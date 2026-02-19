@@ -1,0 +1,33 @@
+template_name: "default"
+include_unmapped_placeholders: true
+placeholder_rules:
+  "{{PROJECT_ID}}":
+    source: "first_row.관리번호"
+  "{{PROJECT_NAME}}":
+    source: "first_row.사업명"
+  "{{OWNER}}":
+    source: "first_row.담당자"
+  "{{BUDGET}}":
+    source: "first_row.사업비"
+    transform: "currency_krw"
+  "{{PROGRESS}}":
+    source: "first_row.진행률"
+    transform: "percent"
+  "{{STATUS}}":
+    source: "first_row.상태"
+  "{{REPORT_DATE}}":
+    source: "first_row.보고일자"
+    transform: "date:%Y-%m-%d"
+  "{{GENERATED_AT}}":
+    source: "metrics.generated_at_utc"
+  "{{DATASET_NAME}}":
+    source: "contract.dataset"
+  "{{PROFILE_NAME}}":
+    source: "profile.profile_name"
+
+table_sections:
+  - placeholder: "{{PROJECT_TABLE_ROWS}}"
+    columns: ["관리번호", "사업명", "담당자", "상태", "진행률", "위험등급"]
+    row_template: "- {관리번호} | {사업명} | {담당자} | {상태} | {진행률} | {위험등급}"
+    max_rows: 20
+    empty_text: "- 데이터 없음"
