@@ -1,0 +1,22 @@
+[프로젝트 보고서]
+생성시각: {{GENERATED_AT}}
+데이터셋: {{DATASET_NAME}}
+프로필: {{PROFILE_NAME}}
+
+기본 정보
+- 관리번호: {{PROJECT_ID}}
+- 사업명: {{PROJECT_NAME}}
+- 담당자: {{OWNER}}
+- 사업비: {{BUDGET}}
+- 진행률: {{PROGRESS}}
+- 상태: {{STATUS}}
+- 보고일자: {{REPORT_DATE}}
+- 전체 건수: {{ROW_COUNT}}
+
+상세 목록
+{{PROJECT_TABLE_ROWS}}
+
+AI 요약
+{{AI_SUMMARY}}
+리스크
+{{AI_RISK_NOTE}}
