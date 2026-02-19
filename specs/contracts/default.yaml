@@ -1,0 +1,54 @@
+version: "1.0"
+dataset: "local_secure_project_status"
+fields:
+  - name: "관리번호"
+    key: "project_id"
+    type: "string"
+    required: true
+    pii: false
+  - name: "사업명"
+    key: "project_name"
+    type: "string"
+    required: true
+    pii: false
+  - name: "담당자"
+    key: "owner"
+    type: "string"
+    required: true
+    pii: true
+  - name: "사업비"
+    key: "budget"
+    type: "float"
+    required: false
+    pii: false
+  - name: "진행률"
+    key: "progress"
+    type: "float"
+    required: false
+    pii: false
+  - name: "상태"
+    key: "status"
+    type: "string"
+    required: true
+    pii: false
+  - name: "보고일자"
+    key: "report_date"
+    type: "date"
+    required: false
+    pii: false
+constraints:
+  unique:
+    - "관리번호"
+  non_negative:
+    - "사업비"
+    - "진행률"
+templates:
+  default:
+    placeholders:
+      "{{PROJECT_ID}}": "관리번호"
+      "{{PROJECT_NAME}}": "사업명"
+      "{{OWNER}}": "담당자"
+      "{{BUDGET}}": "사업비"
+      "{{PROGRESS}}": "진행률"
+      "{{STATUS}}": "상태"
+      "{{REPORT_DATE}}": "보고일자"
