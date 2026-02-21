@@ -30,6 +30,23 @@ def test_ui_home_page() -> None:
     assert "verifySignatureFile" in response.text
     assert "refreshReadinessBtn" in response.text
     assert "readinessList" in response.text
+    assert "bootstrapCard" in response.text
+    assert "bootstrapHashCommand" in response.text
+    assert "bootstrapYamlTemplate" in response.text
+
+
+def test_health_includes_auth_bootstrap_state() -> None:
+    response = client.get("/health")
+    assert response.status_code == 200
+    payload = response.json()
+    assert "auth_bootstrap_required" in payload
+    assert "auth_bootstrap" in payload
+    bootstrap = payload["auth_bootstrap"]
+    assert "required" in bootstrap
+    assert "total_users" in bootstrap
+    assert "active_users" in bootstrap
+    assert "registry_path" in bootstrap
+    assert bootstrap["registry_path"].endswith(".yaml")
 
 
 def test_audit_recent_requires_audit_role() -> None:

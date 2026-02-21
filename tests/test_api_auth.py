@@ -89,6 +89,52 @@ def test_process_path_file_not_found_returns_404() -> None:
     assert "request_id" in response.json()["detail"]
 
 
+def test_process_path_rejects_input_path_outside_allowed_base() -> None:
+    login_response = client.post(
+        "/auth/login",
+        json={"user_id": "demo-admin", "password": "admin123!"},
+    )
+    token = login_response.json()["access_token"]
+
+    response = client.post(
+        "/process/path",
+        headers={"Authorization": f"Bearer {token}"},
+        json={
+            "input_path": "../README.md",
+            "output_dir": "examples/output",
+            "contract_name": "default",
+            "profile_name": "default",
+            "template_name": "default",
+            "template_path": "examples/input/sample_report_template.txt",
+        },
+    )
+    assert response.status_code == 400
+    assert "input_path" in response.json()["detail"]
+
+
+def test_process_file_rejects_output_dir_outside_allowed_base() -> None:
+    login_response = client.post(
+        "/auth/login",
+        json={"user_id": "demo-admin", "password": "admin123!"},
+    )
+    token = login_response.json()["access_token"]
+
+    response = client.post(
+        "/process/file",
+        headers={"Authorization": f"Bearer {token}"},
+        data={
+            "output_dir": "../tmp",
+            "contract_name": "default",
+            "profile_name": "default",
+            "template_name": "default",
+            "template_path": "examples/input/sample_report_template.txt",
+        },
+        files={"file": ("sample.xlsx", io.BytesIO(b"dummy"), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")},
+    )
+    assert response.status_code == 400
+    assert "output_dir" in response.json()["detail"]
+
+
 def test_role_restriction_for_process_endpoint() -> None:
     login_response = client.post(
         "/auth/login",

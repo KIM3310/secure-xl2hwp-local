@@ -18,7 +18,7 @@ from zipfile import ZIP_DEFLATED, ZipFile
 
 import httpx
 import jwt
-from fastapi import Depends, FastAPI, File, HTTPException, Query, Request, UploadFile
+from fastapi import Depends, FastAPI, File, Form, HTTPException, Query, Request, UploadFile
 from fastapi.responses import HTMLResponse, Response
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from fastapi.staticfiles import StaticFiles
@@ -34,6 +34,7 @@ from app.services.pipeline_service import PipelineService
 from app.services.speckit_loader import SpecKitLoader
 
 BASE_DIR = Path(__file__).resolve().parent
+REPO_ROOT = BASE_DIR.parent
 WEB_DIR = BASE_DIR / "web"
 TEMPLATES_DIR = WEB_DIR / "templates"
 STATIC_DIR = WEB_DIR / "static"
@@ -157,6 +158,78 @@ def _allowed_process_roles() -> set[str]:
     return {role.strip() for role in settings.process_allowed_roles.split(",") if role.strip()}
 
 
+def _resolve_repo_path(path_value: str) -> Path:
+    candidate = Path(path_value)
+    if candidate.is_absolute():
+        return candidate.resolve()
+    return (REPO_ROOT / candidate).resolve()
+
+
+def _assert_path_within_base(path_value: str, base_dir_value: str, field_name: str) -> Path:
+    target = _resolve_repo_path(path_value)
+    base_dir = _resolve_repo_path(base_dir_value)
+    try:
+        target.relative_to(base_dir)
+    except ValueError as exc:
+        raise HTTPException(
+            status_code=400,
+            detail=f"{field_name} must stay under configured base directory: {base_dir}",
+        ) from exc
+    return target
+
+
+def _validate_process_path_request(
+    *,
+    input_path: str,
+    output_dir: str,
+    template_path: Optional[str],
+) -> tuple[str, str, Optional[str]]:
+    safe_input_path = _assert_path_within_base(
+        input_path,
+        settings.allowed_input_base_dir,
+        "input_path",
+    )
+    safe_output_dir = _assert_path_within_base(
+        output_dir,
+        settings.allowed_output_base_dir,
+        "output_dir",
+    )
+    safe_output_dir.mkdir(parents=True, exist_ok=True)
+
+    safe_template_path: Optional[Path] = None
+    if template_path:
+        safe_template_path = _assert_path_within_base(
+            template_path,
+            settings.allowed_template_base_dir,
+            "template_path",
+        )
+
+    return str(safe_input_path), str(safe_output_dir), str(safe_template_path) if safe_template_path else None
+
+
+def _validate_upload_request_paths(
+    *,
+    output_dir: str,
+    template_path: Optional[str],
+) -> tuple[str, Optional[str]]:
+    safe_output_dir = _assert_path_within_base(
+        output_dir,
+        settings.allowed_output_base_dir,
+        "output_dir",
+    )
+    safe_output_dir.mkdir(parents=True, exist_ok=True)
+
+    safe_template_path: Optional[Path] = None
+    if template_path:
+        safe_template_path = _assert_path_within_base(
+            template_path,
+            settings.allowed_template_base_dir,
+            "template_path",
+        )
+
+    return str(safe_output_dir), str(safe_template_path) if safe_template_path else None
+
+
 def _sync_login_guard_with_settings() -> None:
     if (
         login_attempt_guard.max_failures != settings.auth_login_max_failures
@@ -168,6 +241,36 @@ def _sync_login_guard_with_settings() -> None:
             window_seconds=settings.auth_login_window_seconds,
             lock_seconds=settings.auth_login_lock_seconds,
         )
+
+
+def _user_registry_relative_path() -> str:
+    return str(Path("specs") / "security" / f"{settings.user_registry_name}.yaml")
+
+
+def _auth_bootstrap_snapshot() -> dict[str, Any]:
+    snapshot: dict[str, Any] = {
+        "required": False,
+        "total_users": 0,
+        "active_users": 0,
+        "registry_path": _user_registry_relative_path(),
+        "load_error": False,
+    }
+    if not settings.auth_enabled:
+        return snapshot
+
+    try:
+        registry = spec_loader.load_user_registry(settings.user_registry_name)
+    except Exception:
+        snapshot["required"] = True
+        snapshot["load_error"] = True
+        return snapshot
+
+    total_users = len(registry.users)
+    active_users = sum(1 for user in registry.users if user.active)
+    snapshot["total_users"] = total_users
+    snapshot["active_users"] = active_users
+    snapshot["required"] = active_users == 0
+    return snapshot
 
 
 def _raise_mapped_http_error(exc: Exception, request: Request) -> None:
@@ -536,6 +639,37 @@ def _service_readiness() -> dict[str, Any]:
     except Exception as exc:
         checks.append({"name": "audit_log_dir", "status": "failed", "detail": str(exc)})
 
+    input_base_dir = _resolve_repo_path(settings.allowed_input_base_dir)
+    if input_base_dir.exists():
+        checks.append({"name": "input_base_dir", "status": "ok", "detail": str(input_base_dir)})
+    else:
+        checks.append(
+            {
+                "name": "input_base_dir",
+                "status": "failed",
+                "detail": f"missing path: {input_base_dir}",
+            }
+        )
+
+    template_base_dir = _resolve_repo_path(settings.allowed_template_base_dir)
+    if template_base_dir.exists():
+        checks.append({"name": "template_base_dir", "status": "ok", "detail": str(template_base_dir)})
+    else:
+        checks.append(
+            {
+                "name": "template_base_dir",
+                "status": "failed",
+                "detail": f"missing path: {template_base_dir}",
+            }
+        )
+
+    output_base_dir = _resolve_repo_path(settings.allowed_output_base_dir)
+    try:
+        output_base_dir.mkdir(parents=True, exist_ok=True)
+        checks.append({"name": "output_base_dir", "status": "ok", "detail": str(output_base_dir)})
+    except Exception as exc:
+        checks.append({"name": "output_base_dir", "status": "failed", "detail": str(exc)})
+
     if settings.export_signing_enabled and len(settings.export_signing_key) >= 32:
         checks.append(
             {
@@ -697,8 +831,12 @@ def require_audit_user(current_user: AuthUser = Depends(get_current_user)) -> Au
 
 @app.get("/", response_class=HTMLResponse)
 def ui_home(request: Request) -> HTMLResponse:
+    auth_bootstrap = _auth_bootstrap_snapshot()
+    default_input_path = str(Path(settings.allowed_input_base_dir) / "sample_projects.xlsx")
+    default_template_path = str(Path(settings.allowed_template_base_dir) / "sample_report_template.txt")
     ui_config = {
         "auth_enabled": settings.auth_enabled,
+        "auth_bootstrap": auth_bootstrap,
         "process_allowed_roles": sorted(_allowed_process_roles()),
         "max_upload_mb": settings.max_upload_mb,
         "export_signing": {
@@ -711,12 +849,12 @@ def ui_home(request: Request) -> HTMLResponse:
             "brand": "aqua",
         },
         "default_paths": {
-            "input_path": "examples/input/sample_projects.xlsx",
-            "output_dir": "examples/output",
+            "input_path": default_input_path,
+            "output_dir": settings.allowed_output_base_dir,
             "contract_name": "default",
             "profile_name": "default",
             "template_name": "default",
-            "template_path": "examples/input/sample_report_template.txt",
+            "template_path": default_template_path,
         },
     }
 
@@ -729,18 +867,24 @@ def ui_home(request: Request) -> HTMLResponse:
 
 @app.get("/health")
 def health() -> dict:
+    auth_bootstrap = _auth_bootstrap_snapshot()
     return {
         "status": "ok",
         "app": settings.app_name,
         "env": settings.app_env,
         "llm_enabled": settings.enable_llm,
         "auth_enabled": settings.auth_enabled,
+        "auth_bootstrap_required": auth_bootstrap["required"],
+        "auth_bootstrap": auth_bootstrap,
         "auth_login_guard": {
             "max_failures": login_attempt_guard.max_failures,
             "window_seconds": login_attempt_guard.window_seconds,
             "lock_seconds": login_attempt_guard.lock_seconds,
         },
         "process_allowed_roles": sorted(_allowed_process_roles()),
+        "allowed_input_base_dir": settings.allowed_input_base_dir,
+        "allowed_output_base_dir": settings.allowed_output_base_dir,
+        "allowed_template_base_dir": settings.allowed_template_base_dir,
         "audit_log_dir": settings.audit_log_dir,
         "export_signing_enabled": settings.export_signing_enabled,
         "export_signing_key_id": settings.export_signing_key_id if settings.export_signing_enabled else None,
@@ -1196,13 +1340,18 @@ def process_path(
 ) -> ProcessResponse:
     service = PipelineService(settings=settings, audit_logger=audit_logger)
     try:
-        outcome = service.process(
+        safe_input_path, safe_output_dir, safe_template_path = _validate_process_path_request(
             input_path=req.input_path,
             output_dir=req.output_dir,
+            template_path=req.template_path,
+        )
+        outcome = service.process(
+            input_path=safe_input_path,
+            output_dir=safe_output_dir,
             contract_name=req.contract_name,
             profile_name=req.profile_name,
             template_name=req.template_name,
-            template_path=req.template_path,
+            template_path=safe_template_path,
             actor=_actor(current_user),
             request_id=request.state.request_id,
         )
@@ -1216,11 +1365,11 @@ def process_path(
 async def process_upload(
     request: Request,
     file: UploadFile = File(...),
-    output_dir: str = "examples/output",
-    contract_name: str = "default",
-    profile_name: str = "default",
-    template_name: str = "default",
-    template_path: str = "",
+    output_dir: str = Form("examples/output"),
+    contract_name: str = Form("default"),
+    profile_name: str = Form("default"),
+    template_name: str = Form("default"),
+    template_path: str = Form(""),
     current_user: AuthUser = Depends(require_process_user),
 ) -> ProcessResponse:
     if not file.filename or not file.filename.lower().endswith((".xlsx", ".xlsm", ".xls")):
@@ -1232,6 +1381,10 @@ async def process_upload(
     try:
         max_bytes = settings.max_upload_mb * 1024 * 1024
         total_bytes = 0
+        safe_output_dir, safe_template_path = _validate_upload_request_paths(
+            output_dir=output_dir,
+            template_path=template_path or None,
+        )
         with tempfile.NamedTemporaryFile(delete=False, suffix=Path(file.filename).suffix) as temp_file:
             temp_path = temp_file.name
             while True:
@@ -1248,11 +1401,11 @@ async def process_upload(
 
         outcome = service.process(
             input_path=temp_path,
-            output_dir=output_dir,
+            output_dir=safe_output_dir,
             contract_name=contract_name,
             profile_name=profile_name,
             template_name=template_name,
-            template_path=template_path or None,
+            template_path=safe_template_path,
             actor=_actor(current_user),
             request_id=request.state.request_id,
         )

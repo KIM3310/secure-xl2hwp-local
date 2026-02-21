@@ -378,6 +378,95 @@ select:focus {
   padding: 11px;
 }
 
+.bootstrap-card {
+  margin-bottom: 12px;
+  border-radius: 14px;
+  border: 1px solid color-mix(in srgb, var(--warn) 40%, var(--line));
+  background: linear-gradient(145deg, color-mix(in srgb, var(--warn) 14%, transparent), rgba(255, 255, 255, 0.62));
+  padding: 11px;
+}
+
+.bootstrap-card.ready {
+  border-color: color-mix(in srgb, var(--accent) 36%, var(--line));
+  background: linear-gradient(145deg, color-mix(in srgb, var(--accent) 15%, transparent), rgba(255, 255, 255, 0.62));
+}
+
+.bootstrap-head-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.bootstrap-badge {
+  margin: 0;
+  border-radius: 999px;
+  padding: 3px 8px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #9a3f1d;
+  background: color-mix(in srgb, var(--warn) 30%, transparent);
+}
+
+.bootstrap-badge.ready {
+  color: var(--accent-strong);
+  background: color-mix(in srgb, var(--accent) 30%, transparent);
+}
+
+.bootstrap-refresh-btn {
+  padding: 6px 9px;
+  font-size: 0.75rem;
+}
+
+.bootstrap-card h3 {
+  margin: 8px 0 4px;
+  font-size: 1rem;
+}
+
+.bootstrap-steps {
+  margin: 9px 0 10px 19px;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  color: var(--muted);
+  font-size: 0.84rem;
+}
+
+.bootstrap-path-row {
+  margin: 7px 0 2px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+  font-size: 0.82rem;
+  color: var(--muted);
+}
+
+.bootstrap-path-row code {
+  background: color-mix(in srgb, var(--line) 26%, transparent);
+  border-radius: 8px;
+  padding: 3px 7px;
+  color: var(--text);
+}
+
+.bootstrap-code-label {
+  margin: 8px 0 5px;
+}
+
+.command-box {
+  margin: 0 0 6px;
+  border-radius: 10px;
+  border: 1px solid var(--line);
+  background: var(--json-bg);
+  color: var(--json-text);
+  padding: 9px;
+  font-size: 0.73rem;
+  line-height: 1.42;
+  white-space: pre-wrap;
+  overflow: auto;
+}
+
 .user-card p {
   margin: 3px 0;
 }

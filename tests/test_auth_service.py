@@ -4,9 +4,17 @@ from app.core.settings import Settings
 from app.services.auth_service import AuthService
 from app.services.speckit_loader import SpecKitLoader
 
+TEST_AUTH_PASSWORD_PEPPER = "test-auth-pepper-very-long-secret-0123456789"
+TEST_JWT_SECRET_KEY = "test-jwt-secret-key-very-long-secret-0123456789abcdef"
+
 
 def test_authenticate_and_verify_token() -> None:
-    settings = Settings(auth_enabled=True)
+    settings = Settings(
+        auth_enabled=True,
+        user_registry_name="users_test",
+        auth_password_pepper=TEST_AUTH_PASSWORD_PEPPER,
+        jwt_secret_key=TEST_JWT_SECRET_KEY,
+    )
     loader = SpecKitLoader(base_path=Path("specs"))
     auth_service = AuthService(settings=settings, spec_loader=loader)
 
@@ -25,7 +33,12 @@ def test_authenticate_and_verify_token() -> None:
 
 
 def test_pbkdf2_hash_verification() -> None:
-    settings = Settings(auth_enabled=True)
+    settings = Settings(
+        auth_enabled=True,
+        user_registry_name="users_test",
+        auth_password_pepper=TEST_AUTH_PASSWORD_PEPPER,
+        jwt_secret_key=TEST_JWT_SECRET_KEY,
+    )
     loader = SpecKitLoader(base_path=Path("specs"))
     auth_service = AuthService(settings=settings, spec_loader=loader)
 
