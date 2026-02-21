@@ -30,11 +30,11 @@ def hash_password_pbkdf2(
 def main() -> None:
     parser = argparse.ArgumentParser(description="Generate password hash for specs/security/users.yaml")
     parser.add_argument("--password", required=True)
-    parser.add_argument("--pepper", default="change-this-pepper")
+    parser.add_argument("--pepper", required=True)
     parser.add_argument(
         "--algo",
         choices=["sha256", "pbkdf2_sha256"],
-        default="sha256",
+        default="pbkdf2_sha256",
         help="Hash algorithm format",
     )
     parser.add_argument("--iterations", type=int, default=390000)

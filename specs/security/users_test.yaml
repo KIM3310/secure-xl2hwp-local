@@ -1,0 +1,13 @@
+users:
+  - user_id: "demo-admin"
+    role: "Admin"
+    password_hash: "pbkdf2_sha256$390000$a1b2c3d4$14295bc3936d7bc2c9be940a9da41007f687a16787b7ffd8c828257a09a3d784"
+    active: true
+  - user_id: "demo-analyst"
+    role: "Analyst"
+    password_hash: "pbkdf2_sha256$390000$b2c3d4e5$efdf5f7e4c192dfe78f689d609d802a5871cf2e31a96227a7de89b9305936f55"
+    active: true
+  - user_id: "demo-auditor"
+    role: "Auditor"
+    password_hash: "pbkdf2_sha256$390000$c3d4e5f6$1b50d9ea1ee273f2c85c7ecfffa4586475de8b73f77b71cf0406d69cafc4679a"
+    active: true

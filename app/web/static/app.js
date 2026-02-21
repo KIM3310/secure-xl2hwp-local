@@ -15,8 +15,20 @@ const I18N = {
     "auth.login": "로그인",
     "auth.logout": "로그아웃",
     "auth.currentUser": "현재 로그인:",
-    "auth.userPlaceholder": "demo-admin",
-    "auth.passwordPlaceholder": "admin123!",
+    "auth.userPlaceholder": "local-admin",
+    "auth.passwordPlaceholder": "StrongPassword!",
+    "auth.bootstrapBadgeRequired": "관리자 설정 필요",
+    "auth.bootstrapBadgeReady": "관리자 계정 준비됨",
+    "auth.bootstrapTitle": "먼저 관리자 ID를 만드세요",
+    "auth.bootstrapMessageRequired": "현재 로그인 가능한 계정이 없습니다. 아래 3단계를 따라 관리자 계정을 먼저 만들어 주세요.",
+    "auth.bootstrapMessageReady": "활성 계정이 감지되었습니다. 생성한 관리자 계정으로 바로 로그인할 수 있습니다.",
+    "auth.bootstrapRefresh": "상태 다시 확인",
+    "auth.bootstrapStep1": ".env에서 AUTH_PASSWORD_PEPPER를 강한 값으로 설정합니다.",
+    "auth.bootstrapStep2": "비밀번호 해시를 생성해 users.yaml에 등록합니다.",
+    "auth.bootstrapStep3": "새로고침 후 생성한 관리자 계정으로 로그인합니다.",
+    "auth.bootstrapRegistryLabel": "사용자 파일:",
+    "auth.bootstrapHashLabel": "해시 생성 명령",
+    "auth.bootstrapYamlLabel": "users.yaml 예시",
     "pipeline.title": "파이프라인 실행",
     "pipeline.subtitle": "Path 모드 / File 업로드 모드",
     "pipeline.modePath": "Path 모드",
@@ -57,7 +69,7 @@ const I18N = {
     "ops.eventAuth": "로그인",
     "ops.eventProcess": "처리",
     "ops.actor": "실행 주체 검색",
-    "ops.actorPlaceholder": "예: demo-admin",
+    "ops.actorPlaceholder": "예: local-admin",
     "ops.autoRefresh": "자동 새로고침",
     "ops.exportSummary": "서명 요약 ZIP 저장",
     "ops.exportAuditCsv": "서명 감사 ZIP 저장",
@@ -128,6 +140,7 @@ const I18N = {
     "toast.verifyInvalid": "서명 검증 실패",
     "toast.verifyFail": "서명 검증 요청 실패",
     "toast.verifySelect": "원본 파일과 서명 파일을 모두 선택하세요.",
+    "toast.bootstrapRefreshed": "관리자 초기 설정 상태를 다시 확인했습니다.",
     "health.ok": "정상",
     "health.unavailable": "상태 확인 실패",
     "health.label": "상태",
@@ -152,8 +165,20 @@ const I18N = {
     "auth.login": "Sign In",
     "auth.logout": "Sign Out",
     "auth.currentUser": "Current user:",
-    "auth.userPlaceholder": "demo-admin",
-    "auth.passwordPlaceholder": "admin123!",
+    "auth.userPlaceholder": "local-admin",
+    "auth.passwordPlaceholder": "StrongPassword!",
+    "auth.bootstrapBadgeRequired": "Admin setup required",
+    "auth.bootstrapBadgeReady": "Admin account ready",
+    "auth.bootstrapTitle": "Create an admin ID first",
+    "auth.bootstrapMessageRequired": "No active login account is configured yet. Follow these 3 steps to create a local admin first.",
+    "auth.bootstrapMessageReady": "An active account is detected. You can sign in with your configured admin ID now.",
+    "auth.bootstrapRefresh": "Recheck status",
+    "auth.bootstrapStep1": "Set a strong AUTH_PASSWORD_PEPPER in .env.",
+    "auth.bootstrapStep2": "Generate a password hash and register it in users.yaml.",
+    "auth.bootstrapStep3": "Refresh the app and sign in with the admin account you created.",
+    "auth.bootstrapRegistryLabel": "User registry file:",
+    "auth.bootstrapHashLabel": "Hash command",
+    "auth.bootstrapYamlLabel": "users.yaml sample",
     "pipeline.title": "Pipeline Run",
     "pipeline.subtitle": "Path mode / File upload mode",
     "pipeline.modePath": "Path Mode",
@@ -194,7 +219,7 @@ const I18N = {
     "ops.eventAuth": "Login",
     "ops.eventProcess": "Process",
     "ops.actor": "Actor contains",
-    "ops.actorPlaceholder": "e.g. demo-admin",
+    "ops.actorPlaceholder": "e.g. local-admin",
     "ops.autoRefresh": "Auto refresh",
     "ops.exportSummary": "Save Signed Summary ZIP",
     "ops.exportAuditCsv": "Save Signed Audit ZIP",
@@ -265,6 +290,7 @@ const I18N = {
     "toast.verifyInvalid": "Signature verification failed",
     "toast.verifyFail": "Verification request failed",
     "toast.verifySelect": "Select both payload and signature files.",
+    "toast.bootstrapRefreshed": "Admin bootstrap status refreshed.",
     "health.ok": "OK",
     "health.unavailable": "Unavailable",
     "health.label": "Health",
@@ -281,6 +307,11 @@ const state = {
   token: localStorage.getItem("secure_xl2hwp_token") || "",
   user: null,
   mode: "path",
+  authBootstrapRequired: Boolean(cfg.auth_bootstrap?.required),
+  authUserTotal: Number(cfg.auth_bootstrap?.total_users || 0),
+  authUserActive: Number(cfg.auth_bootstrap?.active_users || 0),
+  authRegistryPath: cfg.auth_bootstrap?.registry_path || "specs/security/users.yaml",
+  authBootstrapLoadError: Boolean(cfg.auth_bootstrap?.load_error),
   lang: localStorage.getItem("secure_ui_lang") || cfg.ui_defaults?.language || "ko",
   theme: localStorage.getItem("secure_ui_theme") || cfg.ui_defaults?.theme || "light",
   brand: localStorage.getItem("secure_ui_brand") || cfg.ui_defaults?.brand || "aqua",
@@ -308,6 +339,13 @@ const els = {
   loginUserId: document.getElementById("loginUserId"),
   loginPassword: document.getElementById("loginPassword"),
   loginBtn: document.getElementById("loginBtn"),
+  bootstrapCard: document.getElementById("bootstrapCard"),
+  bootstrapBadge: document.getElementById("bootstrapBadge"),
+  bootstrapMessage: document.getElementById("bootstrapMessage"),
+  bootstrapRefreshBtn: document.getElementById("bootstrapRefreshBtn"),
+  bootstrapRegistryPath: document.getElementById("bootstrapRegistryPath"),
+  bootstrapHashCommand: document.getElementById("bootstrapHashCommand"),
+  bootstrapYamlTemplate: document.getElementById("bootstrapYamlTemplate"),
   currentUserText: document.getElementById("currentUserText"),
   tokenStatus: document.getElementById("tokenStatus"),
   modePathBtn: document.getElementById("modePathBtn"),
@@ -412,6 +450,7 @@ function applyI18n() {
     }
   });
 
+  renderBootstrapGuide();
   setAuthState();
   renderMetrics(state.lastMetrics);
   renderArtifacts(state.lastArtifacts);
@@ -429,6 +468,56 @@ function safeSelectValue(selectEl, candidate, fallback = "") {
     return candidate;
   }
   return fallback;
+}
+
+function bootstrapRegistryPath() {
+  return state.authRegistryPath || "specs/security/users.yaml";
+}
+
+function bootstrapHashCommand() {
+  return "python scripts/hash_password.py --password 'StrongPassword!' --pepper 'YOUR_AUTH_PASSWORD_PEPPER'";
+}
+
+function bootstrapYamlTemplate() {
+  return `users:
+  - user_id: "local-admin"
+    role: "Admin"
+    password_hash: "PASTE_HASH_HERE"
+    active: true`;
+}
+
+function renderBootstrapGuide() {
+  if (!els.bootstrapCard) {
+    return;
+  }
+
+  if (cfg.auth_enabled === false) {
+    els.bootstrapCard.classList.add("hidden");
+    return;
+  }
+
+  els.bootstrapCard.classList.remove("hidden");
+
+  const required = Boolean(state.authBootstrapRequired);
+  els.bootstrapCard.classList.toggle("ready", !required);
+  if (els.bootstrapBadge) {
+    els.bootstrapBadge.classList.toggle("ready", !required);
+    els.bootstrapBadge.textContent = required ? t("auth.bootstrapBadgeRequired") : t("auth.bootstrapBadgeReady");
+  }
+  if (els.bootstrapMessage) {
+    els.bootstrapMessage.textContent = required
+      ? t("auth.bootstrapMessageRequired")
+      : t("auth.bootstrapMessageReady");
+  }
+  if (els.bootstrapRegistryPath) {
+    els.bootstrapRegistryPath.textContent = bootstrapRegistryPath();
+  }
+  if (els.bootstrapHashCommand) {
+    els.bootstrapHashCommand.textContent = bootstrapHashCommand();
+  }
+  if (els.bootstrapYamlTemplate) {
+    els.bootstrapYamlTemplate.textContent = bootstrapYamlTemplate();
+  }
 }
 
 function initDefaults() {
@@ -454,8 +543,8 @@ function initDefaults() {
   els.fileTemplateName.value = templateName;
   els.fileTemplatePath.value = templatePath;
 
-  els.loginUserId.value = "demo-admin";
-  els.loginPassword.value = "admin123!";
+  els.loginUserId.value = "local-admin";
+  els.loginPassword.value = "";
 
   els.langSelect.value = state.lang;
   els.themeSelect.value = state.theme;
@@ -473,6 +562,7 @@ function initDefaults() {
   localStorage.setItem("secure_ops_status", state.opsStatus);
   localStorage.setItem("secure_ops_event_type", state.opsEventType);
   localStorage.setItem("secure_ops_actor_contains", state.opsActorContains);
+  renderBootstrapGuide();
 }
 
 function toggleMode(mode) {
@@ -1126,6 +1216,16 @@ async function refreshHealth() {
   try {
     const { data } = await fetchJSON("/health", { method: "GET" });
     const ok = data?.status === "ok";
+    const bootstrap = data?.auth_bootstrap || {};
+    state.authBootstrapRequired = Boolean(
+      data?.auth_bootstrap_required ?? bootstrap.required ?? state.authBootstrapRequired
+    );
+    state.authUserTotal = Number(bootstrap.total_users ?? state.authUserTotal ?? 0);
+    state.authUserActive = Number(bootstrap.active_users ?? state.authUserActive ?? 0);
+    state.authRegistryPath = bootstrap.registry_path || state.authRegistryPath || "specs/security/users.yaml";
+    state.authBootstrapLoadError = Boolean(bootstrap.load_error);
+    renderBootstrapGuide();
+
     els.healthPill.classList.remove("neutral", "warn", "ok");
     els.healthPill.classList.add(ok ? "ok" : "warn");
     const authState = data.auth_enabled ? t("health.authOn") : t("health.authOff");
@@ -1382,6 +1482,12 @@ function bindEvents() {
     await refreshOpsSummary();
   });
   els.refreshReadinessBtn.addEventListener("click", refreshReadiness);
+  if (els.bootstrapRefreshBtn) {
+    els.bootstrapRefreshBtn.addEventListener("click", async () => {
+      await refreshHealth();
+      showToast(t("toast.bootstrapRefreshed"));
+    });
+  }
 
   els.langSelect.addEventListener("change", () => {
     state.lang = els.langSelect.value;

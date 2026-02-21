@@ -55,24 +55,37 @@ Ollama를 쓰지 않으면 `.env`에서 `ENABLE_LLM=false`로 설정합니다.
 
 ## 인증 (JWT)
 
-### 기본 데모 계정
-- `demo-admin / admin123!`
-- `demo-analyst / analyst123!`
-- `demo-auditor / auditor123!`
-
-계정은 `specs/security/users.yaml`에 있고, 비밀번호는 해시 저장입니다.
+### 기본 계정 제거됨
+- 저장소 기본 `specs/security/users.yaml`은 비어 있습니다.
+- 서비스 사용 전, 조직 정책에 맞는 계정을 직접 등록해야 합니다.
 
 운영 전 필수:
-1. `.env`의 `JWT_SECRET_KEY`, `AUTH_PASSWORD_PEPPER` 변경
-2. `scripts/hash_password.py`로 새 비밀번호 해시 생성 후 `specs/security/users.yaml` 갱신
+1. `.env`의 `JWT_SECRET_KEY`, `AUTH_PASSWORD_PEPPER`, `EXPORT_SIGNING_KEY`를 강한 값으로 설정
+2. `scripts/hash_password.py`(기본 pbkdf2)로 비밀번호 해시 생성 후 `specs/security/users.yaml` 작성
 3. 처리 권한 역할은 `PROCESS_ALLOWED_ROLES`로 제한
 4. 로그인 보호 정책(`AUTH_LOGIN_MAX_FAILURES`, `AUTH_LOGIN_WINDOW_SECONDS`, `AUTH_LOGIN_LOCK_SECONDS`) 점검
+5. 경로 제한 정책(`ALLOWED_INPUT_BASE_DIR`, `ALLOWED_OUTPUT_BASE_DIR`, `ALLOWED_TEMPLATE_BASE_DIR`) 점검
+
+### 계정 등록 예시
+```bash
+# 1) 해시 생성 (기본: pbkdf2_sha256)
+python scripts/hash_password.py --password 'StrongPassword!' --pepper 'YOUR_AUTH_PASSWORD_PEPPER'
+
+# 2) specs/security/users.yaml 작성
+cat > specs/security/users.yaml <<'YAML'
+users:
+  - user_id: "local-admin"
+    role: "Admin"
+    password_hash: "PASTE_HASH_HERE"
+    active: true
+YAML
+```
 
 ### 로그인
 ```bash
 curl -sS -X POST http://127.0.0.1:8080/auth/login \
   -H 'Content-Type: application/json' \
-  -d '{"user_id":"demo-admin","password":"admin123!"}' | jq
+  -d '{"user_id":"local-admin","password":"StrongPassword!"}' | jq
 ```
 
 ### 내 정보 확인
@@ -91,11 +104,11 @@ curl -sS http://127.0.0.1:8080/auth/guard/state \
 
 ### 비밀번호 해시 생성
 ```bash
-# legacy sha256
+# default: pbkdf2_sha256
 python scripts/hash_password.py --password 'StrongPassword!' --pepper 'your-pepper'
 
-# recommended pbkdf2 format
-python scripts/hash_password.py --algo pbkdf2_sha256 --password 'StrongPassword!' --pepper 'your-pepper'
+# optional: legacy sha256
+python scripts/hash_password.py --algo sha256 --password 'StrongPassword!' --pepper 'your-pepper'
 ```
 
 ## 실행
@@ -108,6 +121,7 @@ uvicorn app.main:app --host 127.0.0.1 --port 8080
 ### 웹 스튜디오 UI
 - URL: `http://127.0.0.1:8080/`
 - 기능:
+  - 첫 진입 관리자 온보딩 카드(계정 미구성 시 생성 단계 안내, `한국어/English` 토글 반영)
   - 로그인/JWT 세션 관리
   - Path/File 모드 실행
   - 메트릭/아티팩트/응답 JSON 시각화

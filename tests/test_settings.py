@@ -35,3 +35,21 @@ def test_settings_reject_invalid_auth_login_guard_values() -> None:
         Settings(auth_login_window_seconds=5)
     with pytest.raises(ValueError):
         Settings(auth_login_lock_seconds=0)
+
+
+def test_settings_reject_placeholder_secrets_when_enabled() -> None:
+    with pytest.raises(ValueError):
+        Settings(auth_enabled=True, jwt_secret_key="change-this-jwt-secret-minimum-32-characters")
+    with pytest.raises(ValueError):
+        Settings(auth_enabled=True, auth_password_pepper="change-this-pepper")
+    with pytest.raises(ValueError):
+        Settings(export_signing_enabled=True, export_signing_key="change-this-export-signing-key-minimum-32-characters")
+
+
+def test_settings_reject_blank_allowed_base_dirs() -> None:
+    with pytest.raises(ValueError):
+        Settings(allowed_input_base_dir=" ")
+    with pytest.raises(ValueError):
+        Settings(allowed_output_base_dir="")
+    with pytest.raises(ValueError):
+        Settings(allowed_template_base_dir="   ")

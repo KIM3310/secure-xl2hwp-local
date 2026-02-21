@@ -1,13 +1,1 @@
-users:
-  - user_id: "demo-admin"
-    role: "Admin"
-    password_hash: "4d3069cb7cdd4a223d81af94f73ad7f9312c0989c1960bf1d81a4b3c93f8a4c4"
-    active: true
-  - user_id: "demo-analyst"
-    role: "Analyst"
-    password_hash: "bede8c9506ab866b10ead226e06f59e425baa0ac4155a965efa8baa71ac2cbe2"
-    active: true
-  - user_id: "demo-auditor"
-    role: "Auditor"
-    password_hash: "184f4a5b5c0f60445aa5f69ca1d062cc17916aba8a94955160e0f405198ad212"
-    active: true
+users: []

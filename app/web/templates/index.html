@@ -58,14 +58,43 @@
           <p data-i18n="auth.subtitle">JWT 기반 접근 제어</p>
         </div>
 
+        <div id="bootstrapCard" class="bootstrap-card hidden">
+          <div class="bootstrap-head-row">
+            <p id="bootstrapBadge" class="bootstrap-badge" data-i18n="auth.bootstrapBadgeRequired">설정 필요</p>
+            <button id="bootstrapRefreshBtn" class="ghost-btn bootstrap-refresh-btn" type="button" data-i18n="auth.bootstrapRefresh">
+              상태 다시 확인
+            </button>
+          </div>
+          <h3 data-i18n="auth.bootstrapTitle">먼저 관리자 ID를 만드세요</h3>
+          <p id="bootstrapMessage" class="muted" data-i18n="auth.bootstrapMessageRequired">
+            현재 로그인 가능한 계정이 없습니다. 아래 3단계를 따라 관리자 계정을 먼저 만들어 주세요.
+          </p>
+
+          <ol class="bootstrap-steps">
+            <li data-i18n="auth.bootstrapStep1">`.env`에서 `AUTH_PASSWORD_PEPPER`를 강한 값으로 설정합니다.</li>
+            <li data-i18n="auth.bootstrapStep2">비밀번호 해시를 생성해 `users.yaml`에 등록합니다.</li>
+            <li data-i18n="auth.bootstrapStep3">서비스를 새로고침한 뒤, 생성한 관리자 계정으로 로그인합니다.</li>
+          </ol>
+
+          <p class="bootstrap-path-row">
+            <span data-i18n="auth.bootstrapRegistryLabel">사용자 파일:</span>
+            <code id="bootstrapRegistryPath">specs/security/users.yaml</code>
+          </p>
+
+          <p class="muted bootstrap-code-label" data-i18n="auth.bootstrapHashLabel">해시 생성 명령</p>
+          <pre id="bootstrapHashCommand" class="command-box"></pre>
+          <p class="muted bootstrap-code-label" data-i18n="auth.bootstrapYamlLabel">users.yaml 예시</p>
+          <pre id="bootstrapYamlTemplate" class="command-box"></pre>
+        </div>
+
         <form id="loginForm" class="form-grid compact-grid">
           <label>
             <span data-i18n="auth.userId">사용자 ID</span>
-            <input id="loginUserId" type="text" data-i18n-placeholder="auth.userPlaceholder" placeholder="demo-admin" required />
+            <input id="loginUserId" type="text" data-i18n-placeholder="auth.userPlaceholder" placeholder="local-admin" required />
           </label>
           <label>
             <span data-i18n="auth.password">비밀번호</span>
-            <input id="loginPassword" type="password" data-i18n-placeholder="auth.passwordPlaceholder" placeholder="admin123!" required />
+            <input id="loginPassword" type="password" data-i18n-placeholder="auth.passwordPlaceholder" placeholder="StrongPassword!" required />
           </label>
           <button id="loginBtn" type="submit" class="primary-btn stretch" data-i18n="auth.login">로그인</button>
         </form>
@@ -201,7 +230,7 @@
               id="opsActorInput"
               type="text"
               data-i18n-placeholder="ops.actorPlaceholder"
-              placeholder="예: demo-admin"
+              placeholder="예: local-admin"
             />
           </label>
           <label class="mini-check">
