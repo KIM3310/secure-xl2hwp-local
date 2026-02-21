@@ -244,6 +244,8 @@ docker compose up --build
 - Push/PR 시 `ruff + pytest` 자동 실행
 
 ## 문서
+- 사용 가이드 (KO): `docs/usage-ko.md`
+- User Guide (EN): `docs/usage-en.md`
 - 아키텍처: `docs/architecture.md`
 - SpecKit 운영: `docs/speckit.md`
 - CoT 단계 설계: `docs/cot.md`
