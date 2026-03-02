@@ -109,7 +109,17 @@ python scripts/hash_password.py --password 'StrongPassword!' --pepper 'your-pepp
 
 # optional: legacy sha256
 python scripts/hash_password.py --algo sha256 --password 'StrongPassword!' --pepper 'your-pepper'
+
+# verify an existing hash (exit 0 on success, 1 on mismatch)
+python scripts/hash_password.py \
+  --password 'StrongPassword!' \
+  --pepper 'your-pepper' \
+  --verify-hash 'pbkdf2_sha256$390000$abcd1234$...'
 ```
+
+참고:
+- `pbkdf2_sha256`의 `--iterations`는 1 이상이어야 합니다.
+- 사용자 지정 `--salt`는 `$`를 포함할 수 없습니다.
 
 ## 실행
 
