@@ -53,6 +53,7 @@ def test_health_includes_auth_bootstrap_state() -> None:
     assert bootstrap["registry_path"].endswith(".yaml")
     assert payload["diagnostics"]["bootstrap_state"] in {"required", "ready"}
     assert "next_action" in payload["diagnostics"]
+    assert payload["ops_contract"]["schema"] == "ops-envelope-v1"
 
 
 def test_audit_recent_requires_audit_role() -> None:

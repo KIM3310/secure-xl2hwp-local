@@ -905,6 +905,11 @@ def health() -> dict:
         "export_signing_enabled": settings.export_signing_enabled,
         "export_signing_key_id": settings.export_signing_key_id if settings.export_signing_enabled else None,
         "diagnostics": diagnostics,
+        "ops_contract": {
+            "schema": "ops-envelope-v1",
+            "version": 1,
+            "required_fields": ["service", "status", "diagnostics.next_action"],
+        },
         "capabilities": [
             "local-excel-processing",
             "signed-audit-export",
