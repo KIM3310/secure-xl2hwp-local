@@ -39,8 +39,11 @@ def test_health_includes_auth_bootstrap_state() -> None:
     response = client.get("/health")
     assert response.status_code == 200
     payload = response.json()
+    assert payload["service"] == "secure-xl2hwp-local"
     assert "auth_bootstrap_required" in payload
     assert "auth_bootstrap" in payload
+    assert payload["links"]["readiness"] == "/ops/readiness"
+    assert "signed-audit-export" in payload["capabilities"]
     bootstrap = payload["auth_bootstrap"]
     assert "required" in bootstrap
     assert "total_users" in bootstrap

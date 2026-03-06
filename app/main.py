@@ -870,6 +870,7 @@ def health() -> dict:
     auth_bootstrap = _auth_bootstrap_snapshot()
     return {
         "status": "ok",
+        "service": "secure-xl2hwp-local",
         "app": settings.app_name,
         "env": settings.app_env,
         "llm_enabled": settings.enable_llm,
@@ -888,6 +889,18 @@ def health() -> dict:
         "audit_log_dir": settings.audit_log_dir,
         "export_signing_enabled": settings.export_signing_enabled,
         "export_signing_key_id": settings.export_signing_key_id if settings.export_signing_enabled else None,
+        "capabilities": [
+            "local-excel-processing",
+            "signed-audit-export",
+            "role-based-ops-console",
+            "llm-assisted-cleanup",
+        ],
+        "links": {
+            "readiness": "/ops/readiness",
+            "login": "/auth/login",
+            "audit_summary": "/ops/audit/summary",
+            "process_file": "/process/file",
+        },
     }
 
 
