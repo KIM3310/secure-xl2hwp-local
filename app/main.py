@@ -868,6 +868,21 @@ def ui_home(request: Request) -> HTMLResponse:
 @app.get("/health")
 def health() -> dict:
     auth_bootstrap = _auth_bootstrap_snapshot()
+    diagnostics = {
+        "auth_mode": "enabled" if settings.auth_enabled else "disabled",
+        "bootstrap_state": "required" if auth_bootstrap["required"] else "ready",
+        "llm_mode": "enabled" if settings.enable_llm else "disabled",
+        "export_signing_mode": "enabled" if settings.export_signing_enabled else "disabled",
+        "next_action": (
+            "Create the initial admin bootstrap record before opening shared access."
+            if auth_bootstrap["required"]
+            else (
+                "Verify Ollama reachability from /ops/readiness before running LLM cleanup."
+                if settings.enable_llm
+                else "Run /ops/readiness before processing regulated spreadsheets."
+            )
+        ),
+    }
     return {
         "status": "ok",
         "service": "secure-xl2hwp-local",
@@ -889,6 +904,7 @@ def health() -> dict:
         "audit_log_dir": settings.audit_log_dir,
         "export_signing_enabled": settings.export_signing_enabled,
         "export_signing_key_id": settings.export_signing_key_id if settings.export_signing_enabled else None,
+        "diagnostics": diagnostics,
         "capabilities": [
             "local-excel-processing",
             "signed-audit-export",

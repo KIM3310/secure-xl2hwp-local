@@ -42,6 +42,7 @@ def test_health_includes_auth_bootstrap_state() -> None:
     assert payload["service"] == "secure-xl2hwp-local"
     assert "auth_bootstrap_required" in payload
     assert "auth_bootstrap" in payload
+    assert "diagnostics" in payload
     assert payload["links"]["readiness"] == "/ops/readiness"
     assert "signed-audit-export" in payload["capabilities"]
     bootstrap = payload["auth_bootstrap"]
@@ -50,6 +51,8 @@ def test_health_includes_auth_bootstrap_state() -> None:
     assert "active_users" in bootstrap
     assert "registry_path" in bootstrap
     assert bootstrap["registry_path"].endswith(".yaml")
+    assert payload["diagnostics"]["bootstrap_state"] in {"required", "ready"}
+    assert "next_action" in payload["diagnostics"]
 
 
 def test_audit_recent_requires_audit_role() -> None:
