@@ -407,6 +407,7 @@ const els = {
   reviewPackSequence: document.getElementById("reviewPackSequence"),
   reviewPackProofAssets: document.getElementById("reviewPackProofAssets"),
   copyServiceBriefBtn: document.getElementById("copyServiceBriefBtn"),
+  copyReviewRoutesBtn: document.getElementById("copyReviewRoutesBtn"),
   copyReviewPackBtn: document.getElementById("copyReviewPackBtn"),
   logoutBtn: document.getElementById("logoutBtn"),
   loginForm: document.getElementById("loginForm"),
@@ -1344,6 +1345,13 @@ async function copyReviewPackSnapshot() {
   await copyTextValue(lines.join("\n"));
 }
 
+async function copyReviewRoutesSnapshot() {
+  const payload = state.lastReviewPack || {};
+  const reviewEndpoints = payload.proof_bundle?.review_endpoints || [];
+  const lines = ["secure-xl2hwp-local review routes", ...reviewEndpoints.map((item) => `- ${item}`)];
+  await copyTextValue(lines.join("\n"));
+}
+
 async function exportAuditCsv() {
   if (!state.token && cfg.auth_enabled !== false) {
     showToast(t("toast.needLogin"), true);
@@ -1781,6 +1789,9 @@ function bindEvents() {
   els.exportAuditCsvBtn.addEventListener("click", exportAuditCsv);
   if (els.copyServiceBriefBtn) {
     els.copyServiceBriefBtn.addEventListener("click", copyServiceBriefSnapshot);
+  }
+  if (els.copyReviewRoutesBtn) {
+    els.copyReviewRoutesBtn.addEventListener("click", copyReviewRoutesSnapshot);
   }
   if (els.copyReviewPackBtn) {
     els.copyReviewPackBtn.addEventListener("click", copyReviewPackSnapshot);
