@@ -131,9 +131,11 @@ login_attempt_guard = LoginAttemptGuard(
 
 PROCESS_REPORT_SCHEMA = "secure-xl2hwp-process-report-v1"
 SERVICE_BRIEF_CONTRACT = "secure-xl2hwp-service-brief-v1"
+REVIEW_PACK_CONTRACT = "secure-xl2hwp-review-pack-v1"
 SERVICE_BRIEF_ROUTES = [
     "/health",
     "/ops/service-brief",
+    "/ops/review-pack",
     "/ops/schema/process-report",
     "/ops/readiness",
     "/auth/login",
@@ -808,6 +810,73 @@ def _service_brief_payload() -> dict[str, Any]:
     }
 
 
+def _review_pack_payload() -> dict[str, Any]:
+    brief = _service_brief_payload()
+    auth_bootstrap = brief["bootstrap_state"]
+    readiness = brief["readiness"]
+
+    return {
+        "status": brief["status"],
+        "service": "secure-xl2hwp-local",
+        "generated_at_utc": datetime.now(timezone.utc).isoformat(),
+        "readiness_contract": REVIEW_PACK_CONTRACT,
+        "headline": (
+            "Reviewer pack for a local spreadsheet-to-HWP pipeline: auth bootstrap, signed export evidence, "
+            "and regulated path boundaries in one surface."
+        ),
+        "proof_bundle": {
+            "auth_bootstrap_state": "required" if auth_bootstrap["required"] else "ready",
+            "signed_export_mode": brief["signing_mode"],
+            "readiness_failed_checks": len(readiness["failed_checks"]),
+            "allowed_process_roles": len(brief["allowed_process_roles"]),
+            "review_endpoints": [
+                "/health",
+                "/ops/service-brief",
+                "/ops/review-pack",
+                "/ops/audit/summary",
+                "/ops/audit/export/summary.bundle.zip",
+                "/ops/audit/export/verify",
+            ],
+        },
+        "approval_gate": {
+            "auth_bootstrap_required": auth_bootstrap["required"],
+            "audit_roles_required": ["Admin", "Auditor"],
+            "process_roles": brief["allowed_process_roles"],
+            "signed_export_required_for_handoff": settings.export_signing_enabled,
+        },
+        "target_boundary": {
+            "input_base_dir": settings.allowed_input_base_dir,
+            "output_base_dir": settings.allowed_output_base_dir,
+            "template_base_dir": settings.allowed_template_base_dir,
+            "audit_log_dir": settings.audit_log_dir,
+        },
+        "artifacts": [
+            "Signed summary bundle export for reviewer handoff.",
+            "Signed recent-audit bundle export for regulated evidence trails.",
+            "Signature verification endpoint for independent bundle verification.",
+        ],
+        "review_sequence": [
+            "Open /health and /ops/service-brief to confirm bootstrap state, role posture, and signing mode.",
+            "Run /ops/readiness before enabling LLM cleanup or onboarding shared operators.",
+            "Inspect /ops/audit/summary and signed export bundles before approving downstream delivery.",
+            "Verify exported bundle integrity with /ops/audit/export/verify before moving across trust boundaries.",
+        ],
+        "watchouts": [
+            "Signed bundles provide tamper evidence, but they do not validate spreadsheet semantics automatically.",
+            "If auth bootstrap is still required, the workstation is not ready for shared operator access.",
+            "Path guardrails are only effective when base directories remain locked down in deployment.",
+        ],
+        "links": {
+            "health": "/health",
+            "service_brief": "/ops/service-brief",
+            "readiness": "/ops/readiness",
+            "audit_summary": "/ops/audit/summary",
+            "signed_summary_bundle": "/ops/audit/export/summary.bundle.zip",
+            "verify_bundle": "/ops/audit/export/verify",
+        },
+    }
+
+
 def _is_hex_string(value: str, expected_len: int) -> bool:
     if len(value) != expected_len:
         return False
@@ -956,7 +1025,7 @@ def health() -> dict:
             else (
                 "Verify Ollama reachability from /ops/readiness before running LLM cleanup."
                 if settings.enable_llm
-                else "Run /ops/readiness before processing regulated spreadsheets."
+                else "Review /ops/review-pack and run /ops/readiness before processing regulated spreadsheets."
             )
         ),
     }
@@ -996,11 +1065,13 @@ def health() -> dict:
             "llm-assisted-cleanup",
             "service-brief-surface",
             "process-report-schema",
+            "review-pack-surface",
         ],
         "routes": SERVICE_BRIEF_ROUTES,
         "links": {
             "readiness": "/ops/readiness",
             "service_brief": "/ops/service-brief",
+            "review_pack": "/ops/review-pack",
             "process_schema": "/ops/schema/process-report",
             "login": "/auth/login",
             "audit_summary": "/ops/audit/summary",
@@ -1012,6 +1083,11 @@ def health() -> dict:
 @app.get("/ops/service-brief")
 def service_brief() -> dict[str, Any]:
     return _service_brief_payload()
+
+
+@app.get("/ops/review-pack")
+def review_pack() -> dict[str, Any]:
+    return _review_pack_payload()
 
 
 @app.get("/ops/schema/process-report")

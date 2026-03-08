@@ -205,6 +205,7 @@ secure-xl2hwp \
   - `POST /ops/audit/export/verify` (payload + manifest 서명 검증)
   - `GET /ops/readiness` (운영 전 레디니스 점검)
   - `GET /ops/service-brief` (운영 계약, trust boundary, review flow)
+  - `GET /ops/review-pack` (signed export evidence, approval gate, reviewer handoff)
   - `GET /ops/schema/process-report` (처리 결과 contract)
 - 필터 쿼리:
   - `since_hours`, `status`, `event_type`, `actor_contains`

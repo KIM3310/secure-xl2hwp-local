@@ -37,6 +37,8 @@ def test_ui_home_page() -> None:
     assert "briefSchema" in response.text
     assert "briefReviewFlow" in response.text
     assert "briefTrustBoundary" in response.text
+    assert "reviewPackHeadline" in response.text
+    assert "reviewPackSequence" in response.text
 
 
 def test_health_includes_auth_bootstrap_state() -> None:
@@ -61,9 +63,12 @@ def test_health_includes_auth_bootstrap_state() -> None:
     assert payload["readiness_contract"] == "secure-xl2hwp-service-brief-v1"
     assert payload["report_contract"]["schema"] == "secure-xl2hwp-process-report-v1"
     assert payload["links"]["service_brief"] == "/ops/service-brief"
+    assert payload["links"]["review_pack"] == "/ops/review-pack"
     assert payload["links"]["process_schema"] == "/ops/schema/process-report"
     assert "/ops/service-brief" in payload["routes"]
+    assert "/ops/review-pack" in payload["routes"]
     assert "service-brief-surface" in payload["capabilities"]
+    assert "review-pack-surface" in payload["capabilities"]
 
 
 def test_service_brief_and_process_schema_shape() -> None:
@@ -75,6 +80,14 @@ def test_service_brief_and_process_schema_shape() -> None:
     assert isinstance(brief_payload["review_flow"], list)
     assert isinstance(brief_payload["trust_boundary"], list)
     assert "/process/file" in brief_payload["routes"]
+
+    review_response = client.get("/ops/review-pack")
+    assert review_response.status_code == 200
+    review_payload = review_response.json()
+    assert review_payload["readiness_contract"] == "secure-xl2hwp-review-pack-v1"
+    assert review_payload["links"]["verify_bundle"] == "/ops/audit/export/verify"
+    assert "/ops/review-pack" in review_payload["proof_bundle"]["review_endpoints"]
+    assert isinstance(review_payload["review_sequence"], list)
 
     schema_response = client.get("/ops/schema/process-report")
     assert schema_response.status_code == 200

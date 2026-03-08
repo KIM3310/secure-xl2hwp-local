@@ -18,6 +18,12 @@ const I18N = {
     "serviceBrief.reviewFlow": "검토 흐름",
     "serviceBrief.trustBoundary": "신뢰 경계",
     "serviceBrief.watchouts": "주의점",
+    "reviewPack.title": "리뷰 패키지",
+    "reviewPack.approvalGate": "승인 게이트",
+    "reviewPack.proofBundle": "증거 번들",
+    "reviewPack.boundary": "경계",
+    "reviewPack.artifacts": "검토 산출물",
+    "reviewPack.sequence": "검토 순서",
     "control.language": "언어",
     "control.theme": "테마",
     "control.brand": "브랜드",
@@ -155,6 +161,7 @@ const I18N = {
     "toast.verifySelect": "원본 파일과 서명 파일을 모두 선택하세요.",
     "toast.bootstrapRefreshed": "관리자 초기 설정 상태를 다시 확인했습니다.",
     "toast.serviceBriefFail": "서비스 브리프 조회 실패",
+    "toast.reviewPackFail": "리뷰 패키지 조회 실패",
     "health.ok": "정상",
     "health.unavailable": "상태 확인 실패",
     "health.label": "상태",
@@ -182,6 +189,12 @@ const I18N = {
     "serviceBrief.reviewFlow": "Review flow",
     "serviceBrief.trustBoundary": "Trust boundary",
     "serviceBrief.watchouts": "Watchouts",
+    "reviewPack.title": "Review pack",
+    "reviewPack.approvalGate": "Approval gate",
+    "reviewPack.proofBundle": "Proof bundle",
+    "reviewPack.boundary": "Boundary",
+    "reviewPack.artifacts": "Artifacts",
+    "reviewPack.sequence": "Review sequence",
     "control.language": "Language",
     "control.theme": "Theme",
     "control.brand": "Brand",
@@ -319,6 +332,7 @@ const I18N = {
     "toast.verifySelect": "Select both payload and signature files.",
     "toast.bootstrapRefreshed": "Admin bootstrap status refreshed.",
     "toast.serviceBriefFail": "Failed to fetch service brief",
+    "toast.reviewPackFail": "Failed to fetch review pack",
     "health.ok": "OK",
     "health.unavailable": "Unavailable",
     "health.label": "Health",
@@ -356,6 +370,7 @@ const state = {
   lastAnomalies: null,
   lastReadiness: null,
   lastServiceBrief: null,
+  lastReviewPack: null,
   lastVerifyResult: null,
   verifyStatusKey: "verify.idle",
   verifyStatusTone: "neutral",
@@ -373,6 +388,12 @@ const els = {
   briefReviewFlow: document.getElementById("briefReviewFlow"),
   briefTrustBoundary: document.getElementById("briefTrustBoundary"),
   briefWatchouts: document.getElementById("briefWatchouts"),
+  reviewPackHeadline: document.getElementById("reviewPackHeadline"),
+  reviewPackGate: document.getElementById("reviewPackGate"),
+  reviewPackProof: document.getElementById("reviewPackProof"),
+  reviewPackBoundary: document.getElementById("reviewPackBoundary"),
+  reviewPackArtifacts: document.getElementById("reviewPackArtifacts"),
+  reviewPackSequence: document.getElementById("reviewPackSequence"),
   logoutBtn: document.getElementById("logoutBtn"),
   loginForm: document.getElementById("loginForm"),
   loginUserId: document.getElementById("loginUserId"),
@@ -926,6 +947,35 @@ function renderServiceBrief(payload = null) {
   renderBriefList(els.briefWatchouts, payload.watchouts || []);
 }
 
+function renderReviewPack(payload = null) {
+  state.lastReviewPack = payload || null;
+
+  if (!payload) {
+    els.reviewPackHeadline.textContent = t("serviceBrief.unavailable");
+    els.reviewPackGate.textContent = "-";
+    els.reviewPackProof.textContent = "-";
+    els.reviewPackBoundary.textContent = "-";
+    renderBriefList(els.reviewPackArtifacts, []);
+    renderBriefList(els.reviewPackSequence, []);
+    return;
+  }
+
+  const proofBundle = payload.proof_bundle || {};
+  const approvalGate = payload.approval_gate || {};
+  const targetBoundary = payload.target_boundary || {};
+  const failedChecks = Number(proofBundle.readiness_failed_checks || 0);
+  const gateText = approvalGate.auth_bootstrap_required
+    ? "bootstrap required"
+    : `${(approvalGate.process_roles || []).length || 0} process roles ready`;
+
+  els.reviewPackHeadline.textContent = payload.headline || "-";
+  els.reviewPackGate.textContent = gateText;
+  els.reviewPackProof.textContent = `${proofBundle.signed_export_mode || "unknown"} / ${failedChecks} failed checks`;
+  els.reviewPackBoundary.textContent = targetBoundary.output_base_dir || "-";
+  renderBriefList(els.reviewPackArtifacts, payload.artifacts || []);
+  renderBriefList(els.reviewPackSequence, payload.review_sequence || []);
+}
+
 function drawEmpty(canvas, label) {
   const ctx = canvas.getContext("2d");
   const ratio = window.devicePixelRatio || 1;
@@ -1340,6 +1390,15 @@ async function refreshServiceBrief() {
   }
 }
 
+async function refreshReviewPack() {
+  try {
+    const { data } = await fetchJSON("/ops/review-pack", { method: "GET" });
+    renderReviewPack(data || null);
+  } catch (_err) {
+    renderReviewPack(null);
+  }
+}
+
 async function refreshMe() {
   if (!state.token) {
     setAuthState();
@@ -1664,6 +1723,7 @@ async function bootstrap() {
   applyI18n();
   await refreshHealth();
   await refreshServiceBrief();
+  await refreshReviewPack();
   await refreshMe();
   await refreshAudit();
   await refreshOpsSummary();
@@ -1672,6 +1732,7 @@ async function bootstrap() {
   window.setInterval(async () => {
     await refreshHealth();
     await refreshServiceBrief();
+    await refreshReviewPack();
     if (state.opsAutoRefresh) {
       await refreshAudit();
       await refreshOpsSummary();

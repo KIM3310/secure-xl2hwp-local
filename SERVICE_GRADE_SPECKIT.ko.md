@@ -12,14 +12,15 @@ Last updated: 2026-03-08
 
 ## E - Execution
 - `/ops/service-brief`로 auth bootstrap, signed export posture, readiness 결과, review flow를 고정한다.
+- `/ops/review-pack`로 signed export evidence, approval gate, reviewer handoff sequence를 고정한다.
 - `/ops/schema/process-report`로 처리 결과 contract를 명시해 metrics/artifacts review 기준을 고정한다.
-- 웹 스튜디오 첫 화면에 service brief panel을 올려 schema, auth mode, signing mode, failed checks를 바로 보여준다.
+- 웹 스튜디오 첫 화면에 service brief + review pack panel을 올려 schema, auth mode, signing mode, reviewer proof를 바로 보여준다.
 - `/health`에도 같은 readiness contract와 reviewer links를 연결한다.
 
 ## C - Criteria
 - local verification green
 - README에서 trust boundary와 운영 가치가 즉시 이해됨
-- `/health`, `/ops/service-brief`, `/ops/schema/process-report` contract가 일관된다.
+- `/health`, `/ops/service-brief`, `/ops/review-pack`, `/ops/schema/process-report` contract가 일관된다.
 - 첫 화면에서 review flow와 trust boundary가 보인다.
 
 ## K - Keep
