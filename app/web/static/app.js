@@ -406,6 +406,8 @@ const els = {
   reviewPackTwoMinuteReview: document.getElementById("reviewPackTwoMinuteReview"),
   reviewPackSequence: document.getElementById("reviewPackSequence"),
   reviewPackProofAssets: document.getElementById("reviewPackProofAssets"),
+  copyServiceBriefBtn: document.getElementById("copyServiceBriefBtn"),
+  copyReviewPackBtn: document.getElementById("copyReviewPackBtn"),
   logoutBtn: document.getElementById("logoutBtn"),
   loginForm: document.getElementById("loginForm"),
   loginUserId: document.getElementById("loginUserId"),
@@ -921,6 +923,17 @@ function renderBriefList(container, items) {
   });
 }
 
+async function copyTextValue(value) {
+  try {
+    await navigator.clipboard.writeText(String(value || ""));
+    showToast(t("toast.copyDone"));
+    return true;
+  } catch (_err) {
+    showToast(t("toast.copyFail"), true);
+    return false;
+  }
+}
+
 function formatProofAssets(items) {
   return (items || []).map((item) => {
     const label = item?.label || "Asset";
@@ -1296,6 +1309,39 @@ async function exportOpsSummaryJson() {
   } catch (_err) {
     showToast(t("toast.exportFail"), true);
   }
+}
+
+async function copyServiceBriefSnapshot() {
+  const payload = state.lastServiceBrief || {};
+  const lines = [
+    "secure-xl2hwp-local service brief",
+    `Headline: ${payload.headline || els.briefHeadline.textContent || "-"}`,
+    `Schema: ${payload.report_contract?.schema || els.briefSchema.textContent || "-"}`,
+    `Auth: ${payload.auth_mode || els.briefAuthMode.textContent || "-"}`,
+    `Signing: ${payload.signing_mode || els.briefSigningMode.textContent || "-"}`,
+    "",
+    "2-minute review",
+    ...((payload.two_minute_review || []).map((item) => `- ${item}`)),
+  ];
+  await copyTextValue(lines.join("\n"));
+}
+
+async function copyReviewPackSnapshot() {
+  const payload = state.lastReviewPack || {};
+  const lines = [
+    "secure-xl2hwp-local review pack",
+    `Headline: ${payload.headline || els.reviewPackHeadline.textContent || "-"}`,
+    `Gate: ${els.reviewPackGate.textContent || "-"}`,
+    `Proof: ${els.reviewPackProof.textContent || "-"}`,
+    `Boundary: ${els.reviewPackBoundary.textContent || "-"}`,
+    "",
+    "Review sequence",
+    ...((payload.review_sequence || []).map((item) => `- ${item}`)),
+    "",
+    "Proof assets",
+    ...formatProofAssets(payload.proof_assets || []).map((item) => `- ${item}`),
+  ];
+  await copyTextValue(lines.join("\n"));
 }
 
 async function exportAuditCsv() {
@@ -1733,6 +1779,12 @@ function bindEvents() {
 
   els.exportSummaryBtn.addEventListener("click", exportOpsSummaryJson);
   els.exportAuditCsvBtn.addEventListener("click", exportAuditCsv);
+  if (els.copyServiceBriefBtn) {
+    els.copyServiceBriefBtn.addEventListener("click", copyServiceBriefSnapshot);
+  }
+  if (els.copyReviewPackBtn) {
+    els.copyReviewPackBtn.addEventListener("click", copyReviewPackSnapshot);
+  }
 
   els.opsAutoRefresh.addEventListener("change", () => {
     state.opsAutoRefresh = els.opsAutoRefresh.checked;
