@@ -409,6 +409,7 @@ const els = {
   copyServiceBriefBtn: document.getElementById("copyServiceBriefBtn"),
   copyReviewRoutesBtn: document.getElementById("copyReviewRoutesBtn"),
   copyReviewPackBtn: document.getElementById("copyReviewPackBtn"),
+  copySignedHandoffBtn: document.getElementById("copySignedHandoffBtn"),
   logoutBtn: document.getElementById("logoutBtn"),
   loginForm: document.getElementById("loginForm"),
   loginUserId: document.getElementById("loginUserId"),
@@ -1352,6 +1353,32 @@ async function copyReviewRoutesSnapshot() {
   await copyTextValue(lines.join("\n"));
 }
 
+async function copySignedHandoffSnapshot() {
+  const payload = state.lastReviewPack || {};
+  const proofBundle = payload.proof_bundle || {};
+  const approvalGate = payload.approval_gate || {};
+  const targetBoundary = payload.target_boundary || {};
+  const links = payload.links || {};
+  const lines = [
+    "secure-xl2hwp-local signed handoff",
+    `Headline: ${payload.headline || els.reviewPackHeadline.textContent || "-"}`,
+    `Signing mode: ${proofBundle.signed_export_mode || "unknown"}`,
+    `Handoff gate: ${
+      approvalGate.signed_export_required_for_handoff ? "signed export required" : "signature optional"
+    }`,
+    `Output boundary: ${targetBoundary.output_base_dir || els.reviewPackBoundary.textContent || "-"}`,
+    "",
+    "Signed evidence routes",
+    `- Summary bundle: ${links.signed_summary_bundle || "/ops/audit/export/summary.bundle.zip"}`,
+    `- Verify bundle: ${links.verify_bundle || "/ops/audit/export/verify"}`,
+    `- Audit summary: ${links.audit_summary || "/ops/audit/summary"}`,
+    "",
+    "Approval checklist",
+    ...((payload.two_minute_review || []).slice(2, 4).map((item) => `- ${item}`)),
+  ];
+  await copyTextValue(lines.join("\n"));
+}
+
 async function exportAuditCsv() {
   if (!state.token && cfg.auth_enabled !== false) {
     showToast(t("toast.needLogin"), true);
@@ -1795,6 +1822,9 @@ function bindEvents() {
   }
   if (els.copyReviewPackBtn) {
     els.copyReviewPackBtn.addEventListener("click", copyReviewPackSnapshot);
+  }
+  if (els.copySignedHandoffBtn) {
+    els.copySignedHandoffBtn.addEventListener("click", copySignedHandoffSnapshot);
   }
 
   els.opsAutoRefresh.addEventListener("change", () => {
