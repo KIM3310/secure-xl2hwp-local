@@ -4,21 +4,23 @@ Last updated: 2026-03-08
 
 ## S - Scope
 - 대상: air-gapped document automation pipeline
-- baseline 목표: 로컬/폐쇄망 trust boundary와 file-processing contract를 서비스 수준으로 고정
+- 이번 iteration 목표: reviewer가 첫 화면과 API surface만 보고도 trust boundary, processing contract, operator review flow를 이해하게 만든다.
 
 ## P - Product Thesis
 - 이 repo는 단순 변환기가 아니라 `폐쇄망용 문서 자동화 파이프라인`이어야 한다.
 - 입력 파일 경계, output contract, offline posture가 가장 먼저 보여야 한다.
 
 ## E - Execution
-- local-only data path와 no-cloud stance를 README와 docs에서 명확히 유지
-- sample input/output와 validation flow를 계속 재현 가능하게 유지
-- 현재 CI와 verification commands를 baseline으로 유지
+- `/ops/service-brief`로 auth bootstrap, signed export posture, readiness 결과, review flow를 고정한다.
+- `/ops/schema/process-report`로 처리 결과 contract를 명시해 metrics/artifacts review 기준을 고정한다.
+- 웹 스튜디오 첫 화면에 service brief panel을 올려 schema, auth mode, signing mode, failed checks를 바로 보여준다.
+- `/health`에도 같은 readiness contract와 reviewer links를 연결한다.
 
 ## C - Criteria
 - local verification green
 - README에서 trust boundary와 운영 가치가 즉시 이해됨
-- sample file contract가 흔들리지 않음
+- `/health`, `/ops/service-brief`, `/ops/schema/process-report` contract가 일관된다.
+- 첫 화면에서 review flow와 trust boundary가 보인다.
 
 ## K - Keep
 - air-gapped posture
@@ -27,10 +29,10 @@ Last updated: 2026-03-08
 ## I - Improve
 - sample redacted fixtures 추가
 - operator checklist / error catalog 강화
+- signed export evidence를 runbook과 release checklist에 연결
 
 ## T - Trace
 - `README.md`
 - `app/`
-- `docs/`
+- `tests/`
 - `.github/workflows/`
-

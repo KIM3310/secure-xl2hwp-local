@@ -129,6 +129,19 @@ login_attempt_guard = LoginAttemptGuard(
     lock_seconds=settings.auth_login_lock_seconds,
 )
 
+PROCESS_REPORT_SCHEMA = "secure-xl2hwp-process-report-v1"
+SERVICE_BRIEF_CONTRACT = "secure-xl2hwp-service-brief-v1"
+SERVICE_BRIEF_ROUTES = [
+    "/health",
+    "/ops/service-brief",
+    "/ops/schema/process-report",
+    "/ops/readiness",
+    "/auth/login",
+    "/process/path",
+    "/process/file",
+    "/ops/audit/summary",
+]
+
 
 @app.middleware("http")
 async def request_context_middleware(request: Request, call_next):
@@ -731,6 +744,70 @@ def _service_readiness() -> dict[str, Any]:
     }
 
 
+def _process_report_schema() -> dict[str, Any]:
+    return {
+        "schema": PROCESS_REPORT_SCHEMA,
+        "required_sections": [
+            "success",
+            "outcome.metrics",
+            "outcome.artifacts",
+        ],
+        "operator_rules": [
+            "Processing input, output, and template paths must remain under configured base directories.",
+            "Use signed audit exports and verification when moving artifacts across regulated workflows.",
+            "Auth roles should be reviewed before opening processing endpoints to shared operators.",
+        ],
+    }
+
+
+def _service_brief_payload() -> dict[str, Any]:
+    auth_bootstrap = _auth_bootstrap_snapshot()
+    readiness = _service_readiness()
+    allowed_roles = sorted(_allowed_process_roles())
+    auth_mode = "enabled" if settings.auth_enabled else "disabled"
+    signing_mode = "enabled" if settings.export_signing_enabled else "disabled"
+
+    return {
+        "status": "ok" if readiness["overall_status"] == "healthy" else "degraded",
+        "service": "secure-xl2hwp-local",
+        "generated_at_utc": datetime.now(timezone.utc).isoformat(),
+        "readiness_contract": SERVICE_BRIEF_CONTRACT,
+        "headline": (
+            "Air-gapped spreadsheet-to-document pipeline with path guardrails, signed audit exports, "
+            "and operator-facing readiness checks."
+        ),
+        "report_contract": _process_report_schema(),
+        "auth_mode": auth_mode,
+        "signing_mode": signing_mode,
+        "allowed_process_roles": allowed_roles,
+        "bootstrap_state": auth_bootstrap,
+        "readiness": readiness,
+        "evidence_counts": {
+            "allowed_roles": len(allowed_roles),
+            "readiness_failed_checks": len(readiness["failed_checks"]),
+            "login_guard_max_failures": login_attempt_guard.max_failures,
+            "service_routes": len(SERVICE_BRIEF_ROUTES),
+        },
+        "review_flow": [
+            "Open /health to confirm auth bootstrap state, signing posture, and path boundaries.",
+            "Read /ops/service-brief before operator onboarding to confirm review flow and trust boundary.",
+            "Run /ops/readiness before processing regulated spreadsheets or enabling LLM cleanup.",
+            "Only then use /process/path or /process/file and archive signed audit exports for traceability.",
+        ],
+        "watchouts": [
+            "This service is designed for local or air-gapped operation; cloud dependencies should remain optional.",
+            "If auth bootstrap is still required, shared access should not be opened yet.",
+            "Signed exports improve traceability, but they do not replace input or template validation.",
+        ],
+        "trust_boundary": [
+            "Spreadsheet files stay within configured input/output/template base directories.",
+            "JWT access control and process-role restrictions gate high-impact processing endpoints.",
+            "Audit summaries and signature verification surfaces exist for reviewer evidence, not just operator convenience.",
+        ],
+        "routes": SERVICE_BRIEF_ROUTES,
+    }
+
+
 def _is_hex_string(value: str, expected_len: int) -> bool:
     if len(value) != expected_len:
         return False
@@ -886,6 +963,8 @@ def health() -> dict:
     return {
         "status": "ok",
         "service": "secure-xl2hwp-local",
+        "readiness_contract": SERVICE_BRIEF_CONTRACT,
+        "report_contract": _process_report_schema(),
         "app": settings.app_name,
         "env": settings.app_env,
         "llm_enabled": settings.enable_llm,
@@ -915,13 +994,33 @@ def health() -> dict:
             "signed-audit-export",
             "role-based-ops-console",
             "llm-assisted-cleanup",
+            "service-brief-surface",
+            "process-report-schema",
         ],
+        "routes": SERVICE_BRIEF_ROUTES,
         "links": {
             "readiness": "/ops/readiness",
+            "service_brief": "/ops/service-brief",
+            "process_schema": "/ops/schema/process-report",
             "login": "/auth/login",
             "audit_summary": "/ops/audit/summary",
             "process_file": "/process/file",
         },
+    }
+
+
+@app.get("/ops/service-brief")
+def service_brief() -> dict[str, Any]:
+    return _service_brief_payload()
+
+
+@app.get("/ops/schema/process-report")
+def process_report_schema() -> dict[str, Any]:
+    return {
+        "status": "ok",
+        "service": "secure-xl2hwp-local",
+        "generated_at_utc": datetime.now(timezone.utc).isoformat(),
+        **_process_report_schema(),
     }
 
 

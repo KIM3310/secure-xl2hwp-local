@@ -121,6 +121,7 @@ uvicorn app.main:app --host 127.0.0.1 --port 8080
 ### 웹 스튜디오 UI
 - URL: `http://127.0.0.1:8080/`
 - 기능:
+  - 서비스 브리프 패널(처리 스키마, 인증/서명 모드, trust boundary, review flow)
   - 첫 진입 관리자 온보딩 카드(계정 미구성 시 생성 단계 안내, `한국어/English` 토글 반영)
   - 로그인/JWT 세션 관리
   - Path/File 모드 실행
@@ -203,6 +204,8 @@ secure-xl2hwp \
   - `GET /ops/audit/export/recent.bundle.zip` (원본+서명 매니페스트 ZIP)
   - `POST /ops/audit/export/verify` (payload + manifest 서명 검증)
   - `GET /ops/readiness` (운영 전 레디니스 점검)
+  - `GET /ops/service-brief` (운영 계약, trust boundary, review flow)
+  - `GET /ops/schema/process-report` (처리 결과 contract)
 - 필터 쿼리:
   - `since_hours`, `status`, `event_type`, `actor_contains`
 

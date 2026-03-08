@@ -33,6 +33,10 @@ def test_ui_home_page() -> None:
     assert "bootstrapCard" in response.text
     assert "bootstrapHashCommand" in response.text
     assert "bootstrapYamlTemplate" in response.text
+    assert "briefHeadline" in response.text
+    assert "briefSchema" in response.text
+    assert "briefReviewFlow" in response.text
+    assert "briefTrustBoundary" in response.text
 
 
 def test_health_includes_auth_bootstrap_state() -> None:
@@ -54,6 +58,29 @@ def test_health_includes_auth_bootstrap_state() -> None:
     assert payload["diagnostics"]["bootstrap_state"] in {"required", "ready"}
     assert "next_action" in payload["diagnostics"]
     assert payload["ops_contract"]["schema"] == "ops-envelope-v1"
+    assert payload["readiness_contract"] == "secure-xl2hwp-service-brief-v1"
+    assert payload["report_contract"]["schema"] == "secure-xl2hwp-process-report-v1"
+    assert payload["links"]["service_brief"] == "/ops/service-brief"
+    assert payload["links"]["process_schema"] == "/ops/schema/process-report"
+    assert "/ops/service-brief" in payload["routes"]
+    assert "service-brief-surface" in payload["capabilities"]
+
+
+def test_service_brief_and_process_schema_shape() -> None:
+    brief_response = client.get("/ops/service-brief")
+    assert brief_response.status_code == 200
+    brief_payload = brief_response.json()
+    assert brief_payload["readiness_contract"] == "secure-xl2hwp-service-brief-v1"
+    assert brief_payload["report_contract"]["schema"] == "secure-xl2hwp-process-report-v1"
+    assert isinstance(brief_payload["review_flow"], list)
+    assert isinstance(brief_payload["trust_boundary"], list)
+    assert "/process/file" in brief_payload["routes"]
+
+    schema_response = client.get("/ops/schema/process-report")
+    assert schema_response.status_code == 200
+    schema_payload = schema_response.json()
+    assert schema_payload["schema"] == "secure-xl2hwp-process-report-v1"
+    assert "outcome.metrics" in schema_payload["required_sections"]
 
 
 def test_audit_recent_requires_audit_role() -> None:

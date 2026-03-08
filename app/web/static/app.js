@@ -5,6 +5,19 @@ const I18N = {
     "app.eyebrow": "LOCAL SECURE AUTOMATION",
     "app.title": "Secure XL2HWP Studio",
     "app.tagline": "엑셀 정제부터 한컴 문서화까지, 폐쇄망 친화형 자동화 스튜디오",
+    "serviceBrief.kicker": "운영 계약",
+    "serviceBrief.title": "서비스 브리프",
+    "serviceBrief.subtitle": "운영 전 trust boundary, review flow, 처리 계약을 먼저 확인합니다.",
+    "serviceBrief.loading": "불러오는 중...",
+    "serviceBrief.unavailable": "서비스 브리프를 불러오지 못했습니다.",
+    "serviceBrief.schema": "처리 스키마",
+    "serviceBrief.authMode": "인증 모드",
+    "serviceBrief.signing": "서명 모드",
+    "serviceBrief.failedChecks": "실패 점검",
+    "serviceBrief.roles": "처리 역할",
+    "serviceBrief.reviewFlow": "검토 흐름",
+    "serviceBrief.trustBoundary": "신뢰 경계",
+    "serviceBrief.watchouts": "주의점",
     "control.language": "언어",
     "control.theme": "테마",
     "control.brand": "브랜드",
@@ -141,6 +154,7 @@ const I18N = {
     "toast.verifyFail": "서명 검증 요청 실패",
     "toast.verifySelect": "원본 파일과 서명 파일을 모두 선택하세요.",
     "toast.bootstrapRefreshed": "관리자 초기 설정 상태를 다시 확인했습니다.",
+    "toast.serviceBriefFail": "서비스 브리프 조회 실패",
     "health.ok": "정상",
     "health.unavailable": "상태 확인 실패",
     "health.label": "상태",
@@ -155,6 +169,19 @@ const I18N = {
     "app.eyebrow": "LOCAL SECURE AUTOMATION",
     "app.title": "Secure XL2HWP Studio",
     "app.tagline": "Air-gapped friendly studio from Excel cleanup to Hancom document automation",
+    "serviceBrief.kicker": "Operator Contract",
+    "serviceBrief.title": "Service Brief",
+    "serviceBrief.subtitle": "Review the trust boundary, operator flow, and processing contract before running the pipeline.",
+    "serviceBrief.loading": "Loading...",
+    "serviceBrief.unavailable": "Service brief unavailable.",
+    "serviceBrief.schema": "Process schema",
+    "serviceBrief.authMode": "Auth mode",
+    "serviceBrief.signing": "Signing mode",
+    "serviceBrief.failedChecks": "Failed checks",
+    "serviceBrief.roles": "Process roles",
+    "serviceBrief.reviewFlow": "Review flow",
+    "serviceBrief.trustBoundary": "Trust boundary",
+    "serviceBrief.watchouts": "Watchouts",
     "control.language": "Language",
     "control.theme": "Theme",
     "control.brand": "Brand",
@@ -291,6 +318,7 @@ const I18N = {
     "toast.verifyFail": "Verification request failed",
     "toast.verifySelect": "Select both payload and signature files.",
     "toast.bootstrapRefreshed": "Admin bootstrap status refreshed.",
+    "toast.serviceBriefFail": "Failed to fetch service brief",
     "health.ok": "OK",
     "health.unavailable": "Unavailable",
     "health.label": "Health",
@@ -327,6 +355,7 @@ const state = {
   lastSummary: null,
   lastAnomalies: null,
   lastReadiness: null,
+  lastServiceBrief: null,
   lastVerifyResult: null,
   verifyStatusKey: "verify.idle",
   verifyStatusTone: "neutral",
@@ -334,6 +363,16 @@ const state = {
 
 const els = {
   healthPill: document.getElementById("healthPill"),
+  briefBadge: document.getElementById("briefBadge"),
+  briefHeadline: document.getElementById("briefHeadline"),
+  briefSchema: document.getElementById("briefSchema"),
+  briefAuthMode: document.getElementById("briefAuthMode"),
+  briefSigningMode: document.getElementById("briefSigningMode"),
+  briefFailedChecks: document.getElementById("briefFailedChecks"),
+  briefRoles: document.getElementById("briefRoles"),
+  briefReviewFlow: document.getElementById("briefReviewFlow"),
+  briefTrustBoundary: document.getElementById("briefTrustBoundary"),
+  briefWatchouts: document.getElementById("briefWatchouts"),
   logoutBtn: document.getElementById("logoutBtn"),
   loginForm: document.getElementById("loginForm"),
   loginUserId: document.getElementById("loginUserId"),
@@ -457,6 +496,7 @@ function applyI18n() {
   renderAudit(state.lastAuditEvents);
   renderOpsSummary(state.lastSummary, state.lastAnomalies);
   renderReadiness(state.lastReadiness);
+  renderServiceBrief(state.lastServiceBrief);
   renderVerifyResult(state.lastVerifyResult);
   setVerifyStatus(state.verifyStatusKey, state.verifyStatusTone);
   refreshHealth().catch(() => {});
@@ -831,6 +871,59 @@ function renderReadiness(payload = null) {
     `;
     els.readinessList.appendChild(item);
   });
+}
+
+function renderBriefList(container, items) {
+  container.innerHTML = "";
+  if (!items || !items.length) {
+    container.innerHTML = `<li class="artifact-item">${t("msg.none")}</li>`;
+    return;
+  }
+
+  items.forEach((item) => {
+    const li = document.createElement("li");
+    li.className = "artifact-item";
+    li.innerHTML = `<span>${item}</span>`;
+    container.appendChild(li);
+  });
+}
+
+function renderServiceBrief(payload = null) {
+  state.lastServiceBrief = payload || null;
+
+  if (!payload) {
+    els.briefBadge.classList.remove("ok", "warn");
+    els.briefBadge.classList.add("neutral");
+    els.briefBadge.textContent = t("serviceBrief.unavailable");
+    els.briefHeadline.textContent = t("serviceBrief.unavailable");
+    els.briefSchema.textContent = "-";
+    els.briefAuthMode.textContent = "-";
+    els.briefSigningMode.textContent = "-";
+    els.briefFailedChecks.textContent = "-";
+    renderBriefList(els.briefRoles, []);
+    renderBriefList(els.briefReviewFlow, []);
+    renderBriefList(els.briefTrustBoundary, []);
+    renderBriefList(els.briefWatchouts, []);
+    return;
+  }
+
+  const ok = payload.status === "ok";
+  const failedChecks = Array.isArray(payload.readiness?.failed_checks)
+    ? payload.readiness.failed_checks.length
+    : payload.evidence_counts?.readiness_failed_checks || 0;
+
+  els.briefBadge.classList.remove("neutral", "ok", "warn");
+  els.briefBadge.classList.add(ok ? "ok" : "warn");
+  els.briefBadge.textContent = ok ? t("readiness.healthy") : t("readiness.degraded");
+  els.briefHeadline.textContent = payload.headline || t("serviceBrief.unavailable");
+  els.briefSchema.textContent = payload.report_contract?.schema || "-";
+  els.briefAuthMode.textContent = payload.auth_mode || "-";
+  els.briefSigningMode.textContent = payload.signing_mode || "-";
+  els.briefFailedChecks.textContent = String(failedChecks);
+  renderBriefList(els.briefRoles, payload.allowed_process_roles || []);
+  renderBriefList(els.briefReviewFlow, payload.review_flow || []);
+  renderBriefList(els.briefTrustBoundary, payload.trust_boundary || []);
+  renderBriefList(els.briefWatchouts, payload.watchouts || []);
 }
 
 function drawEmpty(canvas, label) {
@@ -1238,6 +1331,15 @@ async function refreshHealth() {
   }
 }
 
+async function refreshServiceBrief() {
+  try {
+    const { data } = await fetchJSON("/ops/service-brief", { method: "GET" });
+    renderServiceBrief(data || null);
+  } catch (_err) {
+    renderServiceBrief(null);
+  }
+}
+
 async function refreshMe() {
   if (!state.token) {
     setAuthState();
@@ -1561,6 +1663,7 @@ async function bootstrap() {
   toggleMode("path");
   applyI18n();
   await refreshHealth();
+  await refreshServiceBrief();
   await refreshMe();
   await refreshAudit();
   await refreshOpsSummary();
@@ -1568,6 +1671,7 @@ async function bootstrap() {
 
   window.setInterval(async () => {
     await refreshHealth();
+    await refreshServiceBrief();
     if (state.opsAutoRefresh) {
       await refreshAudit();
       await refreshOpsSummary();
