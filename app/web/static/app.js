@@ -16,14 +16,18 @@ const I18N = {
     "serviceBrief.failedChecks": "실패 점검",
     "serviceBrief.roles": "처리 역할",
     "serviceBrief.reviewFlow": "검토 흐름",
+    "serviceBrief.twoMinuteReview": "2분 검토 경로",
     "serviceBrief.trustBoundary": "신뢰 경계",
+    "serviceBrief.proofAssets": "증거 자산",
     "serviceBrief.watchouts": "주의점",
     "reviewPack.title": "리뷰 패키지",
     "reviewPack.approvalGate": "승인 게이트",
     "reviewPack.proofBundle": "증거 번들",
     "reviewPack.boundary": "경계",
     "reviewPack.artifacts": "검토 산출물",
+    "reviewPack.twoMinuteReview": "2분 검토 경로",
     "reviewPack.sequence": "검토 순서",
+    "reviewPack.proofAssets": "증거 자산",
     "control.language": "언어",
     "control.theme": "테마",
     "control.brand": "브랜드",
@@ -187,14 +191,18 @@ const I18N = {
     "serviceBrief.failedChecks": "Failed checks",
     "serviceBrief.roles": "Process roles",
     "serviceBrief.reviewFlow": "Review flow",
+    "serviceBrief.twoMinuteReview": "2-minute review",
     "serviceBrief.trustBoundary": "Trust boundary",
+    "serviceBrief.proofAssets": "Proof assets",
     "serviceBrief.watchouts": "Watchouts",
     "reviewPack.title": "Review pack",
     "reviewPack.approvalGate": "Approval gate",
     "reviewPack.proofBundle": "Proof bundle",
     "reviewPack.boundary": "Boundary",
     "reviewPack.artifacts": "Artifacts",
+    "reviewPack.twoMinuteReview": "2-minute review",
     "reviewPack.sequence": "Review sequence",
+    "reviewPack.proofAssets": "Proof assets",
     "control.language": "Language",
     "control.theme": "Theme",
     "control.brand": "Brand",
@@ -386,14 +394,18 @@ const els = {
   briefFailedChecks: document.getElementById("briefFailedChecks"),
   briefRoles: document.getElementById("briefRoles"),
   briefReviewFlow: document.getElementById("briefReviewFlow"),
+  briefTwoMinuteReview: document.getElementById("briefTwoMinuteReview"),
   briefTrustBoundary: document.getElementById("briefTrustBoundary"),
+  briefProofAssets: document.getElementById("briefProofAssets"),
   briefWatchouts: document.getElementById("briefWatchouts"),
   reviewPackHeadline: document.getElementById("reviewPackHeadline"),
   reviewPackGate: document.getElementById("reviewPackGate"),
   reviewPackProof: document.getElementById("reviewPackProof"),
   reviewPackBoundary: document.getElementById("reviewPackBoundary"),
   reviewPackArtifacts: document.getElementById("reviewPackArtifacts"),
+  reviewPackTwoMinuteReview: document.getElementById("reviewPackTwoMinuteReview"),
   reviewPackSequence: document.getElementById("reviewPackSequence"),
+  reviewPackProofAssets: document.getElementById("reviewPackProofAssets"),
   logoutBtn: document.getElementById("logoutBtn"),
   loginForm: document.getElementById("loginForm"),
   loginUserId: document.getElementById("loginUserId"),
@@ -909,6 +921,15 @@ function renderBriefList(container, items) {
   });
 }
 
+function formatProofAssets(items) {
+  return (items || []).map((item) => {
+    const label = item?.label || "Asset";
+    const path = item?.path || "";
+    const why = item?.why || "";
+    return why ? `${label} (${path}) - ${why}` : `${label} (${path})`;
+  });
+}
+
 function renderServiceBrief(payload = null) {
   state.lastServiceBrief = payload || null;
 
@@ -923,7 +944,9 @@ function renderServiceBrief(payload = null) {
     els.briefFailedChecks.textContent = "-";
     renderBriefList(els.briefRoles, []);
     renderBriefList(els.briefReviewFlow, []);
+    renderBriefList(els.briefTwoMinuteReview, []);
     renderBriefList(els.briefTrustBoundary, []);
+    renderBriefList(els.briefProofAssets, []);
     renderBriefList(els.briefWatchouts, []);
     return;
   }
@@ -943,7 +966,9 @@ function renderServiceBrief(payload = null) {
   els.briefFailedChecks.textContent = String(failedChecks);
   renderBriefList(els.briefRoles, payload.allowed_process_roles || []);
   renderBriefList(els.briefReviewFlow, payload.review_flow || []);
+  renderBriefList(els.briefTwoMinuteReview, payload.two_minute_review || []);
   renderBriefList(els.briefTrustBoundary, payload.trust_boundary || []);
+  renderBriefList(els.briefProofAssets, formatProofAssets(payload.proof_assets || []));
   renderBriefList(els.briefWatchouts, payload.watchouts || []);
 }
 
@@ -956,7 +981,9 @@ function renderReviewPack(payload = null) {
     els.reviewPackProof.textContent = "-";
     els.reviewPackBoundary.textContent = "-";
     renderBriefList(els.reviewPackArtifacts, []);
+    renderBriefList(els.reviewPackTwoMinuteReview, []);
     renderBriefList(els.reviewPackSequence, []);
+    renderBriefList(els.reviewPackProofAssets, []);
     return;
   }
 
@@ -973,7 +1000,9 @@ function renderReviewPack(payload = null) {
   els.reviewPackProof.textContent = `${proofBundle.signed_export_mode || "unknown"} / ${failedChecks} failed checks`;
   els.reviewPackBoundary.textContent = targetBoundary.output_base_dir || "-";
   renderBriefList(els.reviewPackArtifacts, payload.artifacts || []);
+  renderBriefList(els.reviewPackTwoMinuteReview, payload.two_minute_review || []);
   renderBriefList(els.reviewPackSequence, payload.review_sequence || []);
+  renderBriefList(els.reviewPackProofAssets, formatProofAssets(payload.proof_assets || []));
 }
 
 function drawEmpty(canvas, label) {

@@ -796,6 +796,12 @@ def _service_brief_payload() -> dict[str, Any]:
             "Run /ops/readiness before processing regulated spreadsheets or enabling LLM cleanup.",
             "Only then use /process/path or /process/file and archive signed audit exports for traceability.",
         ],
+        "two_minute_review": [
+            "Open /health and confirm bootstrap state, signing posture, and path guardrails.",
+            "Open /ops/service-brief and verify allowed roles, failed checks, and trust boundary.",
+            "Run /ops/readiness before enabling LLM cleanup or onboarding shared operators.",
+            "Approve regulated spreadsheet processing only after signed audit export routes are reachable.",
+        ],
         "watchouts": [
             "This service is designed for local or air-gapped operation; cloud dependencies should remain optional.",
             "If auth bootstrap is still required, shared access should not be opened yet.",
@@ -805,6 +811,28 @@ def _service_brief_payload() -> dict[str, Any]:
             "Spreadsheet files stay within configured input/output/template base directories.",
             "JWT access control and process-role restrictions gate high-impact processing endpoints.",
             "Audit summaries and signature verification surfaces exist for reviewer evidence, not just operator convenience.",
+        ],
+        "proof_assets": [
+            {
+                "label": "Health Envelope",
+                "path": "/health",
+                "why": "Shows bootstrap state, signing posture, and next operator action.",
+            },
+            {
+                "label": "Service Brief",
+                "path": "/ops/service-brief",
+                "why": "Pins allowed roles, failed checks, trust boundary, and process contract.",
+            },
+            {
+                "label": "Readiness Check",
+                "path": "/ops/readiness",
+                "why": "Provides the preflight system check before regulated processing starts.",
+            },
+            {
+                "label": "Process Schema",
+                "path": "/ops/schema/process-report",
+                "why": "Locks the expected pipeline output and artifact contract for reviewers.",
+            },
         ],
         "routes": SERVICE_BRIEF_ROUTES,
     }
@@ -861,10 +889,38 @@ def _review_pack_payload() -> dict[str, Any]:
             "Inspect /ops/audit/summary and signed export bundles before approving downstream delivery.",
             "Verify exported bundle integrity with /ops/audit/export/verify before moving across trust boundaries.",
         ],
+        "two_minute_review": [
+            "Open /health, /ops/service-brief, and /ops/review-pack to confirm bootstrap state and signing posture.",
+            "Run /ops/readiness and inspect failed checks before processing regulated spreadsheets.",
+            "Review signed summary or audit bundles before downstream delivery approval.",
+            "Verify the exported bundle with /ops/audit/export/verify before crossing trust boundaries.",
+        ],
         "watchouts": [
             "Signed bundles provide tamper evidence, but they do not validate spreadsheet semantics automatically.",
             "If auth bootstrap is still required, the workstation is not ready for shared operator access.",
             "Path guardrails are only effective when base directories remain locked down in deployment.",
+        ],
+        "proof_assets": [
+            {
+                "label": "Service Brief",
+                "path": "/ops/service-brief",
+                "why": "Summarizes roles, readiness posture, and trust boundary before processing.",
+            },
+            {
+                "label": "Review Pack",
+                "path": "/ops/review-pack",
+                "why": "Packages approval gate, boundary, artifacts, and review sequence in one payload.",
+            },
+            {
+                "label": "Signed Summary Bundle",
+                "path": "/ops/audit/export/summary.bundle.zip",
+                "why": "Provides reviewer-ready evidence with payload plus signature manifest.",
+            },
+            {
+                "label": "Verify Bundle",
+                "path": "/ops/audit/export/verify",
+                "why": "Lets a reviewer independently validate the bundle before handoff.",
+            },
         ],
         "links": {
             "health": "/health",

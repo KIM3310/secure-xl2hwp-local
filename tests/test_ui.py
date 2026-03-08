@@ -79,6 +79,8 @@ def test_service_brief_and_process_schema_shape() -> None:
     assert brief_payload["report_contract"]["schema"] == "secure-xl2hwp-process-report-v1"
     assert isinstance(brief_payload["review_flow"], list)
     assert isinstance(brief_payload["trust_boundary"], list)
+    assert len(brief_payload["two_minute_review"]) == 4
+    assert brief_payload["proof_assets"][0]["path"] == "/health"
     assert "/process/file" in brief_payload["routes"]
 
     review_response = client.get("/ops/review-pack")
@@ -88,6 +90,8 @@ def test_service_brief_and_process_schema_shape() -> None:
     assert review_payload["links"]["verify_bundle"] == "/ops/audit/export/verify"
     assert "/ops/review-pack" in review_payload["proof_bundle"]["review_endpoints"]
     assert isinstance(review_payload["review_sequence"], list)
+    assert len(review_payload["two_minute_review"]) == 4
+    assert review_payload["proof_assets"][0]["label"] == "Service Brief"
 
     schema_response = client.get("/ops/schema/process-report")
     assert schema_response.status_code == 200

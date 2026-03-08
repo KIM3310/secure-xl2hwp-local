@@ -210,6 +210,20 @@ secure-xl2hwp \
 - 필터 쿼리:
   - `since_hours`, `status`, `event_type`, `actor_contains`
 
+## 2-Minute Review Path
+- `/health`에서 bootstrap state, signing posture, path guardrails를 먼저 확인합니다.
+- `/ops/service-brief`에서 allowed roles, failed checks, trust boundary를 확인합니다.
+- `/ops/readiness`를 실행한 뒤 regulated spreadsheet processing을 열어야 합니다.
+- reviewer handoff 전에는 signed summary or audit bundle과 `/ops/audit/export/verify`를 확인합니다.
+
+## Proof Assets
+- `Health Envelope` -> `/health`
+- `Service Brief` -> `/ops/service-brief`
+- `Readiness Check` -> `/ops/readiness`
+- `Process Schema` -> `/ops/schema/process-report`
+- `Signed Summary Bundle` -> `/ops/audit/export/summary.bundle.zip`
+- `Verify Bundle` -> `/ops/audit/export/verify`
+
 ### 서명 검증(옵션)
 - 응답 헤더:
   - `X-Export-SHA256`
