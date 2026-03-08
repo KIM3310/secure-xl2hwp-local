@@ -926,7 +926,8 @@ function formatProofAssets(items) {
     const label = item?.label || "Asset";
     const path = item?.path || "";
     const why = item?.why || "";
-    return why ? `${label} (${path}) - ${why}` : `${label} (${path})`;
+    const kind = item?.kind ? `[${item.kind}] ` : "";
+    return why ? `${kind}${label} -> ${path} :: ${why}` : `${kind}${label} -> ${path}`;
   });
 }
 

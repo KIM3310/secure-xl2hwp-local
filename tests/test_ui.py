@@ -81,6 +81,7 @@ def test_service_brief_and_process_schema_shape() -> None:
     assert isinstance(brief_payload["trust_boundary"], list)
     assert len(brief_payload["two_minute_review"]) == 4
     assert brief_payload["proof_assets"][0]["path"] == "/health"
+    assert "why" in brief_payload["proof_assets"][0]
     assert "/process/file" in brief_payload["routes"]
 
     review_response = client.get("/ops/review-pack")
@@ -92,6 +93,7 @@ def test_service_brief_and_process_schema_shape() -> None:
     assert isinstance(review_payload["review_sequence"], list)
     assert len(review_payload["two_minute_review"]) == 4
     assert review_payload["proof_assets"][0]["label"] == "Service Brief"
+    assert "why" in review_payload["proof_assets"][0]
 
     schema_response = client.get("/ops/schema/process-report")
     assert schema_response.status_code == 200

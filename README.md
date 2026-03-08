@@ -217,12 +217,12 @@ secure-xl2hwp \
 - reviewer handoff 전에는 signed summary or audit bundle과 `/ops/audit/export/verify`를 확인합니다.
 
 ## Proof Assets
-- `Health Envelope` -> `/health`
-- `Service Brief` -> `/ops/service-brief`
-- `Readiness Check` -> `/ops/readiness`
-- `Process Schema` -> `/ops/schema/process-report`
-- `Signed Summary Bundle` -> `/ops/audit/export/summary.bundle.zip`
-- `Verify Bundle` -> `/ops/audit/export/verify`
+- `Health Envelope` -> `/health`: bootstrap state, signing posture, path guardrails를 먼저 확인합니다.
+- `Service Brief` -> `/ops/service-brief`: allowed roles, failed checks, trust boundary, process contract를 한 번에 확인합니다.
+- `Readiness Check` -> `/ops/readiness`: regulated spreadsheet processing 전에 선행 검증을 강제합니다.
+- `Process Schema` -> `/ops/schema/process-report`: 처리 결과 envelope가 어떤 contract를 따르는지 고정합니다.
+- `Signed Summary Bundle` -> `/ops/audit/export/summary.bundle.zip`: reviewer handoff 전에 서명된 요약 증거를 묶습니다.
+- `Verify Bundle` -> `/ops/audit/export/verify`: export bundle의 hash/signature를 사후 검증합니다.
 
 ### 서명 검증(옵션)
 - 응답 헤더:
