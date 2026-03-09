@@ -132,9 +132,11 @@ login_attempt_guard = LoginAttemptGuard(
 PROCESS_REPORT_SCHEMA = "secure-xl2hwp-process-report-v1"
 SERVICE_BRIEF_CONTRACT = "secure-xl2hwp-service-brief-v1"
 REVIEW_PACK_CONTRACT = "secure-xl2hwp-review-pack-v1"
+RUNTIME_SCORECARD_CONTRACT = "secure-xl2hwp-runtime-scorecard-v1"
 SERVICE_BRIEF_ROUTES = [
     "/health",
     "/ops/service-brief",
+    "/ops/runtime-scorecard",
     "/ops/review-pack",
     "/ops/schema/process-report",
     "/ops/readiness",
@@ -792,12 +794,13 @@ def _service_brief_payload() -> dict[str, Any]:
         },
         "review_flow": [
             "Open /health to confirm auth bootstrap state, signing posture, and path boundaries.",
-            "Read /ops/service-brief before operator onboarding to confirm review flow and trust boundary.",
+            "Read /ops/runtime-scorecard and /ops/service-brief before operator onboarding to confirm review flow, audit posture, and trust boundary.",
             "Run /ops/readiness before processing regulated spreadsheets or enabling LLM cleanup.",
             "Only then use /process/path or /process/file and archive signed audit exports for traceability.",
         ],
         "two_minute_review": [
             "Open /health and confirm bootstrap state, signing posture, and path guardrails.",
+            "Open /ops/runtime-scorecard and confirm runtime score, audit event count, and latest process posture.",
             "Open /ops/service-brief and verify allowed roles, failed checks, and trust boundary.",
             "Run /ops/readiness before enabling LLM cleanup or onboarding shared operators.",
             "Approve regulated spreadsheet processing only after signed audit export routes are reachable.",
@@ -817,6 +820,11 @@ def _service_brief_payload() -> dict[str, Any]:
                 "label": "Health Envelope",
                 "path": "/health",
                 "why": "Shows bootstrap state, signing posture, and next operator action.",
+            },
+            {
+                "label": "Runtime Scorecard",
+                "path": "/ops/runtime-scorecard",
+                "why": "Summarizes auth bootstrap, recent audit flow, and runtime readiness in one compact payload.",
             },
             {
                 "label": "Service Brief",
@@ -859,6 +867,7 @@ def _review_pack_payload() -> dict[str, Any]:
             "allowed_process_roles": len(brief["allowed_process_roles"]),
             "review_endpoints": [
                 "/health",
+                "/ops/runtime-scorecard",
                 "/ops/service-brief",
                 "/ops/review-pack",
                 "/ops/audit/summary",
@@ -884,13 +893,13 @@ def _review_pack_payload() -> dict[str, Any]:
             "Signature verification endpoint for independent bundle verification.",
         ],
         "review_sequence": [
-            "Open /health and /ops/service-brief to confirm bootstrap state, role posture, and signing mode.",
+            "Open /health, /ops/runtime-scorecard, and /ops/service-brief to confirm bootstrap state, role posture, signing mode, and recent audit health.",
             "Run /ops/readiness before enabling LLM cleanup or onboarding shared operators.",
             "Inspect /ops/audit/summary and signed export bundles before approving downstream delivery.",
             "Verify exported bundle integrity with /ops/audit/export/verify before moving across trust boundaries.",
         ],
         "two_minute_review": [
-            "Open /health, /ops/service-brief, and /ops/review-pack to confirm bootstrap state and signing posture.",
+            "Open /health, /ops/runtime-scorecard, /ops/service-brief, and /ops/review-pack to confirm bootstrap state and signing posture.",
             "Run /ops/readiness and inspect failed checks before processing regulated spreadsheets.",
             "Review signed summary or audit bundles before downstream delivery approval.",
             "Verify the exported bundle with /ops/audit/export/verify before crossing trust boundaries.",
@@ -901,6 +910,11 @@ def _review_pack_payload() -> dict[str, Any]:
             "Path guardrails are only effective when base directories remain locked down in deployment.",
         ],
         "proof_assets": [
+            {
+                "label": "Runtime Scorecard",
+                "path": "/ops/runtime-scorecard",
+                "why": "Compresses audit flow, auth bootstrap, and runtime posture before downstream approval.",
+            },
             {
                 "label": "Service Brief",
                 "path": "/ops/service-brief",
@@ -924,11 +938,74 @@ def _review_pack_payload() -> dict[str, Any]:
         ],
         "links": {
             "health": "/health",
+            "runtime_scorecard": "/ops/runtime-scorecard",
             "service_brief": "/ops/service-brief",
             "readiness": "/ops/readiness",
             "audit_summary": "/ops/audit/summary",
             "signed_summary_bundle": "/ops/audit/export/summary.bundle.zip",
             "verify_bundle": "/ops/audit/export/verify",
+        },
+    }
+
+
+def _runtime_scorecard_payload() -> dict[str, Any]:
+    brief = _service_brief_payload()
+    audit_events = _recent_audit_events(limit=120)
+    audit_summary = _audit_summary(audit_events)
+    readiness = brief["readiness"]
+    failed_checks = int(len(readiness.get("failed_checks", [])))
+    auth_bootstrap_required = bool(brief["bootstrap_state"]["required"])
+    process_success_rate = audit_summary.get("process_success_rate")
+    success_rate_value = float(process_success_rate) if process_success_rate is not None else 100.0
+    runtime_score = max(
+        40,
+        100
+        - min(failed_checks * 12, 40)
+        - (15 if auth_bootstrap_required else 0)
+        - (10 if success_rate_value < 95 else 0),
+    )
+    top_actor = (audit_summary.get("top_actors") or [{}])[0]
+    latest_process = (audit_summary.get("process_timeline") or [{}])[-1]
+    return {
+        "status": brief["status"],
+        "service": "secure-xl2hwp-local",
+        "generated_at_utc": datetime.now(timezone.utc).isoformat(),
+        "readiness_contract": RUNTIME_SCORECARD_CONTRACT,
+        "headline": "Compact runtime scorecard for auth bootstrap, signed export posture, and recent audit flow.",
+        "summary": {
+            "runtime_score": runtime_score,
+            "auth_mode": brief["auth_mode"],
+            "signing_mode": brief["signing_mode"],
+            "readiness_failed_checks": failed_checks,
+            "audit_event_count": audit_summary.get("total_events", 0),
+            "process_success_rate": process_success_rate,
+            "auth_bootstrap_required": auth_bootstrap_required,
+        },
+        "runtime": {
+            "allowed_process_roles": brief["allowed_process_roles"],
+            "login_guard_max_failures": login_attempt_guard.max_failures,
+            "readiness_overall_status": readiness["overall_status"],
+            "audit_log_dir": settings.audit_log_dir,
+        },
+        "audit_snapshot": {
+            "top_actor": top_actor,
+            "latest_process": latest_process,
+            "process_status_counts": audit_summary.get("process_status_counts", {}),
+        },
+        "fastest_review_path": [
+            "/health",
+            "/ops/runtime-scorecard",
+            "/ops/service-brief",
+            "/ops/readiness",
+            "/ops/audit/summary",
+        ],
+        "links": {
+            "health": "/health",
+            "runtime_scorecard": "/ops/runtime-scorecard",
+            "service_brief": "/ops/service-brief",
+            "review_pack": "/ops/review-pack",
+            "readiness": "/ops/readiness",
+            "audit_summary": "/ops/audit/summary",
         },
     }
 
@@ -1120,6 +1197,7 @@ def health() -> dict:
             "role-based-ops-console",
             "llm-assisted-cleanup",
             "service-brief-surface",
+            "runtime-scorecard-surface",
             "process-report-schema",
             "review-pack-surface",
         ],
@@ -1127,6 +1205,7 @@ def health() -> dict:
         "links": {
             "readiness": "/ops/readiness",
             "service_brief": "/ops/service-brief",
+            "runtime_scorecard": "/ops/runtime-scorecard",
             "review_pack": "/ops/review-pack",
             "process_schema": "/ops/schema/process-report",
             "login": "/auth/login",
@@ -1139,6 +1218,11 @@ def health() -> dict:
 @app.get("/ops/service-brief")
 def service_brief() -> dict[str, Any]:
     return _service_brief_payload()
+
+
+@app.get("/ops/runtime-scorecard")
+def runtime_scorecard() -> dict[str, Any]:
+    return _runtime_scorecard_payload()
 
 
 @app.get("/ops/review-pack")

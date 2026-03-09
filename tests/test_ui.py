@@ -50,6 +50,7 @@ def test_health_includes_auth_bootstrap_state() -> None:
     assert "auth_bootstrap" in payload
     assert "diagnostics" in payload
     assert payload["links"]["readiness"] == "/ops/readiness"
+    assert payload["links"]["runtime_scorecard"] == "/ops/runtime-scorecard"
     assert "signed-audit-export" in payload["capabilities"]
     bootstrap = payload["auth_bootstrap"]
     assert "required" in bootstrap
@@ -66,8 +67,10 @@ def test_health_includes_auth_bootstrap_state() -> None:
     assert payload["links"]["review_pack"] == "/ops/review-pack"
     assert payload["links"]["process_schema"] == "/ops/schema/process-report"
     assert "/ops/service-brief" in payload["routes"]
+    assert "/ops/runtime-scorecard" in payload["routes"]
     assert "/ops/review-pack" in payload["routes"]
     assert "service-brief-surface" in payload["capabilities"]
+    assert "runtime-scorecard-surface" in payload["capabilities"]
     assert "review-pack-surface" in payload["capabilities"]
 
 
@@ -79,20 +82,30 @@ def test_service_brief_and_process_schema_shape() -> None:
     assert brief_payload["report_contract"]["schema"] == "secure-xl2hwp-process-report-v1"
     assert isinstance(brief_payload["review_flow"], list)
     assert isinstance(brief_payload["trust_boundary"], list)
-    assert len(brief_payload["two_minute_review"]) == 4
+    assert len(brief_payload["two_minute_review"]) == 5
     assert brief_payload["proof_assets"][0]["path"] == "/health"
+    assert brief_payload["proof_assets"][1]["path"] == "/ops/runtime-scorecard"
     assert "why" in brief_payload["proof_assets"][0]
     assert "/process/file" in brief_payload["routes"]
+
+    scorecard_response = client.get("/ops/runtime-scorecard")
+    assert scorecard_response.status_code == 200
+    scorecard_payload = scorecard_response.json()
+    assert scorecard_payload["readiness_contract"] == "secure-xl2hwp-runtime-scorecard-v1"
+    assert scorecard_payload["summary"]["runtime_score"] >= 40
+    assert scorecard_payload["links"]["runtime_scorecard"] == "/ops/runtime-scorecard"
 
     review_response = client.get("/ops/review-pack")
     assert review_response.status_code == 200
     review_payload = review_response.json()
     assert review_payload["readiness_contract"] == "secure-xl2hwp-review-pack-v1"
     assert review_payload["links"]["verify_bundle"] == "/ops/audit/export/verify"
+    assert review_payload["links"]["runtime_scorecard"] == "/ops/runtime-scorecard"
+    assert "/ops/runtime-scorecard" in review_payload["proof_bundle"]["review_endpoints"]
     assert "/ops/review-pack" in review_payload["proof_bundle"]["review_endpoints"]
     assert isinstance(review_payload["review_sequence"], list)
     assert len(review_payload["two_minute_review"]) == 4
-    assert review_payload["proof_assets"][0]["label"] == "Service Brief"
+    assert review_payload["proof_assets"][0]["label"] == "Runtime Scorecard"
     assert "why" in review_payload["proof_assets"][0]
 
     schema_response = client.get("/ops/schema/process-report")

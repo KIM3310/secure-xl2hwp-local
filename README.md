@@ -205,6 +205,7 @@ secure-xl2hwp \
   - `POST /ops/audit/export/verify` (payload + manifest 서명 검증)
   - `GET /ops/readiness` (운영 전 레디니스 점검)
   - `GET /ops/service-brief` (운영 계약, trust boundary, review flow)
+  - `GET /ops/runtime-scorecard` (compact runtime score, audit flow, auth bootstrap posture)
   - `GET /ops/review-pack` (signed export evidence, approval gate, reviewer handoff)
   - `GET /ops/schema/process-report` (처리 결과 contract)
 - 필터 쿼리:
@@ -212,12 +213,14 @@ secure-xl2hwp \
 
 ## 2-Minute Review Path
 - `/health`에서 bootstrap state, signing posture, path guardrails를 먼저 확인합니다.
+- `/ops/runtime-scorecard`에서 runtime score, audit event count, latest process posture를 확인합니다.
 - `/ops/service-brief`에서 allowed roles, failed checks, trust boundary를 확인합니다.
 - `/ops/readiness`를 실행한 뒤 regulated spreadsheet processing을 열어야 합니다.
 - reviewer handoff 전에는 signed summary or audit bundle과 `/ops/audit/export/verify`를 확인합니다.
 
 ## Proof Assets
 - `Health Envelope` -> `/health`: bootstrap state, signing posture, path guardrails를 먼저 확인합니다.
+- `Runtime Scorecard` -> `/ops/runtime-scorecard`: auth bootstrap, recent audit flow, runtime readiness를 압축해서 보여줍니다.
 - `Service Brief` -> `/ops/service-brief`: allowed roles, failed checks, trust boundary, process contract를 한 번에 확인합니다.
 - `Readiness Check` -> `/ops/readiness`: regulated spreadsheet processing 전에 선행 검증을 강제합니다.
 - `Process Schema` -> `/ops/schema/process-report`: 처리 결과 envelope가 어떤 contract를 따르는지 고정합니다.
@@ -281,6 +284,7 @@ python -m pip install -U pip
 python -m pip install -e '.[dev]'
 python -m pip install pytest
 python -m pytest -q
+python scripts/exercise_runtime_scorecard.py
 ```
 
 ## Repository Hygiene
