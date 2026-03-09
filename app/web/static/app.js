@@ -410,6 +410,7 @@ const els = {
   copyReviewRoutesBtn: document.getElementById("copyReviewRoutesBtn"),
   copyReviewPackBtn: document.getElementById("copyReviewPackBtn"),
   copySignedHandoffBtn: document.getElementById("copySignedHandoffBtn"),
+  copyVerifySnapshotBtn: document.getElementById("copyVerifySnapshotBtn"),
   logoutBtn: document.getElementById("logoutBtn"),
   loginForm: document.getElementById("loginForm"),
   loginUserId: document.getElementById("loginUserId"),
@@ -1379,6 +1380,33 @@ async function copySignedHandoffSnapshot() {
   await copyTextValue(lines.join("\n"));
 }
 
+async function copyVerifySnapshot() {
+  const payload = state.lastVerifyResult || {};
+  const checks = payload.checks || {};
+  const provided = payload.provided || {};
+  const computed = payload.computed || {};
+  const failedChecks = payload.failed_checks?.length ? payload.failed_checks.join(", ") : "none";
+  const lines = [
+    "secure-xl2hwp-local verify snapshot",
+    `Status: ${els.verifyStatus.textContent || t(state.verifyStatusKey)}`,
+    `Payload file: ${els.verifyPayloadFile.files?.[0]?.name || provided.payload_name || "not selected"}`,
+    `Signature file: ${els.verifySignatureFile.files?.[0]?.name || "not selected"}`,
+    `Overall valid: ${payload.overall_valid === true ? "yes" : payload.overall_valid === false ? "no" : "unknown"}`,
+    `Algorithm: ${provided.algorithm || "unknown"}`,
+    `Key ID: ${provided.key_id || "unknown"}`,
+    `Hash match: ${checks.hash_match === true ? "yes" : checks.hash_match === false ? "no" : "unknown"}`,
+    `Signature match: ${checks.signature_match === true ? "yes" : checks.signature_match === false ? "no" : "unknown"}`,
+    `Failed checks: ${failedChecks}`,
+    `Declared payload: ${provided.declared_payload_name || "unknown"}`,
+    `Computed SHA256: ${computed.sha256 || "unknown"}`,
+    "",
+    "Verify routes",
+    "- /ops/audit/export/verify",
+    `- ${state.lastReviewPack?.links?.verify_bundle || "/ops/audit/export/verify"}`,
+  ];
+  await copyTextValue(lines.join("\n"));
+}
+
 async function exportAuditCsv() {
   if (!state.token && cfg.auth_enabled !== false) {
     showToast(t("toast.needLogin"), true);
@@ -1825,6 +1853,9 @@ function bindEvents() {
   }
   if (els.copySignedHandoffBtn) {
     els.copySignedHandoffBtn.addEventListener("click", copySignedHandoffSnapshot);
+  }
+  if (els.copyVerifySnapshotBtn) {
+    els.copyVerifySnapshotBtn.addEventListener("click", copyVerifySnapshot);
   }
 
   els.opsAutoRefresh.addEventListener("change", () => {
