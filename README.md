@@ -211,7 +211,7 @@ secure-xl2hwp \
 - 필터 쿼리:
   - `since_hours`, `status`, `event_type`, `actor_contains`
 
-## 2-Minute Review Path
+## Quick Review Path
 - `/health`에서 bootstrap state, signing posture, path guardrails를 먼저 확인합니다.
 - `/ops/runtime-scorecard`에서 runtime score, audit event count, latest process posture를 확인합니다.
 - `/ops/service-brief`에서 allowed roles, failed checks, trust boundary를 확인합니다.
@@ -275,7 +275,6 @@ docker compose up --build
 ## 라이선스
 MIT
 
-<!-- codex:local-verification:start -->
 ## Local Verification
 ```bash
 /Library/Developer/CommandLineTools/usr/bin/python3 -m venv .venv
@@ -290,6 +289,3 @@ python scripts/exercise_runtime_scorecard.py
 ## Repository Hygiene
 - Keep runtime artifacts out of commits (`.codex_runs/`, cache folders, temporary venvs).
 - Prefer running verification commands above before opening a PR.
-
-_Last updated: 2026-03-04_
-<!-- codex:local-verification:end -->
