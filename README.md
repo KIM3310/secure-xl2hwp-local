@@ -211,7 +211,7 @@ secure-xl2hwp \
 - 필터 쿼리:
   - `since_hours`, `status`, `event_type`, `actor_contains`
 
-## Quick Review Path
+## Review Flow
 - `/health`에서 bootstrap state, signing posture, path guardrails를 먼저 확인합니다.
 - `/ops/runtime-scorecard`에서 runtime score, audit event count, latest process posture를 확인합니다.
 - `/ops/service-brief`에서 allowed roles, failed checks, trust boundary를 확인합니다.
