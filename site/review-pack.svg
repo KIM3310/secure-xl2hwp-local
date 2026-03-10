@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" role="img" aria-labelledby="title desc">
+  <title id="title">secure-xl2hwp-local review card</title>
+  <desc id="desc">Air-gapped spreadsheet automation with signed exports, readiness checks, and local-only runtime.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#0f1720" />
+      <stop offset="100%" stop-color="#1b2a2d" />
+    </linearGradient>
+    <linearGradient id="accent" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#14b8a6" />
+      <stop offset="100%" stop-color="#7dd3fc" />
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="630" rx="42" fill="url(#bg)" />
+  <circle cx="1025" cy="118" r="150" fill="#14b8a6" opacity="0.10" />
+  <circle cx="168" cy="520" r="220" fill="#7dd3fc" opacity="0.12" />
+  <text x="96" y="128" fill="#99f6e4" font-size="28" font-family="Inter, Arial, sans-serif" letter-spacing="8">AIR-GAPPED DOCUMENT AUTOMATION</text>
+  <text x="96" y="226" fill="#ffffff" font-size="78" font-weight="700" font-family="Inter, Arial, sans-serif">secure-xl2hwp-local</text>
+  <text x="96" y="304" fill="#d7e3e5" font-size="34" font-family="Inter, Arial, sans-serif">SpecKit contracts, signed exports, readiness checks, and local-only processing.</text>
+  <rect x="96" y="394" width="356" height="76" rx="24" fill="url(#accent)" opacity="0.96" />
+  <text x="132" y="442" fill="#082124" font-size="30" font-weight="700" font-family="Inter, Arial, sans-serif">Docs-only public surface → local secure runtime</text>
+</svg>
