@@ -10,10 +10,10 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from app.main import app
-
 
 def main() -> None:
+    from app.main import app
+
     with TestClient(app) as client:
         client.get("/health").raise_for_status()
         client.get("/ops/service-brief").raise_for_status()
