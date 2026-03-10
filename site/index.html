@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>secure-xl2hwp-local</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    :root { --bg:#f7f4ef; --panel:#fffdfa; --ink:#14161a; --muted:#5c6573; --line:#d6d2ca; --accent:#0f766e; --soft:#e9f8f6; }
+    *{box-sizing:border-box} body{margin:0;font-family:"IBM Plex Sans",sans-serif;background:linear-gradient(180deg,#faf8f3 0,#f0ebe1 100%);color:var(--ink)}
+    .shell{max-width:1100px;margin:0 auto;padding:32px 20px 56px}.panel{background:var(--panel);border:1px solid var(--line);border-radius:24px;padding:24px;box-shadow:0 18px 40px rgba(15,23,42,.05)}
+    .hero,.grid{display:grid;gap:16px}.hero{margin-bottom:18px}.eyebrow,.chip{display:inline-flex;padding:8px 12px;border-radius:999px;font-size:.82rem;font-weight:700}.eyebrow{background:#101417;color:#fff}.chip{background:var(--soft);color:var(--accent)}
+    h1,h2{font-family:"Space Grotesk",sans-serif;letter-spacing:-.04em;margin:0}.hero h1{font-size:clamp(2.4rem,4.8vw,4.4rem);line-height:.96}.lede{max-width:840px;margin:0;color:var(--muted);line-height:1.75}
+    .two{grid-template-columns:repeat(2,minmax(0,1fr));margin-top:18px}.list{margin:0;padding-left:18px;color:var(--muted);line-height:1.8}.links a{color:var(--accent);text-decoration:none;font-weight:600}
+    @media (max-width:900px){.two{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <section class="panel hero">
+      <div>
+        <span class="eyebrow">secure-xl2hwp-local</span>
+        <span class="chip">local-first</span>
+        <span class="chip">air-gapped</span>
+      </div>
+      <h1>Spreadsheet automation for secure local environments.</h1>
+      <p class="lede">This public Pages site is documentation only. The actual service is intentionally designed for local secure processing, not public web runtime. That is the product decision, not a deployment gap.</p>
+    </section>
+
+    <section class="grid two">
+      <article class="panel">
+        <h2>Core capabilities</h2>
+        <ul class="list">
+          <li>SpecKit-driven contracts, profiles, and template mapping.</li>
+          <li>CoT-style spreadsheet normalization and document mapping pipeline.</li>
+          <li>JWT auth, audit logging, signing, and readiness checks.</li>
+          <li>Offline installation and regulated handoff posture.</li>
+        </ul>
+      </article>
+      <article class="panel">
+        <h2>Why this stays local</h2>
+        <ul class="list">
+          <li>Source spreadsheets and generated artifacts may be regulated or sensitive.</li>
+          <li>Trust boundary matters more than public demo convenience.</li>
+          <li>The strongest portfolio signal here is deployment restraint, not public hosting.</li>
+        </ul>
+      </article>
+    </section>
+
+    <section class="grid two">
+      <article class="panel links">
+        <h2>Documentation</h2>
+        <ul class="list">
+          <li><a href="https://github.com/KIM3310/secure-xl2hwp-local/blob/main/README.md">README</a></li>
+          <li><a href="https://github.com/KIM3310/secure-xl2hwp-local/blob/main/docs/architecture.md">Architecture</a></li>
+          <li><a href="https://github.com/KIM3310/secure-xl2hwp-local/blob/main/docs/offline-deploy.md">Offline deploy</a></li>
+          <li><a href="https://github.com/KIM3310/secure-xl2hwp-local/blob/main/docs/usage-en.md">Usage (EN)</a></li>
+          <li><a href="https://github.com/KIM3310/secure-xl2hwp-local/blob/main/docs/usage-ko.md">Usage (KO)</a></li>
+        </ul>
+      </article>
+      <article class="panel">
+        <h2>Public posture</h2>
+        <ul class="list">
+          <li>Public site: docs and architectural overview only</li>
+          <li>Processing runtime: local secure environment</li>
+          <li>Recommended review flow: docs -> architecture -> offline deploy -> audit/export surfaces</li>
+        </ul>
+      </article>
+    </section>
+  </main>
+</body>
+</html>
