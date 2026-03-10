@@ -353,6 +353,13 @@ const I18N = {
   },
 };
 
+const URL_PARAMS = new URLSearchParams(window.location.search);
+
+function readUrlValue(key) {
+  const value = URL_PARAMS.get(key);
+  return value == null ? "" : String(value).trim();
+}
+
 const state = {
   token: localStorage.getItem("secure_xl2hwp_token") || "",
   user: null,
@@ -362,14 +369,16 @@ const state = {
   authUserActive: Number(cfg.auth_bootstrap?.active_users || 0),
   authRegistryPath: cfg.auth_bootstrap?.registry_path || "specs/security/users.yaml",
   authBootstrapLoadError: Boolean(cfg.auth_bootstrap?.load_error),
-  lang: localStorage.getItem("secure_ui_lang") || cfg.ui_defaults?.language || "ko",
-  theme: localStorage.getItem("secure_ui_theme") || cfg.ui_defaults?.theme || "light",
-  brand: localStorage.getItem("secure_ui_brand") || cfg.ui_defaults?.brand || "aqua",
-  opsSinceHours: localStorage.getItem("secure_ops_since") || "24",
-  opsStatus: localStorage.getItem("secure_ops_status") || "",
-  opsEventType: localStorage.getItem("secure_ops_event_type") || "",
-  opsActorContains: localStorage.getItem("secure_ops_actor_contains") || "",
-  opsAutoRefresh: localStorage.getItem("secure_ops_auto") !== "false",
+  lang: readUrlValue("lang") || localStorage.getItem("secure_ui_lang") || cfg.ui_defaults?.language || "ko",
+  theme: readUrlValue("theme") || localStorage.getItem("secure_ui_theme") || cfg.ui_defaults?.theme || "light",
+  brand: readUrlValue("brand") || localStorage.getItem("secure_ui_brand") || cfg.ui_defaults?.brand || "aqua",
+  opsSinceHours: readUrlValue("since") || localStorage.getItem("secure_ops_since") || "24",
+  opsStatus: readUrlValue("status") || localStorage.getItem("secure_ops_status") || "",
+  opsEventType: readUrlValue("event_type") || localStorage.getItem("secure_ops_event_type") || "",
+  opsActorContains: readUrlValue("actor_contains") || localStorage.getItem("secure_ops_actor_contains") || "",
+  opsAutoRefresh: readUrlValue("auto")
+    ? readUrlValue("auto") !== "0"
+    : localStorage.getItem("secure_ops_auto") !== "false",
   lastResult: null,
   lastMetrics: {},
   lastArtifacts: {},
@@ -409,6 +418,7 @@ const els = {
   copyServiceBriefBtn: document.getElementById("copyServiceBriefBtn"),
   copyReviewRoutesBtn: document.getElementById("copyReviewRoutesBtn"),
   copyReviewPackBtn: document.getElementById("copyReviewPackBtn"),
+  copyOpsViewBtn: document.getElementById("copyOpsViewBtn"),
   copySignedHandoffBtn: document.getElementById("copySignedHandoffBtn"),
   copyVerifySnapshotBtn: document.getElementById("copyVerifySnapshotBtn"),
   logoutBtn: document.getElementById("logoutBtn"),
@@ -662,6 +672,33 @@ function showToast(message, isError = false) {
   window.setTimeout(() => {
     els.toast.classList.add("hidden");
   }, 2300);
+}
+
+function updateOpsViewUrl() {
+  const params = new URLSearchParams(window.location.search);
+  if (state.lang !== "ko") params.set("lang", state.lang);
+  else params.delete("lang");
+  if (state.theme !== "light") params.set("theme", state.theme);
+  else params.delete("theme");
+  if (state.brand !== "aqua") params.set("brand", state.brand);
+  else params.delete("brand");
+  if (state.opsSinceHours) params.set("since", state.opsSinceHours);
+  else params.delete("since");
+  if (state.opsStatus) params.set("status", state.opsStatus);
+  else params.delete("status");
+  if (state.opsEventType) params.set("event_type", state.opsEventType);
+  else params.delete("event_type");
+  if (state.opsActorContains.trim()) params.set("actor_contains", state.opsActorContains.trim());
+  else params.delete("actor_contains");
+  params.set("auto", state.opsAutoRefresh ? "1" : "0");
+  const search = params.toString();
+  const nextUrl = `${window.location.pathname}${search ? `?${search}` : ""}${window.location.hash}`;
+  window.history.replaceState(window.history.state, "", nextUrl);
+}
+
+async function copyOpsViewLink() {
+  updateOpsViewUrl();
+  await copyTextValue(window.location.href);
 }
 
 function safeErrorMessage(payload, fallbackKey = "errors.generic") {
@@ -1792,23 +1829,27 @@ function bindEvents() {
   els.langSelect.addEventListener("change", () => {
     state.lang = els.langSelect.value;
     applyI18n();
+    updateOpsViewUrl();
   });
 
   els.themeSelect.addEventListener("change", () => {
     state.theme = els.themeSelect.value;
     applyTheme();
     renderOpsSummary(state.lastSummary, state.lastAnomalies);
+    updateOpsViewUrl();
   });
 
   els.brandSelect.addEventListener("change", () => {
     state.brand = els.brandSelect.value;
     applyTheme();
     renderOpsSummary(state.lastSummary, state.lastAnomalies);
+    updateOpsViewUrl();
   });
 
   els.opsSinceSelect.addEventListener("change", async () => {
     state.opsSinceHours = els.opsSinceSelect.value;
     localStorage.setItem("secure_ops_since", state.opsSinceHours);
+    updateOpsViewUrl();
     await refreshAudit();
     await refreshOpsSummary();
   });
@@ -1816,6 +1857,7 @@ function bindEvents() {
   els.opsStatusSelect.addEventListener("change", async () => {
     state.opsStatus = els.opsStatusSelect.value;
     localStorage.setItem("secure_ops_status", state.opsStatus);
+    updateOpsViewUrl();
     await refreshAudit();
     await refreshOpsSummary();
   });
@@ -1823,6 +1865,7 @@ function bindEvents() {
   els.opsEventTypeSelect.addEventListener("change", async () => {
     state.opsEventType = els.opsEventTypeSelect.value;
     localStorage.setItem("secure_ops_event_type", state.opsEventType);
+    updateOpsViewUrl();
     await refreshAudit();
     await refreshOpsSummary();
   });
@@ -1835,6 +1878,7 @@ function bindEvents() {
     actorFilterTimer = window.setTimeout(async () => {
       state.opsActorContains = els.opsActorInput.value;
       localStorage.setItem("secure_ops_actor_contains", state.opsActorContains);
+      updateOpsViewUrl();
       await refreshAudit();
       await refreshOpsSummary();
     }, 350);
@@ -1851,6 +1895,9 @@ function bindEvents() {
   if (els.copyReviewPackBtn) {
     els.copyReviewPackBtn.addEventListener("click", copyReviewPackSnapshot);
   }
+  if (els.copyOpsViewBtn) {
+    els.copyOpsViewBtn.addEventListener("click", copyOpsViewLink);
+  }
   if (els.copySignedHandoffBtn) {
     els.copySignedHandoffBtn.addEventListener("click", copySignedHandoffSnapshot);
   }
@@ -1861,6 +1908,7 @@ function bindEvents() {
   els.opsAutoRefresh.addEventListener("change", () => {
     state.opsAutoRefresh = els.opsAutoRefresh.checked;
     localStorage.setItem("secure_ops_auto", String(state.opsAutoRefresh));
+    updateOpsViewUrl();
   });
 
   window.addEventListener("resize", () => {
