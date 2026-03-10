@@ -419,6 +419,8 @@ const els = {
   copyReviewRoutesBtn: document.getElementById("copyReviewRoutesBtn"),
   copyReviewPackBtn: document.getElementById("copyReviewPackBtn"),
   copyOpsViewBtn: document.getElementById("copyOpsViewBtn"),
+  resetOpsFiltersBtn: document.getElementById("resetOpsFiltersBtn"),
+  copyOpsSnapshotBtn: document.getElementById("copyOpsSnapshotBtn"),
   copySignedHandoffBtn: document.getElementById("copySignedHandoffBtn"),
   copyVerifySnapshotBtn: document.getElementById("copyVerifySnapshotBtn"),
   logoutBtn: document.getElementById("logoutBtn"),
@@ -482,6 +484,7 @@ const els = {
   throughputChartCanvas: document.getElementById("throughputChartCanvas"),
   topActorsList: document.getElementById("topActorsList"),
   opsFlagsList: document.getElementById("opsFlagsList"),
+  opsHotkeysHint: document.getElementById("opsHotkeysHint"),
 };
 
 function t(key) {
@@ -699,6 +702,76 @@ function updateOpsViewUrl() {
 async function copyOpsViewLink() {
   updateOpsViewUrl();
   await copyTextValue(window.location.href);
+}
+
+
+async function resetOpsFilters() {
+  state.opsSinceHours = "24";
+  state.opsStatus = "";
+  state.opsEventType = "";
+  state.opsActorContains = "";
+  state.opsAutoRefresh = true;
+  els.opsSinceSelect.value = state.opsSinceHours;
+  els.opsStatusSelect.value = state.opsStatus;
+  els.opsEventTypeSelect.value = state.opsEventType;
+  els.opsActorInput.value = state.opsActorContains;
+  els.opsAutoRefresh.checked = true;
+  localStorage.setItem("secure_ops_since", state.opsSinceHours);
+  localStorage.setItem("secure_ops_status", state.opsStatus);
+  localStorage.setItem("secure_ops_event_type", state.opsEventType);
+  localStorage.setItem("secure_ops_actor_contains", state.opsActorContains);
+  localStorage.setItem("secure_ops_auto", "true");
+  updateOpsViewUrl();
+  await Promise.all([refreshAudit(), refreshOpsSummary()]);
+  showToast("Ops 필터를 기본값으로 되돌렸습니다.");
+}
+
+function setupOperatorShortcuts() {
+  window.addEventListener("keydown", (event) => {
+    if (event.defaultPrevented || !event.shiftKey || event.metaKey || event.ctrlKey || event.altKey) return;
+    const target = event.target;
+    if (target && (target.tagName === "INPUT" || target.tagName === "TEXTAREA" || target.tagName === "SELECT" || target.isContentEditable)) return;
+    const key = String(event.key || "").toLowerCase();
+    if (key === "l") {
+      event.preventDefault();
+      void copyOpsViewLink().then(() => showToast("현재 Ops 링크를 복사했습니다."));
+    } else if (key === "0") {
+      event.preventDefault();
+      void resetOpsFilters();
+    } else if (key === "r") {
+      event.preventDefault();
+      void Promise.all([refreshAudit(), refreshOpsSummary()]).then(() => showToast("Ops 화면을 새로고침했습니다."));
+    } else if (key === "s") {
+      event.preventDefault();
+      void exportOpsSummaryJson();
+    } else if (key === "a") {
+      event.preventDefault();
+      void exportAuditCsv();
+    }
+  });
+}
+
+async function copyOpsSnapshot() {
+  const metrics = Array.from(els.opsKpis?.querySelectorAll(".metric-card") || []).map((card) => {
+    const label = card.querySelector("span")?.textContent?.trim() || "-";
+    const value = card.querySelector("strong")?.textContent?.trim() || "-";
+    return `- ${label}: ${value}`;
+  });
+  const anomalies = Array.from(els.opsFlagsList?.querySelectorAll("li") || []).map(
+    (item) => `- ${item.textContent?.trim() || "-"}`
+  );
+  const payload = [
+    "Secure XL2HWP Ops snapshot",
+    `Filters: since=${state.opsSinceHours || "-"} / status=${state.opsStatus || "all"} / event=${state.opsEventType || "all"} / actor=${state.opsActorContains.trim() || "-"}`,
+    "",
+    "Metrics",
+    ...(metrics.length ? metrics : ["- No metrics available"]),
+    "",
+    "Anomalies",
+    ...(anomalies.length ? anomalies : ["- No anomalies available"]),
+  ].join("\\n");
+  const ok = await copyTextValue(payload);
+  showToast(ok ? "Ops snapshot copied." : t("toast.copyFail"), !ok);
 }
 
 function safeErrorMessage(payload, fallbackKey = "errors.generic") {
@@ -1896,7 +1969,18 @@ function bindEvents() {
     els.copyReviewPackBtn.addEventListener("click", copyReviewPackSnapshot);
   }
   if (els.copyOpsViewBtn) {
-    els.copyOpsViewBtn.addEventListener("click", copyOpsViewLink);
+    els.copyOpsViewBtn.addEventListener("click", async () => {
+      await copyOpsViewLink();
+      showToast("현재 Ops 링크를 복사했습니다.");
+    });
+  }
+  if (els.resetOpsFiltersBtn) {
+    els.resetOpsFiltersBtn.addEventListener("click", () => {
+      void resetOpsFilters();
+    });
+  }
+  if (els.copyOpsSnapshotBtn) {
+    els.copyOpsSnapshotBtn.addEventListener("click", copyOpsSnapshot);
   }
   if (els.copySignedHandoffBtn) {
     els.copySignedHandoffBtn.addEventListener("click", copySignedHandoffSnapshot);
@@ -1904,6 +1988,43 @@ function bindEvents() {
   if (els.copyVerifySnapshotBtn) {
     els.copyVerifySnapshotBtn.addEventListener("click", copyVerifySnapshot);
   }
+  document.addEventListener("keydown", (event) => {
+    const tag = String(event.target?.tagName || "").toLowerCase();
+    if (tag === "input" || tag === "textarea" || tag === "select" || event.metaKey || event.ctrlKey || event.altKey) {
+      return;
+    }
+    const key = event.key.toLowerCase();
+    if (key === "?") {
+      if (els.opsHotkeysHint) {
+        els.opsHotkeysHint.textContent = "Keyboard: A actor filter · O ops link · S ops snapshot · U refresh audit · K readiness.";
+      }
+      return;
+    }
+    if (key === "a") {
+      event.preventDefault();
+      els.opsActorInput?.focus();
+      els.opsActorInput?.select();
+    }
+    if (key === "o") {
+      event.preventDefault();
+      void copyOpsViewLink();
+    }
+    if (key === "s") {
+      event.preventDefault();
+      void copyOpsSnapshot();
+    }
+    if (key === "u") {
+      event.preventDefault();
+      void (async () => {
+        await refreshAudit();
+        await refreshOpsSummary();
+      })();
+    }
+    if (key === "k") {
+      event.preventDefault();
+      void refreshReadiness();
+    }
+  });
 
   els.opsAutoRefresh.addEventListener("change", () => {
     state.opsAutoRefresh = els.opsAutoRefresh.checked;
@@ -1920,6 +2041,7 @@ async function bootstrap() {
   setRevealAnimation();
   initDefaults();
   applyTheme();
+  setupOperatorShortcuts();
   bindEvents();
   toggleMode("path");
   applyI18n();

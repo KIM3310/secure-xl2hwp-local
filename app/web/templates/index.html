@@ -352,6 +352,8 @@
 
         <div class="ops-actions">
           <button id="copyOpsViewBtn" class="ghost-btn" type="button">현재 Ops 링크 복사</button>
+          <button id="resetOpsFiltersBtn" class="ghost-btn" type="button">Ops 필터 초기화</button>
+          <button id="copyOpsSnapshotBtn" class="ghost-btn" type="button">현재 Ops 스냅샷 복사</button>
           <button id="exportSummaryBtn" class="ghost-btn" type="button" data-i18n="ops.exportSummary">
             서명 요약 ZIP 저장
           </button>
@@ -359,9 +361,11 @@
             서명 감사 ZIP 저장
           </button>
         </div>
+        <p class="muted export-hint">Shortcuts: Shift+L 링크 · Shift+0 필터 초기화 · Shift+R 새로고침 · Shift+S 요약 ZIP · Shift+A 감사 ZIP</p>
         <p class="muted export-hint" data-i18n="ops.exportHint">
           내보내기 시 원본 파일과 서명 매니페스트(.sig.json)가 ZIP 한 개로 생성됩니다.
         </p>
+        <p class="muted export-hint" id="opsHotkeysHint">Keyboard: A actor filter · O ops link · S ops snapshot · U refresh audit · K readiness · ? help.</p>
 
         <div class="ops-kpis" id="opsKpis">
           <article class="metric-card">
