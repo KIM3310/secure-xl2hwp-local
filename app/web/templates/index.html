@@ -1,0 +1,485 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Secure XL2HWP Studio</title>
+    <link rel="stylesheet" href="/assets/style.css" />
+  </head>
+  <body>
+    <div class="bg-orb orb-a"></div>
+    <div class="bg-orb orb-b"></div>
+    <div class="bg-grid"></div>
+
+    <header class="topbar reveal" data-reveal-delay="0">
+      <div class="brand-block">
+        <p class="eyebrow" data-i18n="app.eyebrow">LOCAL SECURE AUTOMATION</p>
+        <h1 data-i18n="app.title">Secure XL2HWP Studio</h1>
+        <p class="tagline" data-i18n="app.tagline">엑셀 정제부터 한컴 문서화까지, 폐쇄망 친화형 자동화 스튜디오</p>
+      </div>
+
+      <div class="topbar-controls">
+        <div class="control-cluster">
+          <label class="mini-control">
+            <span data-i18n="control.language">언어</span>
+            <select id="langSelect">
+              <option value="ko">한국어</option>
+              <option value="en">English</option>
+            </select>
+          </label>
+          <label class="mini-control">
+            <span data-i18n="control.theme">테마</span>
+            <select id="themeSelect">
+              <option value="light">Light</option>
+              <option value="dark">Dark</option>
+            </select>
+          </label>
+          <label class="mini-control">
+            <span data-i18n="control.brand">브랜드</span>
+            <select id="brandSelect">
+              <option value="aqua">Aqua</option>
+              <option value="ember">Ember</option>
+              <option value="slate">Slate</option>
+            </select>
+          </label>
+        </div>
+
+        <div class="meta-row">
+          <div id="healthPill" class="pill neutral">Health: checking...</div>
+          <button id="logoutBtn" class="ghost-btn" disabled data-i18n="auth.logout">로그아웃</button>
+        </div>
+      </div>
+    </header>
+
+    <main class="dashboard">
+      <section class="panel span-12 reveal" data-reveal-delay="40">
+        <div class="panel-head">
+          <div>
+            <p class="brief-kicker" data-i18n="serviceBrief.kicker">OPERATOR CONTRACT</p>
+            <h2 data-i18n="serviceBrief.title">서비스 브리프</h2>
+            <p data-i18n="serviceBrief.subtitle">운영 전 trust boundary, review flow, 처리 계약을 먼저 확인합니다.</p>
+          </div>
+        </div>
+
+        <div class="brief-shell">
+          <div class="brief-summary">
+            <div class="meta-row brief-badge-row">
+              <div id="briefBadge" class="pill neutral" data-i18n="serviceBrief.loading">불러오는 중...</div>
+            </div>
+            <h3 id="briefHeadline" class="brief-headline">Loading service brief...</h3>
+          </div>
+
+          <div class="brief-grid">
+            <article class="brief-card">
+              <span class="brief-label" data-i18n="serviceBrief.schema">처리 스키마</span>
+              <strong id="briefSchema">-</strong>
+            </article>
+            <article class="brief-card">
+              <span class="brief-label" data-i18n="serviceBrief.authMode">인증 모드</span>
+              <strong id="briefAuthMode">-</strong>
+            </article>
+            <article class="brief-card">
+              <span class="brief-label" data-i18n="serviceBrief.signing">서명 모드</span>
+              <strong id="briefSigningMode">-</strong>
+            </article>
+            <article class="brief-card">
+              <span class="brief-label" data-i18n="serviceBrief.failedChecks">실패 점검</span>
+              <strong id="briefFailedChecks">-</strong>
+            </article>
+          </div>
+
+          <div class="brief-lists">
+            <div>
+              <span class="brief-label" data-i18n="serviceBrief.roles">처리 역할</span>
+              <ul id="briefRoles" class="artifact-list"></ul>
+            </div>
+            <div>
+              <span class="brief-label" data-i18n="serviceBrief.reviewFlow">검토 흐름</span>
+              <ul id="briefReviewFlow" class="artifact-list"></ul>
+            </div>
+            <div>
+              <span class="brief-label" data-i18n="serviceBrief.twoMinuteReview">2분 검토 경로</span>
+              <ul id="briefTwoMinuteReview" class="artifact-list"></ul>
+            </div>
+            <div>
+              <span class="brief-label" data-i18n="serviceBrief.trustBoundary">신뢰 경계</span>
+              <ul id="briefTrustBoundary" class="artifact-list"></ul>
+            </div>
+            <div>
+              <span class="brief-label" data-i18n="serviceBrief.proofAssets">증거 자산</span>
+              <ul id="briefProofAssets" class="artifact-list"></ul>
+            </div>
+            <div>
+              <span class="brief-label" data-i18n="serviceBrief.watchouts">주의점</span>
+              <ul id="briefWatchouts" class="artifact-list"></ul>
+            </div>
+          </div>
+
+          <div class="brief-grid">
+            <article class="brief-card">
+              <span class="brief-label" data-i18n="reviewPack.title">리뷰 패키지</span>
+              <strong id="reviewPackHeadline">-</strong>
+            </article>
+            <article class="brief-card">
+              <span class="brief-label" data-i18n="reviewPack.approvalGate">승인 게이트</span>
+              <strong id="reviewPackGate">-</strong>
+            </article>
+            <article class="brief-card">
+              <span class="brief-label" data-i18n="reviewPack.proofBundle">증거 번들</span>
+              <strong id="reviewPackProof">-</strong>
+            </article>
+            <article class="brief-card">
+              <span class="brief-label" data-i18n="reviewPack.boundary">경계</span>
+              <strong id="reviewPackBoundary">-</strong>
+            </article>
+          </div>
+
+          <div class="brief-lists">
+            <div>
+              <span class="brief-label" data-i18n="reviewPack.artifacts">검토 산출물</span>
+              <ul id="reviewPackArtifacts" class="artifact-list"></ul>
+            </div>
+            <div>
+              <span class="brief-label" data-i18n="reviewPack.twoMinuteReview">2분 검토 경로</span>
+              <ul id="reviewPackTwoMinuteReview" class="artifact-list"></ul>
+            </div>
+            <div>
+              <span class="brief-label" data-i18n="reviewPack.sequence">검토 순서</span>
+              <ul id="reviewPackSequence" class="artifact-list"></ul>
+            </div>
+            <div>
+              <span class="brief-label" data-i18n="reviewPack.proofAssets">증거 자산</span>
+              <ul id="reviewPackProofAssets" class="artifact-list"></ul>
+            </div>
+          </div>
+
+          <div class="meta-row">
+            <button id="copyServiceBriefBtn" class="ghost-btn" type="button">Service Brief 복사</button>
+            <button id="copyReviewRoutesBtn" class="ghost-btn" type="button">Review Routes 복사</button>
+            <button id="copyReviewPackBtn" class="ghost-btn" type="button">Review Pack 복사</button>
+            <button id="copySignedHandoffBtn" class="ghost-btn" type="button">Signed Handoff 복사</button>
+            <button id="copyVerifySnapshotBtn" class="ghost-btn" type="button">Verify Snapshot 복사</button>
+          </div>
+
+          <div class="brief-lists">
+            <div>
+              <span class="brief-label" data-i18n="workflow.title">첫 번째 운영 워크플로우</span>
+              <strong id="workflowLaunchpadStatus">-</strong>
+              <p class="muted"><strong id="workflowLaunchpadGate">-</strong></p>
+              <p class="muted"><strong id="workflowLaunchpadNextStep">-</strong></p>
+              <ul id="workflowLaunchpadSteps" class="artifact-list"></ul>
+            </div>
+            <div>
+              <span class="brief-label" data-i18n="workflow.fallbackLabel">의도된 fallback</span>
+              <p id="workflowLaunchpadFallback" class="muted">-</p>
+              <ul id="workflowLaunchpadRoutes" class="artifact-list"></ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel span-4 reveal" data-reveal-delay="80">
+        <div class="panel-head">
+          <h2 data-i18n="auth.title">인증</h2>
+          <p data-i18n="auth.subtitle">JWT 기반 접근 제어</p>
+        </div>
+
+        <div id="bootstrapCard" class="bootstrap-card hidden">
+          <div class="bootstrap-head-row">
+            <p id="bootstrapBadge" class="bootstrap-badge" data-i18n="auth.bootstrapBadgeRequired">설정 필요</p>
+            <button id="bootstrapRefreshBtn" class="ghost-btn bootstrap-refresh-btn" type="button" data-i18n="auth.bootstrapRefresh">
+              상태 다시 확인
+            </button>
+          </div>
+          <h3 data-i18n="auth.bootstrapTitle">먼저 관리자 ID를 만드세요</h3>
+          <p id="bootstrapMessage" class="muted" data-i18n="auth.bootstrapMessageRequired">
+            현재 로그인 가능한 계정이 없습니다. 아래 3단계를 따라 관리자 계정을 먼저 만들어 주세요.
+          </p>
+
+          <ol class="bootstrap-steps">
+            <li data-i18n="auth.bootstrapStep1">`.env`에서 `AUTH_PASSWORD_PEPPER`를 강한 값으로 설정합니다.</li>
+            <li data-i18n="auth.bootstrapStep2">비밀번호 해시를 생성해 `users.yaml`에 등록합니다.</li>
+            <li data-i18n="auth.bootstrapStep3">서비스를 새로고침한 뒤, 생성한 관리자 계정으로 로그인합니다.</li>
+          </ol>
+
+          <p class="bootstrap-path-row">
+            <span data-i18n="auth.bootstrapRegistryLabel">사용자 파일:</span>
+            <code id="bootstrapRegistryPath">specs/security/users.yaml</code>
+          </p>
+
+          <p class="muted bootstrap-code-label" data-i18n="auth.bootstrapHashLabel">해시 생성 명령</p>
+          <pre id="bootstrapHashCommand" class="command-box"></pre>
+          <p class="muted bootstrap-code-label" data-i18n="auth.bootstrapYamlLabel">users.yaml 예시</p>
+          <pre id="bootstrapYamlTemplate" class="command-box"></pre>
+        </div>
+
+        <form id="loginForm" class="form-grid compact-grid">
+          <label>
+            <span data-i18n="auth.userId">사용자 ID</span>
+            <input id="loginUserId" type="text" data-i18n-placeholder="auth.userPlaceholder" placeholder="local-admin" required />
+          </label>
+          <label>
+            <span data-i18n="auth.password">비밀번호</span>
+            <input id="loginPassword" type="password" data-i18n-placeholder="auth.passwordPlaceholder" placeholder="StrongPassword!" required />
+          </label>
+          <button id="loginBtn" type="submit" class="primary-btn stretch" data-i18n="auth.login">로그인</button>
+        </form>
+
+        <div class="divider"></div>
+
+        <div class="user-card" id="userCard">
+          <p class="muted" data-i18n="auth.currentUser">현재 로그인:</p>
+          <p id="currentUserText">없음</p>
+          <p id="tokenStatus" class="muted">토큰: 없음</p>
+        </div>
+      </section>
+
+      <section class="panel span-8 reveal" data-reveal-delay="140">
+        <div class="panel-head">
+          <h2 data-i18n="pipeline.title">파이프라인 실행</h2>
+          <p data-i18n="pipeline.subtitle">Path 모드 / File 업로드 모드</p>
+        </div>
+
+        <div class="mode-toggle" role="tablist" aria-label="processing mode">
+          <button id="modePathBtn" class="mode-btn active" type="button" data-i18n="pipeline.modePath">Path Mode</button>
+          <button id="modeFileBtn" class="mode-btn" type="button" data-i18n="pipeline.modeFile">File Mode</button>
+        </div>
+
+        <form id="pathForm" class="form-grid">
+          <label>
+            <span data-i18n="pipeline.inputPath">입력 파일 경로</span>
+            <input id="pathInputPath" type="text" required />
+          </label>
+          <label>
+            <span data-i18n="pipeline.outputDir">출력 폴더</span>
+            <input id="pathOutputDir" type="text" required />
+          </label>
+          <label>
+            <span>Contract</span>
+            <input id="pathContract" type="text" required />
+          </label>
+          <label>
+            <span>Profile</span>
+            <input id="pathProfile" type="text" required />
+          </label>
+          <label>
+            <span data-i18n="pipeline.templateName">Template Name</span>
+            <input id="pathTemplateName" type="text" required />
+          </label>
+          <label>
+            <span data-i18n="pipeline.templatePath">Template Path</span>
+            <input id="pathTemplatePath" type="text" required />
+          </label>
+          <button id="runPathBtn" type="submit" class="primary-btn stretch" data-i18n="pipeline.runPath">Path 실행</button>
+        </form>
+
+        <form id="fileForm" class="form-grid hidden">
+          <label>
+            <span data-i18n="pipeline.uploadFile">업로드 파일</span>
+            <input id="fileInput" type="file" accept=".xlsx,.xlsm,.xls" required />
+          </label>
+          <label>
+            <span data-i18n="pipeline.outputDir">출력 폴더</span>
+            <input id="fileOutputDir" type="text" required />
+          </label>
+          <label>
+            <span>Contract</span>
+            <input id="fileContract" type="text" required />
+          </label>
+          <label>
+            <span>Profile</span>
+            <input id="fileProfile" type="text" required />
+          </label>
+          <label>
+            <span data-i18n="pipeline.templateName">Template Name</span>
+            <input id="fileTemplateName" type="text" required />
+          </label>
+          <label>
+            <span data-i18n="pipeline.templatePath">Template Path</span>
+            <input id="fileTemplatePath" type="text" required />
+          </label>
+          <button id="runFileBtn" type="submit" class="primary-btn stretch" data-i18n="pipeline.runFile">File 실행</button>
+        </form>
+
+        <p id="runStatus" class="status-line" data-i18n="pipeline.idle">대기 중</p>
+      </section>
+
+      <section class="panel span-4 reveal" data-reveal-delay="200">
+        <div class="panel-head">
+          <h2 data-i18n="metrics.title">실행 메트릭</h2>
+          <p data-i18n="metrics.subtitle">최근 실행 요약</p>
+        </div>
+        <div id="metricsGrid" class="metrics-grid"></div>
+
+        <div class="divider"></div>
+
+        <h3 data-i18n="metrics.artifacts">Artifacts</h3>
+        <ul id="artifactsList" class="artifact-list"></ul>
+      </section>
+
+      <section class="panel span-8 reveal" data-reveal-delay="260">
+        <div class="panel-head">
+          <h2 data-i18n="ops.title">운영 인사이트</h2>
+          <p data-i18n="ops.subtitle">감사 이벤트 기반 운영 지표</p>
+        </div>
+
+        <div class="ops-controls">
+          <label class="mini-control">
+            <span data-i18n="ops.range">조회 기간</span>
+            <select id="opsSinceSelect">
+              <option value="6" data-i18n="ops.range6h">최근 6시간</option>
+              <option value="24" selected data-i18n="ops.range24h">최근 24시간</option>
+              <option value="168" data-i18n="ops.range7d">최근 7일</option>
+              <option value="" data-i18n="ops.rangeAll">전체</option>
+            </select>
+          </label>
+          <label class="mini-control">
+            <span data-i18n="ops.statusFilter">상태 필터</span>
+            <select id="opsStatusSelect">
+              <option value="" data-i18n="ops.statusAll">전체</option>
+              <option value="succeeded" data-i18n="ops.statusSucceeded">성공</option>
+              <option value="failed" data-i18n="ops.statusFailed">실패</option>
+              <option value="started" data-i18n="ops.statusStarted">시작</option>
+            </select>
+          </label>
+          <label class="mini-control">
+            <span data-i18n="ops.eventType">이벤트 타입</span>
+            <select id="opsEventTypeSelect">
+              <option value="" data-i18n="ops.eventAll">전체</option>
+              <option value="auth.login" data-i18n="ops.eventAuth">로그인</option>
+              <option value="pipeline.process" data-i18n="ops.eventProcess">처리</option>
+            </select>
+          </label>
+          <label class="mini-control">
+            <span data-i18n="ops.actor">실행 주체 검색</span>
+            <input
+              id="opsActorInput"
+              type="text"
+              data-i18n-placeholder="ops.actorPlaceholder"
+              placeholder="예: local-admin"
+            />
+          </label>
+          <label class="mini-check">
+            <input id="opsAutoRefresh" type="checkbox" checked />
+            <span data-i18n="ops.autoRefresh">자동 새로고침</span>
+          </label>
+        </div>
+
+        <div class="ops-actions">
+          <button id="copyOpsViewBtn" class="ghost-btn" type="button">현재 Ops 링크 복사</button>
+          <button id="resetOpsFiltersBtn" class="ghost-btn" type="button">Ops 필터 초기화</button>
+          <button id="copyOpsSnapshotBtn" class="ghost-btn" type="button">현재 Ops 스냅샷 복사</button>
+          <button id="exportSummaryBtn" class="ghost-btn" type="button" data-i18n="ops.exportSummary">
+            서명 요약 ZIP 저장
+          </button>
+          <button id="exportAuditCsvBtn" class="ghost-btn" type="button" data-i18n="ops.exportAuditCsv">
+            서명 감사 ZIP 저장
+          </button>
+        </div>
+        <p class="muted export-hint">Shortcuts: Shift+L 링크 · Shift+0 필터 초기화 · Shift+R 새로고침 · Shift+S 요약 ZIP · Shift+A 감사 ZIP</p>
+        <p class="muted export-hint" data-i18n="ops.exportHint">
+          내보내기 시 원본 파일과 서명 매니페스트(.sig.json)가 ZIP 한 개로 생성됩니다.
+        </p>
+        <p class="muted export-hint" id="opsHotkeysHint">Keyboard: A actor filter · O ops link · S ops snapshot · U refresh audit · K readiness · ? help.</p>
+
+        <div class="ops-kpis" id="opsKpis">
+          <article class="metric-card">
+            <span data-i18n="ops.successRate">성공률</span>
+            <strong>-</strong>
+          </article>
+          <article class="metric-card">
+            <span data-i18n="ops.procSucceeded">처리 성공</span>
+            <strong>-</strong>
+          </article>
+          <article class="metric-card">
+            <span data-i18n="ops.procFailed">처리 실패</span>
+            <strong>-</strong>
+          </article>
+          <article class="metric-card">
+            <span data-i18n="ops.totalEvents">총 이벤트</span>
+            <strong>-</strong>
+          </article>
+        </div>
+
+        <ul id="opsFlagsList" class="artifact-list"></ul>
+
+        <div class="charts-grid">
+          <article class="chart-card">
+            <h4 data-i18n="ops.statusChart">처리 상태 분포</h4>
+            <canvas id="statusChartCanvas"></canvas>
+          </article>
+          <article class="chart-card">
+            <h4 data-i18n="ops.throughputChart">시간대별 처리량</h4>
+            <canvas id="throughputChartCanvas"></canvas>
+          </article>
+        </div>
+
+        <div class="divider"></div>
+
+        <h3 data-i18n="ops.topActors">상위 실행 주체</h3>
+        <ul id="topActorsList" class="artifact-list"></ul>
+      </section>
+
+      <section class="panel span-8 reveal" data-reveal-delay="320">
+        <div class="panel-head">
+          <h2 data-i18n="response.title">응답 JSON</h2>
+          <p data-i18n="response.subtitle">API raw payload</p>
+        </div>
+        <pre id="resultJson" class="json-box">{}</pre>
+      </section>
+
+      <section class="panel span-4 reveal" data-reveal-delay="380">
+        <div class="panel-head">
+          <h2 data-i18n="audit.title">감사 이벤트</h2>
+          <p data-i18n="audit.subtitle">최근 인증/처리 로그</p>
+        </div>
+        <div class="audit-actions">
+          <button id="refreshAuditBtn" class="ghost-btn" type="button" data-i18n="audit.refresh">새로고침</button>
+        </div>
+        <ul id="auditList" class="audit-list"></ul>
+      </section>
+
+      <section class="panel span-12 reveal" data-reveal-delay="440">
+        <div class="panel-head">
+          <h2 data-i18n="verify.title">서명 검증 센터</h2>
+          <p data-i18n="verify.subtitle">내보낸 원본 파일과 .sig.json 매니페스트 무결성을 검증합니다.</p>
+        </div>
+
+        <form id="verifyForm" class="form-grid">
+          <label>
+            <span data-i18n="verify.payload">원본 파일</span>
+            <input id="verifyPayloadFile" type="file" required />
+          </label>
+          <label>
+            <span data-i18n="verify.signature">서명 매니페스트(.sig.json)</span>
+            <input id="verifySignatureFile" type="file" accept=".json,.sig.json" required />
+          </label>
+          <button id="verifyRunBtn" type="submit" class="primary-btn stretch" data-i18n="verify.run">검증 실행</button>
+        </form>
+
+        <p id="verifyStatus" class="status-line" data-i18n="verify.idle">대기 중</p>
+        <pre id="verifyResultJson" class="json-box verify-json">{}</pre>
+      </section>
+
+      <section class="panel span-4 reveal" data-reveal-delay="500">
+        <div class="panel-head">
+          <h2 data-i18n="readiness.title">시스템 레디니스</h2>
+          <p data-i18n="readiness.subtitle">실행 전 핵심 구성요소 상태를 점검합니다.</p>
+        </div>
+        <div class="audit-actions">
+          <button id="refreshReadinessBtn" class="ghost-btn" type="button" data-i18n="readiness.refresh">점검</button>
+        </div>
+        <p id="readinessOverall" class="status-line" data-i18n="readiness.idle">대기 중</p>
+        <ul id="readinessList" class="artifact-list"></ul>
+      </section>
+    </main>
+
+    <div id="toast" class="toast hidden"></div>
+
+    <script>
+      // Fallback for static deployments where server-side template injection is unavailable.
+      window.UI_CONFIG = window.UI_CONFIG || {};
+    </script>
+    <script src="/assets/app.js" defer></script>
+  </body>
+</html>

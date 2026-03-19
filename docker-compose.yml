@@ -1,0 +1,14 @@
+services:
+  secure-xl2hwp:
+    build: .
+    ports:
+      - "8080:8080"
+    environment:
+      - APP_ENV=prod
+      - ENABLE_LLM=true
+      - OLLAMA_BASE_URL=http://host.docker.internal:11434
+      - LLM_PRIMARY_MODEL=qwen2.5:7b
+      - LLM_FALLBACK_MODEL=qwen2.5:14b
+    volumes:
+      - ./examples:/app/examples
+      - ./specs:/app/specs

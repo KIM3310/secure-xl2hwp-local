@@ -1,0 +1,42 @@
+profile_name: "default"
+sheet_name: 0
+rename_columns:
+  "Project ID": "관리번호"
+  "Project Name": "사업명"
+  "Owner": "담당자"
+  "Budget": "사업비"
+  "Progress": "진행률"
+  "Report Date": "보고일자"
+  "State": "상태"
+drop_columns:
+  - "비고"
+required_columns:
+  - "관리번호"
+  - "사업명"
+  - "담당자"
+  - "상태"
+type_cast:
+  "관리번호": "string"
+  "사업명": "string"
+  "담당자": "string"
+  "사업비": "float"
+  "진행률": "float"
+  "보고일자": "date"
+  "상태": "string"
+fill_defaults:
+  "상태": "미정"
+regex_replace:
+  - column: "사업명"
+    pattern: "\\s+"
+    replacement: " "
+derived_columns:
+  - name: "위험등급"
+    expression: "risk_from_progress:진행률"
+template_mapping:
+  "{{PROJECT_ID}}": "관리번호"
+  "{{PROJECT_NAME}}": "사업명"
+  "{{OWNER}}": "담당자"
+  "{{BUDGET}}": "사업비"
+  "{{PROGRESS}}": "진행률"
+  "{{STATUS}}": "상태"
+  "{{RISK_LEVEL}}": "위험등급"

@@ -1,0 +1,122 @@
+# secure-xl2hwp-local
+
+Excel-to-Hancom document conversion platform designed for air-gapped and local secure environments. Cleans spreadsheet data using contract-based rules and maps it to Hancom (HWP) templates, with full audit logging and signed exports.
+
+## Key Features
+
+- **SpecKit**: Contract/profile/template specs that control the pipeline
+- **CoT pipeline**: Schema inference -> cleanup advice -> document mapping
+- **Hancom templates**: Placeholder detection + transform rules + auto table generation
+- **Template drift preview**: Shows placeholder/spec mismatches before export
+- **JWT auth**: `/auth/login`, `/auth/me`, protected processing APIs
+- **Audit log**: Login/processing events recorded as `jsonl`
+- **Offline deployment**: Wheel bundles and air-gapped install scripts
+- **Signed exports**: HMAC-SHA256 signed audit bundles with verification
+
+## Quickstart
+
+```bash
+cd secure-xl2hwp-local
+python3 -m venv .venv
+source .venv/bin/activate
+pip install '.[dev]'
+cp .env.example .env
+python scripts/create_sample_excel.py
+```
+
+Or use Make:
+```bash
+make install
+make sample-data
+```
+
+### Optional: Ollama models
+```bash
+ollama pull qwen2.5:7b
+ollama pull qwen2.5:14b
+```
+
+Set `ENABLE_LLM=false` in `.env` if not using Ollama. The deterministic pipeline still runs when the LLM is unavailable.
+
+## Running
+
+```bash
+uvicorn app.main:app --host 127.0.0.1 --port 8080
+```
+
+Web UI at `http://127.0.0.1:8080/`
+
+Features: login/JWT session, path/file mode execution, metrics visualization, audit timeline, bilingual UI (Korean/English), theme toggle, signed export + verification.
+
+## Auth Setup
+
+The default `specs/security/users.yaml` is empty. Before using:
+
+1. Set strong values for `JWT_SECRET_KEY`, `AUTH_PASSWORD_PEPPER`, `EXPORT_SIGNING_KEY` in `.env`
+2. Generate password hashes: `python scripts/hash_password.py --password 'StrongPassword!' --pepper 'YOUR_PEPPER'`
+3. Write `specs/security/users.yaml` with the hash
+4. Configure `PROCESS_ALLOWED_ROLES` and path restrictions
+
+## API Endpoints
+
+| Endpoint | Description |
+|---|---|
+| `POST /auth/login` | JWT login |
+| `GET /auth/me` | Current user info |
+| `POST /process/path` | Process spreadsheet by path |
+| `GET /health` | Bootstrap state, signing status |
+| `GET /ops/readiness` | Pre-flight checks |
+| `GET /ops/service-brief` | Allowed roles, trust boundary |
+| `GET /ops/runtime-scorecard` | Runtime health summary |
+| `GET /ops/review-pack` | Export evidence and approval gates |
+| `GET /ops/audit/recent` | Recent audit events |
+| `GET /ops/audit/export/summary.bundle.zip` | Signed audit bundle |
+| `POST /ops/audit/export/verify` | Verify export signatures |
+
+## Output Artifacts
+
+- `*.normalized.*.xlsx` / `*.normalized.*.csv`
+- `*.report.*.json`
+- `*.hancom_payload.*.json`
+- `*.hancom_preview.*.txt`
+
+## Project Structure
+
+```text
+app/
+  api/                 # API schemas
+  connectors/          # Optional Hancom Windows COM connector
+  core/                # Settings, logging
+  pipeline/            # CoT orchestrator
+  services/            # Auth/Audit/SpecKit/Template/Export/Pipeline
+specs/
+  contracts/           # Data contract YAML
+  profiles/            # Cleanup profile YAML
+  templates/           # Hancom template mapping
+  security/            # Local users registry
+scripts/
+examples/
+docs/
+```
+
+## Tests
+
+```bash
+pytest -q
+ruff check app tests scripts
+```
+
+97 tests covering JWT auth, login guard thread safety, export signature verification, CoT pipeline stages, and path traversal blocking.
+
+## Docs
+
+- Usage guide (KO): `docs/usage-ko.md`
+- User guide (EN): `docs/usage-en.md`
+- Architecture: `docs/architecture.md`
+- SpecKit: `docs/speckit.md`
+- CoT design: `docs/cot.md`
+- Offline deploy: `docs/offline-deploy.md`
+
+## License
+
+MIT
