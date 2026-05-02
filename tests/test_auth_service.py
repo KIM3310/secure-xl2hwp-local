@@ -4,8 +4,8 @@ from app.core.settings import Settings
 from app.services.auth_service import AuthService
 from app.services.speckit_loader import SpecKitLoader
 
-TEST_AUTH_PASSWORD_PEPPER = "test-auth-pepper-very-long-secret-0123456789"
-TEST_JWT_SECRET_KEY = "test-jwt-secret-key-very-long-secret-0123456789abcdef"
+TEST_AUTH_PASSWORD_PEPPER = "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+TEST_JWT_SECRET_KEY = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
 
 
 def test_authenticate_and_verify_token() -> None:

@@ -38,8 +38,8 @@ class TestJwtAuthFlow:
         s = Settings(
             auth_enabled=True,
             user_registry_name="users_test",
-            auth_password_pepper="test-auth-pepper-very-long-secret-0123456789",
-            jwt_secret_key="test-jwt-secret-key-very-long-secret-0123456789abcdef",
+            auth_password_pepper="bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+            jwt_secret_key="aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
         )
         loader = SpecKitLoader(base_path=Path("specs"))
         return AuthService(settings=s, spec_loader=loader)
@@ -307,7 +307,7 @@ class TestExportSignature:
         original_key_id = settings.export_signing_key_id
         try:
             settings.export_signing_enabled = True
-            settings.export_signing_key = "test-signing-key-at-least-32-characters-long-enough"
+            settings.export_signing_key = "dddddddddddddddddddddddddddddddd"
             settings.export_signing_key_id = "test-key-v1"
 
             payload = b'{"test": "data"}'
@@ -357,7 +357,7 @@ class TestExportSignature:
         original_key = settings.export_signing_key
         try:
             settings.export_signing_enabled = True
-            settings.export_signing_key = "test-signing-key-at-least-32-characters-long-enough"
+            settings.export_signing_key = "dddddddddddddddddddddddddddddddd"
 
             h1 = _export_signature_headers(b"payload-a")
             h2 = _export_signature_headers(b"payload-b")

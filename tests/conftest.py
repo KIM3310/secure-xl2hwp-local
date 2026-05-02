@@ -4,9 +4,9 @@ import pytest
 
 from app.main import auth_service, login_attempt_guard, settings
 
-TEST_AUTH_PASSWORD_PEPPER = "test-auth-pepper-very-long-secret-0123456789"
-TEST_JWT_SECRET_KEY = "test-jwt-secret-key-very-long-secret-0123456789abcdef"
-TEST_EXPORT_SIGNING_KEY = "test-export-signing-key-very-long-secret-0123456789abcdef"
+TEST_AUTH_PASSWORD_PEPPER = "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+TEST_JWT_SECRET_KEY = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+TEST_EXPORT_SIGNING_KEY = "cccccccccccccccccccccccccccccccc"
 
 
 @pytest.fixture(autouse=True)
