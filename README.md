@@ -2,6 +2,8 @@
 
 Excel-to-Hancom document conversion platform designed for air-gapped and local secure environments. Cleans spreadsheet data using contract-based rules and maps it to Hancom (HWP) templates, with full audit logging and signed exports.
 
+Technical review pack: [`docs/technical-review-pack.md`](docs/technical-review-pack.md)
+
 ## Key Features
 
 - **SpecKit**: Contract/profile/template specs that control the pipeline
