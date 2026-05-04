@@ -89,7 +89,7 @@
 ```
 ============================= test session starts ==============================
 platform darwin -- Python 3.9.6, pytest-8.4.2, pluggy-1.6.0
-rootdir: /Users/doeonkim/repo-audit/secure-xl2hwp-local
+rootdir: <repo-root>
 configfile: pyproject.toml
 testpaths: tests
 plugins: anyio-4.12.1, cov-5.0.0
