@@ -23,6 +23,10 @@ A local-first Korean document automation tool that turns repetitive Excel-to-Han
 - **Verification:** Run `make verify`; it covers lint, tests, and signed proof generation.
 - **Commercial read:** Position it as an offline/local license for Korean document automation in controlled environments.
 
+## Commercialization Playbook
+
+- [Monetization and GTM playbook](docs/monetization-playbook.md) maps the repository to buyer segments, offer ladder, pricing hypotheses, proof gates, and risk boundaries.
+
 ## Key Features
 
 - **SpecKit**: Contract/profile/template specs that control the pipeline
