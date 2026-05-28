@@ -4,6 +4,18 @@ Excel-to-Hancom document conversion platform designed for air-gapped and local s
 
 Technical review pack: [`docs/technical-review-pack.md`](docs/technical-review-pack.md)
 
+## Product and Review Surface
+
+A local-first Korean document automation tool that turns repetitive Excel-to-Hancom work into signed, auditable exports.
+
+| Lens | Definition |
+|---|---|
+| Buyer or user | Korean back-office teams, public-sector-adjacent operators, legal/admin teams, and secure internal workflow owners. |
+| Commercial route | Sell as an offline license, per-seat internal tool, or setup package for controlled document workflows. |
+| Review signal | JWT auth, signed exports, audit logs, local operation, structured output, and Hancom-focused workflow design. |
+| Safety boundary | Designed for controlled local use; real deployments need approved templates, retention rules, and workstation policies. |
+| Fast proof | Run the backend checks and generate a sample signed export from staged input data. |
+
 ## Key Features
 
 - **SpecKit**: Contract/profile/template specs that control the pipeline
