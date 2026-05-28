@@ -16,6 +16,13 @@ A local-first Korean document automation tool that turns repetitive Excel-to-Han
 | Safety boundary | Designed for controlled local use; real deployments need approved templates, retention rules, and workstation policies. |
 | Fast proof | Run the backend checks and generate a sample signed export from staged input data. |
 
+## Reviewer Fast Path
+
+- **First minute:** Check the auth setup, template drift preview, signed export, and audit timeline.
+- **Local demo:** Run `make install`, `make sample-data`, and `uvicorn app.main:app --host 127.0.0.1 --port 8080`; open `http://127.0.0.1:8080/`.
+- **Verification:** Run `make verify`; it covers lint, tests, and signed proof generation.
+- **Commercial read:** Position it as an offline/local license for Korean document automation in controlled environments.
+
 ## Key Features
 
 - **SpecKit**: Contract/profile/template specs that control the pipeline
