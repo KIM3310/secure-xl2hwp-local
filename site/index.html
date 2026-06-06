@@ -27,6 +27,7 @@
     h1,h2,h3{font-family:"Space Grotesk",sans-serif;letter-spacing:-.04em;margin:0}.hero h1{font-size:clamp(2.4rem,4.8vw,4.4rem);line-height:.96}.lede,.note,.step p,.proof-card p,.callout p{margin:0;color:var(--muted);line-height:1.75}
     .hero-grid,.two,.three{display:grid;gap:16px}.hero-grid,.two{grid-template-columns:repeat(2,minmax(0,1fr))}.three,.proof-strip{grid-template-columns:repeat(3,minmax(0,1fr))}
     .list{margin:0;padding-left:18px;color:var(--muted);line-height:1.8}.links a{color:var(--accent);text-decoration:none;font-weight:600}
+    .hero-actions{display:flex;gap:10px;flex-wrap:wrap}.button{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:0 14px;border:1px solid var(--line);border-radius:999px;background:#fff;color:var(--ink);font-weight:700;text-decoration:none}.button.primary{background:var(--accent);border-color:var(--accent);color:#fff}
     .proof-strip{display:grid;gap:16px;margin-top:18px}.proof-card,.step,.callout,.route-card{border:1px solid var(--line);border-radius:18px;background:var(--panel-soft);padding:16px}.proof-card strong,.step strong,.route-card strong{display:block;margin-bottom:8px}
     .hero-aside{display:grid;gap:12px;align-content:start}.metric{border:1px solid var(--line);border-radius:18px;padding:16px;background:#14161a;color:#f7f4ef}.metric small{display:block;color:#b7c0ca;text-transform:uppercase;letter-spacing:.12em;font-size:.72rem;margin-bottom:8px}.metric strong{display:block;font-size:1.8rem;letter-spacing:-.04em}.metric p{margin:8px 0 0;color:#d2d7dd;line-height:1.6}
     .route-grid{display:grid;grid-template-columns:1.2fr .8fr;gap:16px}.route-list{display:grid;gap:12px}.step{display:grid;grid-template-columns:auto 1fr;align-items:start;gap:14px}.step-num{display:grid;place-items:center;width:38px;height:38px;border-radius:12px;background:var(--soft);color:var(--accent-ink);font-weight:700}
@@ -50,6 +51,10 @@
           <h1>Local-only spreadsheet automation with verifiable handoff.</h1>
           <p class="lede">This page is intentionally not a SaaS front door. It is a public explainer for a secure local runtime whose strongest proof is the review path: trust boundary first, template-drift before export claims, then signed audit/export evidence for handoff.</p>
           <p class="note"><strong>Honest framing:</strong> GitHub Pages hosts the story. The regulated processing routes live only inside the local secure deployment.</p>
+          <div class="hero-actions">
+            <a class="button primary" href="https://github.com/KIM3310/secure-xl2hwp-local/blob/main/docs/verification-guide.md">Open review path</a>
+            <a class="button" href="https://github.com/KIM3310/secure-xl2hwp-local/blob/main/docs/technical-review-pack.md">View technical pack</a>
+          </div>
         </div>
         <aside class="hero-aside">
           <div class="metric">
