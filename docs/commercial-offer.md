@@ -12,7 +12,7 @@ This is the buyer-ready version of the repository. It turns the technical proof 
 | Buyer | Korean back-office, public-sector-adjacent, legal/admin, and secure internal workflow teams. |
 | Pain wedge | Air-gapped/local Excel-to-Hancom conversion with audit logging and signed exports. |
 | Front-door offer | Offline license |
-| Entry scope | $499-$2k/seat/year |
+| Entry scope | Scope after buyer intake |
 | Proof before pitch | make verify passes |
 | Next buyer action | Review one proof artifact, then choose diagnostic, workshop, pilot, support, or revival path. |
 
@@ -20,9 +20,9 @@ This is the buyer-ready version of the repository. It turns the technical proof 
 
 | Offer | Scope assumption | Buyer-facing scope |
 |---|---|---|
-| Offline license | $499-$2k/seat/year | Create 3 template demos |
-| Controlled workflow setup | $5k-$25k setup | Build local install guide |
-| Template migration package | $1k-$6k/month template support | Offer offline pilot |
+| Offline license | Scope after buyer intake | Create 3 template demos |
+| Controlled workflow setup | Scope after buyer intake | Build local install guide |
+| Template migration package | Scope after buyer intake | Offer offline pilot |
 
 ## Close Path
 

@@ -51,9 +51,9 @@ Use this page as the short path through the repository. It keeps the review grou
 
 | Possible offer | Working scope assumption |
 |---|---|
-| Offline license | $499-$2k/seat/year |
-| Controlled workflow setup | $5k-$25k setup |
-| Template migration package | $1k-$6k/month template support |
+| Offline license | Scope after buyer intake |
+| Controlled workflow setup | Scope after buyer intake |
+| Template migration package | Scope after buyer intake |
 
 ## Boundaries
 

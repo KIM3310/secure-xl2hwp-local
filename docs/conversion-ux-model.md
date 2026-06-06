@@ -49,9 +49,9 @@ This note specializes the repository for service launch. It combines product str
 
 ## Conversion Path
 
-- Risk-reversing entry: Offline license ($499-$2k/seat/year) with one acceptance metric.
-- Pilot: Controlled workflow setup ($5k-$25k setup) using buyer-approved data and named operators.
-- Recurring layer: Template migration package ($1k-$6k/month template support) for monitoring, governance, support, or managed review.
+- Risk-reversing entry: Offline license (scope after buyer intake) with one acceptance metric.
+- Pilot: Controlled workflow setup (scope after buyer intake) using buyer-approved data and named operators.
+- Recurring layer: Template migration package (scope after buyer intake) for monitoring, governance, support, or managed review.
 
 ## Scope Frame
 
