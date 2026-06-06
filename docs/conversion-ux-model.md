@@ -2,7 +2,7 @@
 
 Updated: 2026-05-30
 
-This note specializes the repository for revenue. It combines product strategy, UX design, behavioral economics, and neuroscience-informed attention and working-memory design in a practical way: reduce confusion, build trust, help the right user act, and avoid manipulative conversion patterns.
+This note specializes the repository for service launch. It combines product strategy, UX design, behavioral economics, and neuroscience-informed attention and working-memory design in a practical way: reduce confusion, build trust, help the right user act, and avoid manipulative conversion patterns.
 
 ## Commercial Focus
 
@@ -12,7 +12,7 @@ This note specializes the repository for revenue. It combines product strategy, 
 | Lane | B2B local document automation |
 | Primary buyer or user | Korean back-office, public-sector-adjacent, legal/admin, and secure internal workflow teams. |
 | Value wedge | Air-gapped/local Excel-to-Hancom conversion with audit logging and signed exports. |
-| Revenue model | Enterprise workshop, implementation pilot, and support retainer |
+| Service model | Enterprise workshop, implementation pilot, and support retainer |
 | Operating note | Make the buyer's painful workflow visible, then offer a scoped pilot with explicit acceptance criteria. |
 | Best channel | Outbound to narrow ICPs, demo walkthroughs, partner referrals, and review artifacts. |
 
@@ -53,9 +53,9 @@ This note specializes the repository for revenue. It combines product strategy, 
 - Pilot: Controlled workflow setup ($5k-$25k setup) using buyer-approved data and named operators.
 - Recurring layer: Template migration package ($1k-$6k/month template support) for monitoring, governance, support, or managed review.
 
-## Pricing Frame
+## Scope Frame
 
-- Anchor price to the buyer's existing cost: hours lost, incidents, review delay, audit exposure, or manual handoff.
+- Anchor scope to the buyer's existing cost: hours lost, incidents, review delay, audit exposure, or manual handoff.
 - Use the first offer as risk reversal, not as a race to the bottom.
 - Put Document processing time on the pilot scorecard.
 
@@ -67,8 +67,8 @@ This note specializes the repository for revenue. It combines product strategy, 
 
 ## Ethical Guardrails
 
-- No fake users, fake logos, fake revenue, fake benchmarks, or unverifiable endorsements.
-- No urgency timers, hidden opt-outs, forced continuity, or confusing pricing.
+- No fake users, fake logos, fake financial outcomes, fake benchmarks, or unverifiable endorsements.
+- No urgency timers, hidden opt-outs, forced continuity, or confusing scope.
 - Conversion prompts should come after value or evidence, not before.
 - Data collection should be minimal, visible, and tied to product value.
 - Approved templates required
