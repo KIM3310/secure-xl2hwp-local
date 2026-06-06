@@ -1,6 +1,6 @@
 # Service Architecture - secure-xl2hwp-local
 
-This document defines the deployment and resource plan for turning this repository into a buyer-reviewable service. It intentionally avoids public public financial assumptions, public financial guesses, or contract assumptions.
+This document defines the deployment and resource plan for turning this repository into a buyer-reviewable service. It intentionally avoids public financial assumptions, public financial guesses, or contract assumptions.
 
 ## Commercial Role
 
@@ -44,6 +44,15 @@ Visitor or operator
 - license/signing key
 - team auth secret
 - storage credentials only for cloud mode
+
+## Revenue Channel Architecture
+
+- **Primary channel:** B2B workflow and data automation
+- **Monetization route:** Workflow audit, controlled implementation, then template or support package for repeated operations.
+- **Acquisition motion:** Portfolio proof, vertical workflow demos, back-office outreach, and data or document automation case studies.
+- **Activation path:** Connect one approved input, one review step, and one export path before adding wider integrations.
+- **Margin control:** Favor reusable templates, signed exports, and minimal custom integration until repeated demand is proven.
+- **Public boundary:** Keep revenue, pricing, and contract assumptions in private planning; this repository publishes service structure, resource needs, and technical proof only.
 
 ## Cost and Risk Controls
 
