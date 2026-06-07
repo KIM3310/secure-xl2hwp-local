@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "secure-xl2hwp-local"
 version = "1.0.0"
-description = "Local-first secure Excel extraction/cleanup to Hancom payload service with SpecKit + CoT pipeline"
+description = "Local-first secure Excel extraction/cleanup to Hancom payload workflow with SpecKit + CoT pipeline"
 readme = "README.md"
 requires-python = ">=3.9"
 authors = [{name = "Doeon Kim", email = "ehdjs1351@gmail.com"}]

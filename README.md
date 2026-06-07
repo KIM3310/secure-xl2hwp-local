@@ -10,8 +10,8 @@ A local-first Korean document automation tool that turns repetitive Excel-to-Han
 
 | Lens | Definition |
 |---|---|
-| Buyer or user | Korean back-office teams, public-sector-adjacent operators, legal/admin teams, and secure internal workflow owners. |
-| Commercial route | Sell as an offline license, per-seat internal tool, or setup package for controlled document workflows. |
+| Audience | Korean back-office teams, public-sector-adjacent operators, legal/admin teams, and secure internal workflow owners. |
+| Review path | Validate the demo, README, architecture notes, and quality gate before deeper workflow review. |
 | Review signal | JWT auth, signed exports, audit logs, local operation, structured output, and Hancom-focused workflow design. |
 | Safety boundary | Designed for controlled local use; real deployments need approved templates, retention rules, and workstation policies. |
 | Fast proof | Run the backend checks and generate a sample signed export from staged input data. |
@@ -21,20 +21,16 @@ A local-first Korean document automation tool that turns repetitive Excel-to-Han
 - **First minute:** Check the auth setup, template drift preview, signed export, and audit timeline.
 - **Local demo:** Run `make install`, `make sample-data`, and `uvicorn app.main:app --host 127.0.0.1 --port 8080`; open `http://127.0.0.1:8080/`.
 - **Verification:** Run `make verify`; it covers lint, tests, and signed proof generation.
-- **Commercial read:** Position it as an offline/local license for Korean document automation in controlled environments.
 
 ## Service Launch Playbook
 
-- [Service launch playbook](docs/service-launch-playbook.md) maps the repository to buyer segments, offer ladder, proof gates, proof gates, and risk boundaries.
+- [Service launch playbook](docs/service-launch-playbook.md) maps the repository to review audiences, offer ladder, proof gates, proof gates, and risk boundaries.
 
 ## Review Notes
 
 - [Review guide](docs/reviewer-evidence-map.md) summarizes the project angle, first files to inspect, verification commands, and known boundaries.
 - [Quality notes](docs/quality-gate.md) lists the local checks, CI surface, and release expectations for this repository.
-- [Service growth model](docs/service-growth-model.md) maps the project to an ethical service path, activation loop, scope logic, and growth experiments.
 - [Enterprise readiness notes](docs/enterprise-readiness.md) outlines security, data, operations, integration, and handoff expectations.
-- [Conversion UX model](docs/conversion-ux-model.md) maps the buyer path, behavioral design, UI/UX direction, scope frame, and ethical conversion guardrails.
-- [Commercial offer](docs/commercial-offer.md) packages the repository into a buyer-ready offer ladder, proof gate, outreach angle, and close path.
 
 ## Key Features
 
@@ -165,7 +161,7 @@ This repository includes a neutral cloud and AI engineering blueprint that maps 
 
 ## Enterprise Productization
 
-- [Product operating model](docs/product-operating-model.md) defines the buyer, paid wedge, trust boundary, operating checks, and service path for this repository.
+- [Product operating model](docs/product-operating-model.md) defines the reviewer, trust boundary, trust boundary, operating checks, and service path for this repository.
 
 ## Service Architecture
 

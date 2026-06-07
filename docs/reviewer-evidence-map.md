@@ -47,13 +47,13 @@ Use this page as the short path through the repository. It keeps the review grou
 - Sample signed export works
 - Auth setup is explicit
 
-## Commercial Notes
+## Review Notes
 
 | Possible offer | Working scope assumption |
 |---|---|
-| Offline license | Scope after buyer intake |
-| Controlled workflow setup | Scope after buyer intake |
-| Template migration package | Scope after buyer intake |
+| Offline license | Scope after reviewer intake |
+| Controlled workflow setup | Scope after reviewer intake |
+| Template migration package | Scope after reviewer intake |
 
 ## Boundaries
 
