@@ -2,21 +2,21 @@
 
 Excel-to-Hancom document conversion platform designed for air-gapped and local secure environments. Cleans spreadsheet data using contract-based rules and maps it to Hancom (HWP) templates, with full audit logging and signed exports.
 
-Technical review pack: [`docs/technical-review-pack.md`](docs/technical-review-pack.md)
+Architecture pack: [`docs/architecture-pack.md`](docs/architecture-pack.md)
 
-## Product and Review Surface
+## Product and System Surface
 
 A local-first Korean document automation tool that turns repetitive Excel-to-Hancom work into signed, auditable exports.
 
 | Lens | Definition |
 |---|---|
 | Audience | Korean back-office teams, public-sector-adjacent operators, legal/admin teams, and secure internal workflow owners. |
-| Review path | Validate the demo, README, architecture notes, and quality gate before deeper workflow review. |
-| Architecture signal | JWT auth, signed exports, audit logs, local operation, structured output, and Hancom-focused workflow design. |
+| Architecture path | Validate the demo, README, architecture notes, and quality gate before deeper workflow architecture. |
+| System signal | JWT auth, signed exports, audit logs, local operation, structured output, and Hancom-focused workflow design. |
 | Safety boundary | Designed for controlled local use; real deployments need approved templates, retention rules, and workstation policies. |
-| Fast proof | Run the backend checks and generate a sample signed export from staged input data. |
+| Fast path | Run the backend checks and generate a sample signed export from staged input data. |
 
-## Reviewer Fast Path
+## System Fast Path
 
 - **First minute:** Check the auth setup, template drift preview, signed export, and audit timeline.
 - **Local demo:** Run `make install`, `make sample-data`, and `uvicorn app.main:app --host 127.0.0.1 --port 8080`; open `http://127.0.0.1:8080/`.
@@ -24,11 +24,11 @@ A local-first Korean document automation tool that turns repetitive Excel-to-Han
 
 ## Service Launch Playbook
 
-- [Service launch playbook](docs/service-launch-playbook.md) maps the repository to review audiences, proof gates, operating boundaries, and risk controls.
+- [Service launch playbook](docs/service-launch-playbook.md) maps the repository to architecture audiences, operating gates, operating boundaries, and risk controls.
 
-## Review Notes
+## Architecture Notes
 
-- [Review guide](docs/reviewer-evidence-map.md) summarizes the project angle, first files to inspect, verification commands, and known boundaries.
+- [Architecture guide](docs/architecture-evidence-map.md) summarizes the project angle, first files to inspect, runtime commands, and known boundaries.
 - [Quality notes](docs/quality-gate.md) lists the local checks, CI surface, and release expectations for this repository.
 - [Enterprise readiness notes](docs/enterprise-readiness.md) outlines security, data, operations, integration, and handoff expectations.
 
@@ -98,7 +98,7 @@ The default `specs/security/users.yaml` is empty. Before using:
 | `GET /ops/readiness` | Pre-flight checks |
 | `GET /ops/service-brief` | Allowed roles, trust boundary |
 | `GET /ops/runtime-scorecard` | Runtime health summary |
-| `GET /ops/review-pack` | Export evidence and approval gates |
+| `GET /ops/architecture-pack` | Export evidence and approval gates |
 | `GET /ops/audit/recent` | Recent audit events |
 | `GET /ops/audit/export/summary.bundle.zip` | Signed audit bundle |
 | `POST /ops/audit/export/verify` | Verify export signatures |
@@ -161,7 +161,7 @@ This repository includes a neutral cloud and AI engineering blueprint that maps 
 
 ## Enterprise Productization
 
-- [Product operating model](docs/product-operating-model.md) defines the reviewer, trust boundary, trust boundary, operating checks, and service path for this repository.
+- [Product operating model](docs/product-operating-model.md) defines the technical reader, trust boundary, trust boundary, operating checks, and service path for this repository.
 
 ## System Architecture
 

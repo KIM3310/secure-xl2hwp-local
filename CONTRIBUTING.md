@@ -27,6 +27,6 @@ python scripts/exercise_runtime_scorecard.py
 ## Working agreements
 - Preserve local-first / air-gapped runtime assumptions.
 - Do not add cloud dependencies unless the requirement is explicit.
-- Keep output panels (`/health`, `/ops/*`, audit exports) reviewable and stable.
+- Keep output panels (`/health`, `/ops/*`, audit exports) inspectable and stable.
 - Prefer small, behavior-preserving diffs.
 - Use clear conventional commits.

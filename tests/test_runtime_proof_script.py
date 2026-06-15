@@ -16,10 +16,10 @@ def test_runtime_proof_snapshot_shape() -> None:
     assert snapshot["contract"] == "secure-xl2hwp-runtime-scorecard-v1"
     assert snapshot["contracts"]["service_brief"] == "secure-xl2hwp-service-brief-v1"
     assert snapshot["contracts"]["export_verification_pack"] == "secure-xl2hwp-export-verification-pack-v1"
-    assert snapshot["contracts"]["review_pack"] == "secure-xl2hwp-review-pack-v1"
-    assert snapshot["links"]["review_pack"] == "/ops/review-pack"
-    assert "/ops/review-pack" in snapshot["review_endpoints"]
-    assert "/ops/export-verification-pack" in snapshot["review_endpoints"]
+    assert snapshot["contracts"]["architecture_pack"] == "secure-xl2hwp-architecture-pack-v1"
+    assert snapshot["links"]["architecture_pack"] == "/ops/architecture-pack"
+    assert "/ops/architecture-pack" in snapshot["architecture_endpoints"]
+    assert "/ops/export-verification-pack" in snapshot["architecture_endpoints"]
     assert any(asset["path"] == "/health" for asset in snapshot["proof_assets"])
     assert any(asset["path"] == "/ops/export-verification-pack" for asset in snapshot["proof_assets"])
     assert any(asset["path"] == "/ops/readiness" for asset in snapshot["proof_assets"])
@@ -35,4 +35,4 @@ def test_runtime_proof_snapshot_can_include_full_payloads() -> None:
 
     assert "payloads" in parsed
     assert parsed["payloads"]["health"]["service"] == "secure-xl2hwp-local"
-    assert parsed["payloads"]["review_pack"]["links"]["verify_bundle"] == "/ops/audit/export/verify"
+    assert parsed["payloads"]["architecture_pack"]["links"]["verify_bundle"] == "/ops/audit/export/verify"

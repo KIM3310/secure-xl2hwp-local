@@ -152,7 +152,7 @@ login_attempt_guard = LoginAttemptGuard(
 
 PROCESS_REPORT_SCHEMA = "secure-xl2hwp-process-report-v1"
 SERVICE_BRIEF_CONTRACT = "secure-xl2hwp-service-brief-v1"
-REVIEW_PACK_CONTRACT = "secure-xl2hwp-review-pack-v1"
+REVIEW_PACK_CONTRACT = "secure-xl2hwp-architecture-pack-v1"
 RUNTIME_SCORECARD_CONTRACT = "secure-xl2hwp-runtime-scorecard-v1"
 SERVICE_BRIEF_ROUTES = [
     "/health",
@@ -161,7 +161,7 @@ SERVICE_BRIEF_ROUTES = [
     "/ops/template-drift-preview",
     "/ops/export-verification-pack",
     "/ops/offline-deployment-pack",
-    "/ops/review-pack",
+    "/ops/architecture-pack",
     "/ops/schema/process-report",
     "/ops/readiness",
     "/auth/login",
@@ -220,7 +220,7 @@ def _template_drift_preview_payload() -> dict[str, Any]:
             "export_verification_pack": "/ops/export-verification-pack",
             "service_brief": "/ops/service-brief",
             "runtime_scorecard": "/ops/runtime-scorecard",
-            "review_pack": "/ops/review-pack",
+            "architecture_pack": "/ops/architecture-pack",
         },
     }
 
@@ -892,7 +892,7 @@ def _service_brief_payload() -> dict[str, Any]:
         },
         "review_flow": [
             "Open /health to confirm auth bootstrap state, signing posture, and path boundaries.",
-            "Read /ops/runtime-scorecard and /ops/service-brief before operator onboarding to confirm review flow, audit posture, and trust boundary.",
+            "Read /ops/runtime-scorecard and /ops/service-brief before operator onboarding to confirm review flow, operating posture, and trust boundary.",
             "Inspect /ops/template-drift-preview before changing templates or exporting regulated documents.",
             "Open /ops/export-verification-pack before any export handoff that depends on signed bundles.",
             "Open /ops/offline-deployment-pack before shared workstation rollout or constrained-environment delivery.",
@@ -1001,7 +1001,7 @@ def _export_verification_pack_payload() -> dict[str, Any]:
             "health": "/health",
             "runtime_scorecard": "/ops/runtime-scorecard",
             "service_brief": "/ops/service-brief",
-            "review_pack": "/ops/review-pack",
+            "architecture_pack": "/ops/architecture-pack",
             "signed_summary_bundle": "/ops/audit/export/summary.bundle.zip",
             "verify_bundle": "/ops/audit/export/verify",
             "export_verification_pack": "/ops/export-verification-pack",
@@ -1079,13 +1079,13 @@ def _offline_deployment_pack_payload() -> dict[str, Any]:
             "runtime_scorecard": "/ops/runtime-scorecard",
             "export_verification_pack": "/ops/export-verification-pack",
             "offline_deployment_pack": "/ops/offline-deployment-pack",
-            "review_pack": "/ops/review-pack",
+            "architecture_pack": "/ops/architecture-pack",
             "readiness": "/ops/readiness",
         },
     }
 
 
-def _review_pack_payload() -> dict[str, Any]:
+def _architecture_pack_payload() -> dict[str, Any]:
     brief = _service_brief_payload()
     auth_bootstrap = brief["bootstrap_state"]
     readiness = brief["readiness"]
@@ -1100,7 +1100,7 @@ def _review_pack_payload() -> dict[str, Any]:
         "generated_at_utc": datetime.now(timezone.utc).isoformat(),
         "readiness_contract": REVIEW_PACK_CONTRACT,
         "headline": (
-            "Reviewer pack for a local spreadsheet-to-HWP pipeline: auth bootstrap, signed export evidence, "
+            "Architecture brief for a local spreadsheet-to-HWP pipeline: auth bootstrap, signed export evidence, "
             "and regulated path boundaries in one surface."
         ),
         "proof_bundle": {
@@ -1109,14 +1109,14 @@ def _review_pack_payload() -> dict[str, Any]:
             "readiness_failed_checks": len(readiness["failed_checks"]),
             "allowed_process_roles": len(brief["allowed_process_roles"]),
             "audit_chain_valid": _audit_summary(_recent_audit_events(limit=120)).get("hash_chain_valid", False),
-            "review_endpoints": [
+            "architecture_endpoints": [
                 "/health",
                 "/ops/runtime-scorecard",
                 "/ops/service-brief",
                 "/ops/template-drift-preview",
                 "/ops/export-verification-pack",
                 "/ops/offline-deployment-pack",
-                "/ops/review-pack",
+                "/ops/architecture-pack",
                 "/ops/audit/summary",
                 "/ops/audit/export/summary.bundle.zip",
                 "/ops/audit/export/verify",
@@ -1163,7 +1163,7 @@ def _review_pack_payload() -> dict[str, Any]:
             "Verify exported bundle integrity with /ops/audit/export/verify before moving across trust boundaries.",
         ],
         "two_minute_review": [
-            "Open /health, /ops/runtime-scorecard, /ops/service-brief, and /ops/review-pack to confirm bootstrap state and signing posture.",
+            "Open /health, /ops/runtime-scorecard, /ops/service-brief, and /ops/architecture-pack to confirm bootstrap state and signing posture.",
             "Open /ops/export-verification-pack before approving any signed verification bundle.",
             "Open /ops/offline-deployment-pack before approving shared workstation rollout.",
             "Run /ops/readiness and inspect failed checks before processing regulated spreadsheets.",
@@ -1187,8 +1187,8 @@ def _review_pack_payload() -> dict[str, Any]:
                 "why": "Summarizes roles, readiness posture, and trust boundary before processing.",
             },
             {
-                "label": "Review Pack",
-                "path": "/ops/review-pack",
+                "label": "Architecture Pack",
+                "path": "/ops/architecture-pack",
                 "why": "Packages approval gate, boundary, artifacts, and review sequence in one payload.",
             },
             {
@@ -1216,7 +1216,7 @@ def _review_pack_payload() -> dict[str, Any]:
             "health": "/health",
             "runtime_scorecard": "/ops/runtime-scorecard",
             "service_brief": "/ops/service-brief",
-            "review_pack": "/ops/review-pack",
+            "architecture_pack": "/ops/architecture-pack",
             "export_verification_pack": "/ops/export-verification-pack",
             "offline_deployment_pack": "/ops/offline-deployment-pack",
             "template_drift_preview": "/ops/template-drift-preview",
@@ -1295,7 +1295,7 @@ def _runtime_scorecard_payload() -> dict[str, Any]:
             "template_drift_preview": "/ops/template-drift-preview",
             "export_verification_pack": "/ops/export-verification-pack",
             "offline_deployment_pack": "/ops/offline-deployment-pack",
-            "review_pack": "/ops/review-pack",
+            "architecture_pack": "/ops/architecture-pack",
             "readiness": "/ops/readiness",
             "audit_summary": "/ops/audit/summary",
         },
@@ -1450,7 +1450,7 @@ def health() -> dict:
             else (
                 "Verify Ollama reachability from /ops/readiness before running LLM cleanup."
                 if settings.enable_llm
-                else "Review /ops/review-pack and run /ops/readiness before processing regulated spreadsheets."
+                else "Review /ops/architecture-pack and run /ops/readiness before processing regulated spreadsheets."
             )
         ),
     }
@@ -1494,7 +1494,7 @@ def health() -> dict:
             "export-verification-pack-surface",
             "offline-deployment-pack-surface",
             "process-report-schema",
-            "review-pack-surface",
+            "architecture-pack-surface",
         ],
         "routes": SERVICE_BRIEF_ROUTES,
         "links": {
@@ -1504,7 +1504,7 @@ def health() -> dict:
             "template_drift_preview": "/ops/template-drift-preview",
             "export_verification_pack": "/ops/export-verification-pack",
             "offline_deployment_pack": "/ops/offline-deployment-pack",
-            "review_pack": "/ops/review-pack",
+            "architecture_pack": "/ops/architecture-pack",
             "process_schema": "/ops/schema/process-report",
             "login": "/auth/login",
             "audit_summary": "/ops/audit/summary",
@@ -1538,9 +1538,9 @@ def offline_deployment_pack() -> dict[str, Any]:
     return _offline_deployment_pack_payload()
 
 
-@app.get("/ops/review-pack")
-def review_pack() -> dict[str, Any]:
-    return _review_pack_payload()
+@app.get("/ops/architecture-pack")
+def architecture_pack() -> dict[str, Any]:
+    return _architecture_pack_payload()
 
 
 @app.get("/ops/schema/process-report")

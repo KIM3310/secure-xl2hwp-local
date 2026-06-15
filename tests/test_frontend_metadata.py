@@ -4,7 +4,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 INDEX_HTML = ROOT / "site" / "index.html"
-PREVIEW_CARD = ROOT / "site" / "review-pack.svg"
+PREVIEW_CARD = ROOT / "site" / "architecture-pack.svg"
 
 
 def test_frontend_metadata_contract() -> None:

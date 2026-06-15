@@ -72,19 +72,19 @@ def test_health_includes_auth_bootstrap_state() -> None:
     assert payload["readiness_contract"] == "secure-xl2hwp-service-brief-v1"
     assert payload["report_contract"]["schema"] == "secure-xl2hwp-process-report-v1"
     assert payload["links"]["service_brief"] == "/ops/service-brief"
-    assert payload["links"]["review_pack"] == "/ops/review-pack"
+    assert payload["links"]["architecture_pack"] == "/ops/architecture-pack"
     assert payload["links"]["process_schema"] == "/ops/schema/process-report"
     assert "/ops/service-brief" in payload["routes"]
     assert "/ops/runtime-scorecard" in payload["routes"]
     assert "/ops/template-drift-preview" in payload["routes"]
     assert "/ops/export-verification-pack" in payload["routes"]
     assert "/ops/offline-deployment-pack" in payload["routes"]
-    assert "/ops/review-pack" in payload["routes"]
+    assert "/ops/architecture-pack" in payload["routes"]
     assert "service-brief-surface" in payload["capabilities"]
     assert "runtime-scorecard-surface" in payload["capabilities"]
     assert "export-verification-pack-surface" in payload["capabilities"]
     assert "offline-deployment-pack-surface" in payload["capabilities"]
-    assert "review-pack-surface" in payload["capabilities"]
+    assert "architecture-pack-surface" in payload["capabilities"]
 
 
 def test_service_brief_and_process_schema_shape() -> None:
@@ -113,20 +113,20 @@ def test_service_brief_and_process_schema_shape() -> None:
     assert scorecard_payload["links"]["export_verification_pack"] == "/ops/export-verification-pack"
     assert scorecard_payload["links"]["offline_deployment_pack"] == "/ops/offline-deployment-pack"
 
-    review_response = client.get("/ops/review-pack")
+    review_response = client.get("/ops/architecture-pack")
     assert review_response.status_code == 200
     review_payload = review_response.json()
-    assert review_payload["readiness_contract"] == "secure-xl2hwp-review-pack-v1"
-    assert review_payload["links"]["review_pack"] == "/ops/review-pack"
+    assert review_payload["readiness_contract"] == "secure-xl2hwp-architecture-pack-v1"
+    assert review_payload["links"]["architecture_pack"] == "/ops/architecture-pack"
     assert review_payload["links"]["verify_bundle"] == "/ops/audit/export/verify"
     assert review_payload["links"]["template_drift_preview"] == "/ops/template-drift-preview"
     assert review_payload["links"]["export_verification_pack"] == "/ops/export-verification-pack"
     assert review_payload["links"]["offline_deployment_pack"] == "/ops/offline-deployment-pack"
     assert review_payload["links"]["runtime_scorecard"] == "/ops/runtime-scorecard"
-    assert "/ops/runtime-scorecard" in review_payload["proof_bundle"]["review_endpoints"]
-    assert "/ops/export-verification-pack" in review_payload["proof_bundle"]["review_endpoints"]
-    assert "/ops/offline-deployment-pack" in review_payload["proof_bundle"]["review_endpoints"]
-    assert "/ops/review-pack" in review_payload["proof_bundle"]["review_endpoints"]
+    assert "/ops/runtime-scorecard" in review_payload["proof_bundle"]["architecture_endpoints"]
+    assert "/ops/export-verification-pack" in review_payload["proof_bundle"]["architecture_endpoints"]
+    assert "/ops/offline-deployment-pack" in review_payload["proof_bundle"]["architecture_endpoints"]
+    assert "/ops/architecture-pack" in review_payload["proof_bundle"]["architecture_endpoints"]
     assert (
         review_payload["proof_bundle"]["export_verification_contract"]
         == "secure-xl2hwp-export-verification-pack-v1"

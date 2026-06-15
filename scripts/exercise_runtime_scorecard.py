@@ -54,7 +54,7 @@ def collect_runtime_proof() -> dict[str, dict[str, Any]]:
             "service_brief": _get_json(client, "/ops/service-brief"),
             "runtime_scorecard": _get_json(client, "/ops/runtime-scorecard"),
             "export_verification_pack": _get_json(client, "/ops/export-verification-pack"),
-            "review_pack": _get_json(client, "/ops/review-pack"),
+            "architecture_pack": _get_json(client, "/ops/architecture-pack"),
         }
 
 
@@ -67,7 +67,7 @@ def build_runtime_proof_snapshot(
     brief = payloads["service_brief"]
     scorecard = payloads["runtime_scorecard"]
     export_verification_pack = payloads["export_verification_pack"]
-    review_pack = payloads["review_pack"]
+    architecture_pack = payloads["architecture_pack"]
 
     snapshot: dict[str, Any] = {
         "contract": scorecard["readiness_contract"],
@@ -80,12 +80,12 @@ def build_runtime_proof_snapshot(
             "service_brief": brief["readiness_contract"],
             "runtime_scorecard": scorecard["readiness_contract"],
             "export_verification_pack": export_verification_pack["schema"],
-            "review_pack": review_pack["readiness_contract"],
+            "architecture_pack": architecture_pack["readiness_contract"],
         },
         "proof_assets": [
             {"label": item["label"], "path": item["path"]} for item in brief["proof_assets"]
         ],
-        "review_endpoints": review_pack["proof_bundle"]["review_endpoints"],
+        "architecture_endpoints": architecture_pack["proof_bundle"]["architecture_endpoints"],
         "links": {
             "health": "/health",
             **scorecard["links"],

@@ -197,7 +197,7 @@ const I18N = {
     "serviceBrief.trustBoundary": "Trust boundary",
     "serviceBrief.proofAssets": "Proof assets",
     "serviceBrief.watchouts": "Watchouts",
-    "reviewPack.title": "Review pack",
+    "reviewPack.title": "Architecture pack",
     "reviewPack.approvalGate": "Approval gate",
     "reviewPack.proofBundle": "Proof bundle",
     "reviewPack.boundary": "Boundary",
@@ -344,7 +344,7 @@ const I18N = {
     "toast.verifySelect": "Select both payload and signature files.",
     "toast.bootstrapRefreshed": "Admin bootstrap status refreshed.",
     "toast.serviceBriefFail": "Failed to fetch service brief",
-    "toast.reviewPackFail": "Failed to fetch review pack",
+    "toast.reviewPackFail": "Failed to fetch architecture pack",
     "health.ok": "OK",
     "health.unavailable": "Unavailable",
     "health.label": "Health",
@@ -1177,7 +1177,7 @@ function renderWorkflowLaunchpad() {
   const steps = bootstrapRequired
     ? [
         "Create the first local admin before demoing any secure processing route.",
-        "Open the service brief and review pack so the trust boundary is visible before login claims.",
+        "Open the service brief and architecture pack so the trust boundary is visible before login claims.",
         "After bootstrap, log in and run one path/file job before talking about signed export evidence.",
       ]
     : hasUser
@@ -1186,7 +1186,7 @@ function renderWorkflowLaunchpad() {
           resultReady
             ? "The first run already exists: copy the signed handoff or verify snapshot before expanding scope."
             : `Run one ${state.mode === "file" ? "file upload" : "path mode"} job so the first service workflow becomes tangible on-screen.`,
-          "End on review-pack routes and signed verification instead of describing the pipeline abstractly.",
+          "End on architecture-pack routes and signed verification instead of describing the pipeline abstractly.",
         ]
       : [
           "Log in with a local operator account before running any secure route.",
@@ -1197,10 +1197,10 @@ function renderWorkflowLaunchpad() {
   const routes = reviewPack.links
     ? [
         reviewPack.links.template_drift_preview || "/ops/template-drift-preview",
-        reviewPack.links.review_pack || "/ops/review-pack",
+        reviewPack.links.architecture_pack || "/ops/architecture-pack",
         reviewPack.links.verify_bundle || "/ops/audit/export/verify",
       ]
-    : ["/ops/service-brief", "/ops/template-drift-preview", "/ops/review-pack"];
+    : ["/ops/service-brief", "/ops/template-drift-preview", "/ops/architecture-pack"];
 
   els.workflowLaunchpadStatus.textContent = status;
   if (els.workflowLaunchpadGate) els.workflowLaunchpadGate.textContent = gate;
@@ -1210,8 +1210,8 @@ function renderWorkflowLaunchpad() {
   els.workflowLaunchpadFallback.textContent = bootstrapRequired
     ? "When no local admin exists, the UI keeps the workflow honest: bootstrap first, processing second."
     : reviewPack.headline
-      ? "If a downstream review surface degrades, stay on service brief + review pack routes and avoid pretending the signed handoff already exists."
-      : "If review-pack data is unavailable, keep the service brief and template-drift route visible while the secure runtime catches up.";
+      ? "If a downstream architecture surface degrades, stay on service brief + architecture pack routes and avoid pretending the signed handoff already exists."
+      : "If architecture-pack data is unavailable, keep the service brief and template-drift route visible while the secure runtime catches up.";
 }
 
 function drawEmpty(canvas, label) {
@@ -1524,7 +1524,7 @@ async function copyServiceBriefSnapshot() {
 async function copyReviewPackSnapshot() {
   const payload = state.lastReviewPack || {};
   const lines = [
-    "secure-xl2hwp-local review pack",
+    "secure-xl2hwp-local architecture pack",
     `Headline: ${payload.headline || els.reviewPackHeadline.textContent || "-"}`,
     `Gate: ${els.reviewPackGate.textContent || "-"}`,
     `Proof: ${els.reviewPackProof.textContent || "-"}`,
@@ -1541,8 +1541,8 @@ async function copyReviewPackSnapshot() {
 
 async function copyReviewRoutesSnapshot() {
   const payload = state.lastReviewPack || {};
-  const reviewEndpoints = payload.proof_bundle?.review_endpoints || [];
-  const lines = ["secure-xl2hwp-local review routes", ...reviewEndpoints.map((item) => `- ${item}`)];
+  const architectureEndpoints = payload.proof_bundle?.architecture_endpoints || [];
+  const lines = ["secure-xl2hwp-local architecture routes", ...architectureEndpoints.map((item) => `- ${item}`)];
   await copyTextValue(lines.join("\n"));
 }
 
@@ -1723,7 +1723,7 @@ async function refreshServiceBrief() {
 
 async function refreshReviewPack() {
   try {
-    const { data } = await fetchJSON("/ops/review-pack", { method: "GET" });
+    const { data } = await fetchJSON("/ops/architecture-pack", { method: "GET" });
     renderReviewPack(data || null);
   } catch (_err) {
     renderReviewPack(null);

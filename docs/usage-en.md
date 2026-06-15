@@ -28,7 +28,7 @@ Edit `.env` and set strong values:
 - `AUTH_PASSWORD_PEPPER`
 - `EXPORT_SIGNING_KEY`
 
-Also review policy settings:
+Also architecture policy settings:
 - `PROCESS_ALLOWED_ROLES`
 - `AUTH_LOGIN_MAX_FAILURES`, `AUTH_LOGIN_WINDOW_SECONDS`, `AUTH_LOGIN_LOCK_SECONDS`
 - `ALLOWED_INPUT_BASE_DIR`, `ALLOWED_OUTPUT_BASE_DIR`, `ALLOWED_TEMPLATE_BASE_DIR`
@@ -69,7 +69,7 @@ Open UI:
 1. Login with your admin account.
 2. Choose `Path Mode` or `File Mode`.
 3. Run the pipeline.
-4. Review metrics, artifacts, response JSON.
+4. Architecture metrics, artifacts, response JSON.
 5. Check audit/ops panels.
 6. Export signed bundles and verify signatures.
 
