@@ -12,7 +12,7 @@ A local-first Korean document automation tool that turns repetitive Excel-to-Han
 |---|---|
 | Audience | Korean back-office teams, public-sector-adjacent operators, legal/admin teams, and secure internal workflow owners. |
 | Review path | Validate the demo, README, architecture notes, and quality gate before deeper workflow review. |
-| Review signal | JWT auth, signed exports, audit logs, local operation, structured output, and Hancom-focused workflow design. |
+| Architecture signal | JWT auth, signed exports, audit logs, local operation, structured output, and Hancom-focused workflow design. |
 | Safety boundary | Designed for controlled local use; real deployments need approved templates, retention rules, and workstation policies. |
 | Fast proof | Run the backend checks and generate a sample signed export from staged input data. |
 
@@ -162,6 +162,10 @@ This repository includes a neutral cloud and AI engineering blueprint that maps 
 ## Enterprise Productization
 
 - [Product operating model](docs/product-operating-model.md) defines the reviewer, trust boundary, trust boundary, operating checks, and service path for this repository.
+
+## System Architecture
+
+- [System architecture](docs/system-architecture.md) maps the runtime boundary, data/control flow, cloud or local deployment surface, and operating assumptions for this repository.
 
 ## Service Architecture
 
