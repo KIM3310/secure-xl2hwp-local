@@ -8,7 +8,7 @@ version = "1.0.0"
 description = "Local-first secure Excel extraction/cleanup to Hancom payload workflow with SpecKit + CoT pipeline"
 readme = "README.md"
 requires-python = ">=3.9"
-authors = [{name = "Doeon Kim", email = "ehdjs1351@gmail.com"}]
+authors = [{name = "Doeon Kim"}]
 license = "MIT"
 keywords = ["fastapi", "air-gapped", "local-first", "hancom", "document-automation", "speckit"]
 classifiers = [
