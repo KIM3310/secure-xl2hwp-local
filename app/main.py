@@ -152,7 +152,7 @@ login_attempt_guard = LoginAttemptGuard(
 
 PROCESS_REPORT_SCHEMA = "secure-xl2hwp-process-report-v1"
 SERVICE_BRIEF_CONTRACT = "secure-xl2hwp-service-brief-v1"
-REVIEW_PACK_CONTRACT = "secure-xl2hwp-architecture-pack-v1"
+ARCHITECTURE_PACK_CONTRACT = "secure-xl2hwp-architecture-pack-v1"
 RUNTIME_SCORECARD_CONTRACT = "secure-xl2hwp-runtime-scorecard-v1"
 SERVICE_BRIEF_ROUTES = [
     "/health",
@@ -210,7 +210,7 @@ def _template_drift_preview_payload() -> dict[str, Any]:
             "affected_fields": affected_fields,
             "contract_dataset": contract.dataset,
         },
-        "review_actions": [
+        "architecture_actions": [
             "Review missing placeholder rules before exporting regulated templates.",
             "Treat missing table placeholders as re-review blockers, not cosmetic gaps.",
             "Verify signed export bundles only after template drift items are resolved.",
@@ -890,16 +890,16 @@ def _service_brief_payload() -> dict[str, Any]:
             "login_guard_max_failures": login_attempt_guard.max_failures,
             "service_routes": len(SERVICE_BRIEF_ROUTES),
         },
-        "review_flow": [
+        "architecture_flow": [
             "Open /health to confirm auth bootstrap state, signing posture, and path boundaries.",
-            "Read /ops/runtime-scorecard and /ops/service-brief before operator onboarding to confirm review flow, operating posture, and trust boundary.",
+            "Read /ops/runtime-scorecard and /ops/service-brief before operator onboarding to confirm architecture flow, operating posture, and trust boundary.",
             "Inspect /ops/template-drift-preview before changing templates or exporting regulated documents.",
             "Open /ops/export-verification-pack before any export handoff that depends on signed bundles.",
             "Open /ops/offline-deployment-pack before shared workstation rollout or constrained-environment delivery.",
             "Run /ops/readiness before processing regulated spreadsheets or enabling LLM cleanup.",
             "Only then use /process/path or /process/file and archive signed audit exports for traceability.",
         ],
-        "two_minute_review": [
+        "two_minute_architecture": [
             "Open /health and confirm bootstrap state, signing posture, and path guardrails.",
             "Open /ops/runtime-scorecard and confirm runtime score, audit event count, and latest process posture.",
             "Open /ops/service-brief and verify allowed roles, failed checks, and trust boundary.",
@@ -992,7 +992,7 @@ def _export_verification_pack_payload() -> dict[str, Any]:
                 "independent verify endpoint passes",
             ],
         },
-        "review_actions": [
+        "architecture_actions": [
             "Download the signed summary bundle only after the verification pack is healthy.",
             "Treat a broken hash chain as a export handoff blocker, not a warning.",
             "Keep signature verification and signed bundle export in the same walkthrough for regulated delivery.",
@@ -1041,7 +1041,7 @@ def _offline_deployment_pack_payload() -> dict[str, Any]:
                 "template_base_dir": settings.allowed_template_base_dir,
                 "audit_log_dir": settings.audit_log_dir,
             },
-            "required_review_routes": [
+            "required_architecture_routes": [
                 "/health",
                 "/ops/service-brief",
                 "/ops/runtime-scorecard",
@@ -1064,11 +1064,11 @@ def _offline_deployment_pack_payload() -> dict[str, Any]:
                 if auth_bootstrap["required"]
                 else f"{failed_checks} readiness checks still failing"
             ),
-            "next_review_gate": (
+            "next_architecture_gate": (
                 "Run /ops/readiness and verify /ops/export-verification-pack before shared rollout."
             ),
         },
-        "review_actions": [
+        "architecture_actions": [
             "Keep offline rollout tied to the same signed export and audit surfaces used for export handoff.",
             "Treat auth bootstrap and readiness failures as rollout blockers for shared operators.",
             "Use this pack to document workstation trust boundaries before enabling regulated processing.",
@@ -1098,7 +1098,7 @@ def _architecture_pack_payload() -> dict[str, Any]:
         "status": brief["status"],
         "service": "secure-xl2hwp-local",
         "generated_at_utc": datetime.now(timezone.utc).isoformat(),
-        "readiness_contract": REVIEW_PACK_CONTRACT,
+        "readiness_contract": ARCHITECTURE_PACK_CONTRACT,
         "headline": (
             "Architecture brief for a local spreadsheet-to-HWP pipeline: auth bootstrap, signed export evidence, "
             "and regulated path boundaries in one surface."
@@ -1154,7 +1154,7 @@ def _architecture_pack_payload() -> dict[str, Any]:
             "Signature verification endpoint for independent bundle verification.",
             "Offline deployment pack for workstation rollout and shared-operator readiness.",
         ],
-        "review_sequence": [
+        "architecture_sequence": [
             "Open /health, /ops/runtime-scorecard, and /ops/service-brief to confirm bootstrap state, role posture, signing mode, and recent audit health.",
             "Run /ops/readiness before enabling LLM cleanup or onboarding shared operators.",
             "Inspect /ops/export-verification-pack before trusting signed bundle delivery posture.",
@@ -1162,7 +1162,7 @@ def _architecture_pack_payload() -> dict[str, Any]:
             "Inspect /ops/audit/summary and the signed export bundles together so the export handoff reads like evidence, not just logs.",
             "Verify exported bundle integrity with /ops/audit/export/verify before moving across trust boundaries.",
         ],
-        "two_minute_review": [
+        "two_minute_architecture": [
             "Open /health, /ops/runtime-scorecard, /ops/service-brief, and /ops/architecture-pack to confirm bootstrap state and signing posture.",
             "Open /ops/export-verification-pack before approving any signed verification bundle.",
             "Open /ops/offline-deployment-pack before approving shared workstation rollout.",
@@ -1189,7 +1189,7 @@ def _architecture_pack_payload() -> dict[str, Any]:
             {
                 "label": "Architecture Pack",
                 "path": "/ops/architecture-pack",
-                "why": "Packages approval gate, boundary, artifacts, and review sequence in one payload.",
+                "why": "Packages approval gate, boundary, artifacts, and architecture sequence in one payload.",
             },
             {
                 "label": "Export Verification Pack",
@@ -1278,7 +1278,7 @@ def _runtime_scorecard_payload() -> dict[str, Any]:
                 "broken": audit_summary.get("hash_chain_broken", 0),
             },
         },
-        "fastest_review_path": [
+        "fastest_architecture_path": [
             "/health",
             "/ops/runtime-scorecard",
             "/ops/service-brief",
@@ -1490,7 +1490,7 @@ def health() -> dict:
             "llm-assisted-cleanup",
             "service-brief-surface",
             "runtime-scorecard-surface",
-            "template-drift-preview-surface",
+            "template-drift-parchitecture-surface",
             "export-verification-pack-surface",
             "offline-deployment-pack-surface",
             "process-report-schema",

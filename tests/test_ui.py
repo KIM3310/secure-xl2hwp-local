@@ -35,10 +35,10 @@ def test_ui_home_page() -> None:
     assert "bootstrapYamlTemplate" in response.text
     assert "briefHeadline" in response.text
     assert "briefSchema" in response.text
-    assert "briefReviewFlow" in response.text
+    assert "briefArchitectureFlow" in response.text
     assert "briefTrustBoundary" in response.text
-    assert "reviewPackHeadline" in response.text
-    assert "reviewPackSequence" in response.text
+    assert "architecturePackHeadline" in response.text
+    assert "architecturePackSequence" in response.text
     assert "workflowLaunchpadStatus" in response.text
     assert "workflowLaunchpadGate" in response.text
     assert "workflowLaunchpadNextStep" in response.text
@@ -93,9 +93,9 @@ def test_service_brief_and_process_schema_shape() -> None:
     brief_payload = brief_response.json()
     assert brief_payload["readiness_contract"] == "secure-xl2hwp-service-brief-v1"
     assert brief_payload["report_contract"]["schema"] == "secure-xl2hwp-process-report-v1"
-    assert isinstance(brief_payload["review_flow"], list)
+    assert isinstance(brief_payload["architecture_flow"], list)
     assert isinstance(brief_payload["trust_boundary"], list)
-    assert len(brief_payload["two_minute_review"]) == 7
+    assert len(brief_payload["two_minute_architecture"]) == 7
     assert brief_payload["proof_assets"][0]["path"] == "/health"
     assert brief_payload["proof_assets"][1]["path"] == "/ops/runtime-scorecard"
     assert any(item["path"] == "/ops/template-drift-preview" for item in brief_payload["proof_assets"])
@@ -138,8 +138,8 @@ def test_service_brief_and_process_schema_shape() -> None:
     assert review_payload["handoff_bundle"]["ready_for_handoff"] in {True, False}
     assert review_payload["handoff_bundle"]["signed_bundle_path"] == "/ops/audit/export/summary.bundle.zip"
     assert review_payload["handoff_bundle"]["verify_route"] == "/ops/audit/export/verify"
-    assert isinstance(review_payload["review_sequence"], list)
-    assert len(review_payload["two_minute_review"]) == 6
+    assert isinstance(review_payload["architecture_sequence"], list)
+    assert len(review_payload["two_minute_architecture"]) == 6
     assert review_payload["proof_assets"][0]["label"] == "Runtime Scorecard"
     assert "why" in review_payload["proof_assets"][0]
 
@@ -155,7 +155,7 @@ def test_service_brief_and_process_schema_shape() -> None:
     deployment_payload = deployment_response.json()
     assert deployment_payload["schema"] == "secure-xl2hwp-offline-deployment-pack-v1"
     assert deployment_payload["links"]["offline_deployment_pack"] == "/ops/offline-deployment-pack"
-    assert deployment_payload["deployment_contract"]["required_review_routes"][-1] == "/ops/readiness"
+    assert deployment_payload["deployment_contract"]["required_architecture_routes"][-1] == "/ops/readiness"
 
     drift_response = client.get("/ops/template-drift-preview")
     assert drift_response.status_code == 200

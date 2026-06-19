@@ -7,7 +7,7 @@ const I18N = {
     "app.tagline": "엑셀 정제부터 한컴 문서화까지, 폐쇄망 친화형 자동화 스튜디오",
     "serviceBrief.kicker": "운영 계약",
     "serviceBrief.title": "서비스 브리프",
-    "serviceBrief.subtitle": "운영 전 trust boundary, review flow, 처리 계약을 먼저 확인합니다.",
+    "serviceBrief.subtitle": "운영 전 trust boundary, architecture flow, 처리 계약을 먼저 확인합니다.",
     "serviceBrief.loading": "불러오는 중...",
     "serviceBrief.unavailable": "서비스 브리프를 불러오지 못했습니다.",
     "serviceBrief.schema": "처리 스키마",
@@ -15,19 +15,19 @@ const I18N = {
     "serviceBrief.signing": "서명 모드",
     "serviceBrief.failedChecks": "실패 점검",
     "serviceBrief.roles": "처리 역할",
-    "serviceBrief.reviewFlow": "검토 흐름",
-    "serviceBrief.twoMinuteReview": "2분 검토 경로",
+    "serviceBrief.architectureFlow": "검토 흐름",
+    "serviceBrief.twoMinuteArchitecture": "2분 아키텍처 경로",
     "serviceBrief.trustBoundary": "신뢰 경계",
     "serviceBrief.proofAssets": "증거 자산",
     "serviceBrief.watchouts": "주의점",
-    "reviewPack.title": "리뷰 패키지",
-    "reviewPack.approvalGate": "승인 게이트",
-    "reviewPack.proofBundle": "증거 번들",
-    "reviewPack.boundary": "경계",
-    "reviewPack.artifacts": "검토 산출물",
-    "reviewPack.twoMinuteReview": "2분 검토 경로",
-    "reviewPack.sequence": "검토 순서",
-    "reviewPack.proofAssets": "증거 자산",
+    "architecturePack.title": "리뷰 패키지",
+    "architecturePack.approvalGate": "승인 게이트",
+    "architecturePack.proofBundle": "증거 번들",
+    "architecturePack.boundary": "경계",
+    "architecturePack.artifacts": "검토 산출물",
+    "architecturePack.twoMinuteArchitecture": "2분 아키텍처 경로",
+    "architecturePack.sequence": "검토 순서",
+    "architecturePack.proofAssets": "증거 자산",
     "workflow.title": "첫 번째 운영 워크플로우",
     "workflow.fallbackLabel": "의도된 fallback",
     "control.language": "언어",
@@ -167,7 +167,7 @@ const I18N = {
     "toast.verifySelect": "원본 파일과 서명 파일을 모두 선택하세요.",
     "toast.bootstrapRefreshed": "관리자 초기 설정 상태를 다시 확인했습니다.",
     "toast.serviceBriefFail": "서비스 브리프 조회 실패",
-    "toast.reviewPackFail": "리뷰 패키지 조회 실패",
+    "toast.architecturePackFail": "리뷰 패키지 조회 실패",
     "health.ok": "정상",
     "health.unavailable": "상태 확인 실패",
     "health.label": "상태",
@@ -192,19 +192,19 @@ const I18N = {
     "serviceBrief.signing": "Signing mode",
     "serviceBrief.failedChecks": "Failed checks",
     "serviceBrief.roles": "Process roles",
-    "serviceBrief.reviewFlow": "Review flow",
-    "serviceBrief.twoMinuteReview": "2-minute review",
+    "serviceBrief.architectureFlow": "Architecture flow",
+    "serviceBrief.twoMinuteArchitecture": "2-minute architecture path",
     "serviceBrief.trustBoundary": "Trust boundary",
     "serviceBrief.proofAssets": "Proof assets",
     "serviceBrief.watchouts": "Watchouts",
-    "reviewPack.title": "Architecture pack",
-    "reviewPack.approvalGate": "Approval gate",
-    "reviewPack.proofBundle": "Proof bundle",
-    "reviewPack.boundary": "Boundary",
-    "reviewPack.artifacts": "Artifacts",
-    "reviewPack.twoMinuteReview": "2-minute review",
-    "reviewPack.sequence": "Review sequence",
-    "reviewPack.proofAssets": "Proof assets",
+    "architecturePack.title": "Architecture pack",
+    "architecturePack.approvalGate": "Approval gate",
+    "architecturePack.proofBundle": "Proof bundle",
+    "architecturePack.boundary": "Boundary",
+    "architecturePack.artifacts": "Artifacts",
+    "architecturePack.twoMinuteArchitecture": "2-minute architecture path",
+    "architecturePack.sequence": "Architecture sequence",
+    "architecturePack.proofAssets": "Proof assets",
     "workflow.title": "First secure workflow",
     "workflow.fallbackLabel": "Intentional fallback",
     "control.language": "Language",
@@ -344,7 +344,7 @@ const I18N = {
     "toast.verifySelect": "Select both payload and signature files.",
     "toast.bootstrapRefreshed": "Admin bootstrap status refreshed.",
     "toast.serviceBriefFail": "Failed to fetch service brief",
-    "toast.reviewPackFail": "Failed to fetch architecture pack",
+    "toast.architecturePackFail": "Failed to fetch architecture pack",
     "health.ok": "OK",
     "health.unavailable": "Unavailable",
     "health.label": "Health",
@@ -391,7 +391,7 @@ const state = {
   lastAnomalies: null,
   lastReadiness: null,
   lastServiceBrief: null,
-  lastReviewPack: null,
+  lastArchitecturePack: null,
   lastVerifyResult: null,
   verifyStatusKey: "verify.idle",
   verifyStatusTone: "neutral",
@@ -406,19 +406,19 @@ const els = {
   briefSigningMode: document.getElementById("briefSigningMode"),
   briefFailedChecks: document.getElementById("briefFailedChecks"),
   briefRoles: document.getElementById("briefRoles"),
-  briefReviewFlow: document.getElementById("briefReviewFlow"),
-  briefTwoMinuteReview: document.getElementById("briefTwoMinuteReview"),
+  briefArchitectureFlow: document.getElementById("briefArchitectureFlow"),
+  briefTwoMinuteArchitecture: document.getElementById("briefTwoMinuteArchitecture"),
   briefTrustBoundary: document.getElementById("briefTrustBoundary"),
   briefProofAssets: document.getElementById("briefProofAssets"),
   briefWatchouts: document.getElementById("briefWatchouts"),
-  reviewPackHeadline: document.getElementById("reviewPackHeadline"),
-  reviewPackGate: document.getElementById("reviewPackGate"),
-  reviewPackProof: document.getElementById("reviewPackProof"),
-  reviewPackBoundary: document.getElementById("reviewPackBoundary"),
-  reviewPackArtifacts: document.getElementById("reviewPackArtifacts"),
-  reviewPackTwoMinuteReview: document.getElementById("reviewPackTwoMinuteReview"),
-  reviewPackSequence: document.getElementById("reviewPackSequence"),
-  reviewPackProofAssets: document.getElementById("reviewPackProofAssets"),
+  architecturePackHeadline: document.getElementById("architecturePackHeadline"),
+  architecturePackGate: document.getElementById("architecturePackGate"),
+  architecturePackProof: document.getElementById("architecturePackProof"),
+  architecturePackBoundary: document.getElementById("architecturePackBoundary"),
+  architecturePackArtifacts: document.getElementById("architecturePackArtifacts"),
+  architecturePackTwoMinuteArchitecture: document.getElementById("architecturePackTwoMinuteArchitecture"),
+  architecturePackSequence: document.getElementById("architecturePackSequence"),
+  architecturePackProofAssets: document.getElementById("architecturePackProofAssets"),
   workflowLaunchpadStatus: document.getElementById("workflowLaunchpadStatus"),
   workflowLaunchpadGate: document.getElementById("workflowLaunchpadGate"),
   workflowLaunchpadNextStep: document.getElementById("workflowLaunchpadNextStep"),
@@ -426,8 +426,8 @@ const els = {
   workflowLaunchpadFallback: document.getElementById("workflowLaunchpadFallback"),
   workflowLaunchpadRoutes: document.getElementById("workflowLaunchpadRoutes"),
   copyServiceBriefBtn: document.getElementById("copyServiceBriefBtn"),
-  copyReviewRoutesBtn: document.getElementById("copyReviewRoutesBtn"),
-  copyReviewPackBtn: document.getElementById("copyReviewPackBtn"),
+  copyArchitectureRoutesBtn: document.getElementById("copyArchitectureRoutesBtn"),
+  copyArchitecturePackBtn: document.getElementById("copyArchitecturePackBtn"),
   copyOpsViewBtn: document.getElementById("copyOpsViewBtn"),
   resetOpsFiltersBtn: document.getElementById("resetOpsFiltersBtn"),
   copyOpsSnapshotBtn: document.getElementById("copyOpsSnapshotBtn"),
@@ -1082,8 +1082,8 @@ function renderServiceBrief(payload = null) {
     els.briefSigningMode.textContent = "-";
     els.briefFailedChecks.textContent = "-";
     renderBriefList(els.briefRoles, []);
-    renderBriefList(els.briefReviewFlow, []);
-    renderBriefList(els.briefTwoMinuteReview, []);
+    renderBriefList(els.briefArchitectureFlow, []);
+    renderBriefList(els.briefTwoMinuteArchitecture, []);
     renderBriefList(els.briefTrustBoundary, []);
     renderBriefList(els.briefProofAssets, []);
     renderBriefList(els.briefWatchouts, []);
@@ -1104,26 +1104,26 @@ function renderServiceBrief(payload = null) {
   els.briefSigningMode.textContent = payload.signing_mode || "-";
   els.briefFailedChecks.textContent = String(failedChecks);
   renderBriefList(els.briefRoles, payload.allowed_process_roles || []);
-  renderBriefList(els.briefReviewFlow, payload.review_flow || []);
-  renderBriefList(els.briefTwoMinuteReview, payload.two_minute_review || []);
+  renderBriefList(els.briefArchitectureFlow, payload.architecture_flow || []);
+  renderBriefList(els.briefTwoMinuteArchitecture, payload.two_minute_architecture || []);
   renderBriefList(els.briefTrustBoundary, payload.trust_boundary || []);
   renderBriefList(els.briefProofAssets, formatProofAssets(payload.proof_assets || []));
   renderBriefList(els.briefWatchouts, payload.watchouts || []);
   renderWorkflowLaunchpad();
 }
 
-function renderReviewPack(payload = null) {
-  state.lastReviewPack = payload || null;
+function renderArchitecturePack(payload = null) {
+  state.lastArchitecturePack = payload || null;
 
   if (!payload) {
-    els.reviewPackHeadline.textContent = t("serviceBrief.unavailable");
-    els.reviewPackGate.textContent = "-";
-    els.reviewPackProof.textContent = "-";
-    els.reviewPackBoundary.textContent = "-";
-    renderBriefList(els.reviewPackArtifacts, []);
-    renderBriefList(els.reviewPackTwoMinuteReview, []);
-    renderBriefList(els.reviewPackSequence, []);
-    renderBriefList(els.reviewPackProofAssets, []);
+    els.architecturePackHeadline.textContent = t("serviceBrief.unavailable");
+    els.architecturePackGate.textContent = "-";
+    els.architecturePackProof.textContent = "-";
+    els.architecturePackBoundary.textContent = "-";
+    renderBriefList(els.architecturePackArtifacts, []);
+    renderBriefList(els.architecturePackTwoMinuteArchitecture, []);
+    renderBriefList(els.architecturePackSequence, []);
+    renderBriefList(els.architecturePackProofAssets, []);
     return;
   }
 
@@ -1139,14 +1139,14 @@ function renderReviewPack(payload = null) {
     ? "verify route ready"
     : handoffBundle.blocking_reason || "handoff blocked";
 
-  els.reviewPackHeadline.textContent = payload.headline || "-";
-  els.reviewPackGate.textContent = gateText;
-  els.reviewPackProof.textContent = `${proofBundle.signed_export_mode || "unknown"} / ${handoffText} / ${failedChecks} failed checks`;
-  els.reviewPackBoundary.textContent = targetBoundary.output_base_dir || "-";
-  renderBriefList(els.reviewPackArtifacts, payload.artifacts || []);
-  renderBriefList(els.reviewPackTwoMinuteReview, payload.two_minute_review || []);
-  renderBriefList(els.reviewPackSequence, payload.review_sequence || []);
-  renderBriefList(els.reviewPackProofAssets, formatProofAssets(payload.proof_assets || []));
+  els.architecturePackHeadline.textContent = payload.headline || "-";
+  els.architecturePackGate.textContent = gateText;
+  els.architecturePackProof.textContent = `${proofBundle.signed_export_mode || "unknown"} / ${handoffText} / ${failedChecks} failed checks`;
+  els.architecturePackBoundary.textContent = targetBoundary.output_base_dir || "-";
+  renderBriefList(els.architecturePackArtifacts, payload.artifacts || []);
+  renderBriefList(els.architecturePackTwoMinuteArchitecture, payload.two_minute_architecture || []);
+  renderBriefList(els.architecturePackSequence, payload.architecture_sequence || []);
+  renderBriefList(els.architecturePackProofAssets, formatProofAssets(payload.proof_assets || []));
   renderWorkflowLaunchpad();
 }
 
@@ -1154,7 +1154,7 @@ function renderWorkflowLaunchpad() {
   if (!els.workflowLaunchpadStatus) return;
 
   const brief = state.lastServiceBrief || {};
-  const reviewPack = state.lastReviewPack || {};
+  const architecturePack = state.lastArchitecturePack || {};
   const bootstrapRequired = state.authBootstrapRequired;
   const hasUser = Boolean(state.user);
   const resultReady = Boolean(state.lastResult);
@@ -1194,11 +1194,11 @@ function renderWorkflowLaunchpad() {
           "Copy the signed handoff snapshot once the first result is available.",
         ];
 
-  const routes = reviewPack.links
+  const routes = architecturePack.links
     ? [
-        reviewPack.links.template_drift_preview || "/ops/template-drift-preview",
-        reviewPack.links.architecture_pack || "/ops/architecture-pack",
-        reviewPack.links.verify_bundle || "/ops/audit/export/verify",
+        architecturePack.links.template_drift_preview || "/ops/template-drift-preview",
+        architecturePack.links.architecture_pack || "/ops/architecture-pack",
+        architecturePack.links.verify_bundle || "/ops/audit/export/verify",
       ]
     : ["/ops/service-brief", "/ops/template-drift-preview", "/ops/architecture-pack"];
 
@@ -1209,7 +1209,7 @@ function renderWorkflowLaunchpad() {
   renderBriefList(els.workflowLaunchpadRoutes, routes.filter(Boolean));
   els.workflowLaunchpadFallback.textContent = bootstrapRequired
     ? "When no local admin exists, the UI keeps the workflow honest: bootstrap first, processing second."
-    : reviewPack.headline
+    : architecturePack.headline
       ? "If a downstream architecture surface degrades, stay on service brief + architecture pack routes and avoid pretending the signed handoff already exists."
       : "If architecture-pack data is unavailable, keep the service brief and template-drift route visible while the secure runtime catches up.";
 }
@@ -1515,23 +1515,23 @@ async function copyServiceBriefSnapshot() {
     `Auth: ${payload.auth_mode || els.briefAuthMode.textContent || "-"}`,
     `Signing: ${payload.signing_mode || els.briefSigningMode.textContent || "-"}`,
     "",
-    "2-minute review",
-    ...((payload.two_minute_review || []).map((item) => `- ${item}`)),
+    "2-minute architecture path",
+    ...((payload.two_minute_architecture || []).map((item) => `- ${item}`)),
   ];
   await copyTextValue(lines.join("\n"));
 }
 
-async function copyReviewPackSnapshot() {
-  const payload = state.lastReviewPack || {};
+async function copyArchitecturePackSnapshot() {
+  const payload = state.lastArchitecturePack || {};
   const lines = [
     "secure-xl2hwp-local architecture pack",
-    `Headline: ${payload.headline || els.reviewPackHeadline.textContent || "-"}`,
-    `Gate: ${els.reviewPackGate.textContent || "-"}`,
-    `Proof: ${els.reviewPackProof.textContent || "-"}`,
-    `Boundary: ${els.reviewPackBoundary.textContent || "-"}`,
+    `Headline: ${payload.headline || els.architecturePackHeadline.textContent || "-"}`,
+    `Gate: ${els.architecturePackGate.textContent || "-"}`,
+    `Proof: ${els.architecturePackProof.textContent || "-"}`,
+    `Boundary: ${els.architecturePackBoundary.textContent || "-"}`,
     "",
-    "Review sequence",
-    ...((payload.review_sequence || []).map((item) => `- ${item}`)),
+    "Architecture sequence",
+    ...((payload.architecture_sequence || []).map((item) => `- ${item}`)),
     "",
     "Proof assets",
     ...formatProofAssets(payload.proof_assets || []).map((item) => `- ${item}`),
@@ -1539,27 +1539,27 @@ async function copyReviewPackSnapshot() {
   await copyTextValue(lines.join("\n"));
 }
 
-async function copyReviewRoutesSnapshot() {
-  const payload = state.lastReviewPack || {};
+async function copyArchitectureRoutesSnapshot() {
+  const payload = state.lastArchitecturePack || {};
   const architectureEndpoints = payload.proof_bundle?.architecture_endpoints || [];
   const lines = ["secure-xl2hwp-local architecture routes", ...architectureEndpoints.map((item) => `- ${item}`)];
   await copyTextValue(lines.join("\n"));
 }
 
 async function copySignedHandoffSnapshot() {
-  const payload = state.lastReviewPack || {};
+  const payload = state.lastArchitecturePack || {};
   const proofBundle = payload.proof_bundle || {};
   const approvalGate = payload.approval_gate || {};
   const targetBoundary = payload.target_boundary || {};
   const links = payload.links || {};
   const lines = [
     "secure-xl2hwp-local signed handoff",
-    `Headline: ${payload.headline || els.reviewPackHeadline.textContent || "-"}`,
+    `Headline: ${payload.headline || els.architecturePackHeadline.textContent || "-"}`,
     `Signing mode: ${proofBundle.signed_export_mode || "unknown"}`,
     `Handoff gate: ${
       approvalGate.signed_export_required_for_handoff ? "signed export required" : "signature optional"
     }`,
-    `Output boundary: ${targetBoundary.output_base_dir || els.reviewPackBoundary.textContent || "-"}`,
+    `Output boundary: ${targetBoundary.output_base_dir || els.architecturePackBoundary.textContent || "-"}`,
     "",
     "Signed evidence routes",
     `- Summary bundle: ${links.signed_summary_bundle || "/ops/audit/export/summary.bundle.zip"}`,
@@ -1567,7 +1567,7 @@ async function copySignedHandoffSnapshot() {
     `- Audit summary: ${links.audit_summary || "/ops/audit/summary"}`,
     "",
     "Approval checklist",
-    ...((payload.two_minute_review || []).slice(2, 4).map((item) => `- ${item}`)),
+    ...((payload.two_minute_architecture || []).slice(2, 4).map((item) => `- ${item}`)),
   ];
   await copyTextValue(lines.join("\n"));
 }
@@ -1594,7 +1594,7 @@ async function copyVerifySnapshot() {
     "",
     "Verify routes",
     "- /ops/audit/export/verify",
-    `- ${state.lastReviewPack?.links?.verify_bundle || "/ops/audit/export/verify"}`,
+    `- ${state.lastArchitecturePack?.links?.verify_bundle || "/ops/audit/export/verify"}`,
   ];
   await copyTextValue(lines.join("\n"));
 }
@@ -1721,12 +1721,12 @@ async function refreshServiceBrief() {
   }
 }
 
-async function refreshReviewPack() {
+async function refreshArchitecturePack() {
   try {
     const { data } = await fetchJSON("/ops/architecture-pack", { method: "GET" });
-    renderReviewPack(data || null);
+    renderArchitecturePack(data || null);
   } catch (_err) {
-    renderReviewPack(null);
+    renderArchitecturePack(null);
   }
 }
 
@@ -2045,11 +2045,11 @@ function bindEvents() {
   if (els.copyServiceBriefBtn) {
     els.copyServiceBriefBtn.addEventListener("click", copyServiceBriefSnapshot);
   }
-  if (els.copyReviewRoutesBtn) {
-    els.copyReviewRoutesBtn.addEventListener("click", copyReviewRoutesSnapshot);
+  if (els.copyArchitectureRoutesBtn) {
+    els.copyArchitectureRoutesBtn.addEventListener("click", copyArchitectureRoutesSnapshot);
   }
-  if (els.copyReviewPackBtn) {
-    els.copyReviewPackBtn.addEventListener("click", copyReviewPackSnapshot);
+  if (els.copyArchitecturePackBtn) {
+    els.copyArchitecturePackBtn.addEventListener("click", copyArchitecturePackSnapshot);
   }
   if (els.copyOpsViewBtn) {
     els.copyOpsViewBtn.addEventListener("click", async () => {
@@ -2130,7 +2130,7 @@ async function bootstrap() {
   applyI18n();
   await refreshHealth();
   await refreshServiceBrief();
-  await refreshReviewPack();
+  await refreshArchitecturePack();
   await refreshMe();
   await refreshAudit();
   await refreshOpsSummary();
@@ -2139,7 +2139,7 @@ async function bootstrap() {
   window.setInterval(async () => {
     await refreshHealth();
     await refreshServiceBrief();
-    await refreshReviewPack();
+    await refreshArchitecturePack();
     if (state.opsAutoRefresh) {
       await refreshAudit();
       await refreshOpsSummary();
