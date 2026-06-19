@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://secure-xl2hwp-local.pages.dev/sitemap.xml

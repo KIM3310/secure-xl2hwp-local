@@ -1,0 +1,73 @@
+{
+  "name": "Secure XL2HWP Local",
+  "slug": "secure-xl2hwp-local",
+  "canonical_url": "https://secure-xl2hwp-local.pages.dev/",
+  "repository_url": "https://github.com/KIM3310/secure-xl2hwp-local",
+  "architecture_url": "https://github.com/KIM3310/secure-xl2hwp-local/blob/main/docs/system-architecture.md",
+  "revenue_architecture_url": "https://github.com/KIM3310/secure-xl2hwp-local/blob/main/docs/revenue-architecture.md",
+  "lead_capture_url": "mailto:ehdjs1351@gmail.com?subject=Secure%20XL2HWP%20Local%20private%20workspace&body=I%20am%20interested%20in%20paid%20local%20license%2C%20deployment%20package%2C%20and%20template%20adaptation%20support%20for%20Secure%20XL2HWP%20Local.",
+  "productized_offer": "local-only spreadsheet cleanup and Hancom handoff workflow with signed audit/export evidence",
+  "first_paid_sku": "paid local license, deployment package, and template adaptation support",
+  "free_lead_magnet": "public architecture page that explains trust boundary and handoff path",
+  "search_positioning": {
+    "primary_query": "Secure XL2HWP Local local-only spreadsheet cleanup",
+    "secondary_queries": [
+      "Secure XL2HWP Local demo",
+      "Secure XL2HWP Local system architecture",
+      "Secure XL2HWP Local business tool",
+      "local-only spreadsheet cleanup and Hancom handoff workflow with signed audit/export evidence service"
+    ],
+    "audience_intent": "Find a runnable demo, inspect the system architecture, and decide whether a private workspace or implementation package is useful."
+  },
+  "monetization_boundary": {
+    "free": "public architecture page that explains trust boundary and handoff path",
+    "paid": "paid local license, deployment package, and template adaptation support",
+    "metering_hooks": [
+      "workspace_id",
+      "plan",
+      "quota_day",
+      "export_count",
+      "lead_source"
+    ],
+    "cost_guardrails": [
+      "static first",
+      "edge functions",
+      "customer API keys",
+      "cached AI outputs",
+      "synthetic public data"
+    ]
+  },
+  "structured_data": {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "Secure XL2HWP Local",
+    "applicationCategory": "BusinessApplication",
+    "operatingSystem": "Web, serverless, and local development environments",
+    "url": "https://secure-xl2hwp-local.pages.dev/",
+    "codeRepository": "https://github.com/KIM3310/secure-xl2hwp-local",
+    "description": "Secure XL2HWP Local: local-only spreadsheet cleanup and Hancom handoff workflow with signed audit/export evidence. Free entry point: public architecture page that explains trust boundary and handoff path. Paid path.",
+    "creator": {
+      "@type": "Person",
+      "name": "KIM3310",
+      "url": "https://github.com/KIM3310"
+    },
+    "offers": [
+      {
+        "@type": "Offer",
+        "name": "public architecture page that explains trust boundary and handoff path",
+        "price": "0",
+        "priceCurrency": "USD",
+        "availability": "https://schema.org/InStock",
+        "url": "https://secure-xl2hwp-local.pages.dev/"
+      },
+      {
+        "@type": "Offer",
+        "name": "paid local license, deployment package, and template adaptation support",
+        "availability": "https://schema.org/LimitedAvailability",
+        "url": "https://github.com/KIM3310/secure-xl2hwp-local/blob/main/docs/revenue-architecture.md"
+      }
+    ],
+    "isAccessibleForFree": true,
+    "keywords": "secure-xl2hwp-local, Secure, XL2HWP, Local, local-only, spreadsheet, cleanup, Hancom, handoff, workflow, signed, audit, export, evidence, local, license, deployment, package, template, adaptation, support, architecture, page, explains"
+  }
+}
