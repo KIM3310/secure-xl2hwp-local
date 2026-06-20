@@ -24,9 +24,16 @@ class Settings(BaseSettings):
     app_env: str = "dev"
     log_level: str = "INFO"
 
+    llm_provider: str = "ollama"
     ollama_base_url: str = "http://127.0.0.1:11434"
     llm_primary_model: str = "qwen2.5:7b"
     llm_fallback_model: str = "qwen2.5:14b"
+    openrouter_api_key: str = ""
+    openrouter_base_url: str = "https://openrouter.ai/api/v1"
+    openrouter_model: str = "qwen/qwen3-next-80b-a3b-thinking"
+    openrouter_fallback_model: str = "openai/gpt-5.4-mini"
+    openrouter_http_referer: str = "https://secure-xl2hwp-local.pages.dev"
+    openrouter_app_title: str = "secure-xl2hwp-local"
     llm_timeout_seconds: int = Field(default=45, ge=1)
     llm_unavailable_cooldown_seconds: int = Field(default=20, ge=0)
     enable_llm: bool = True

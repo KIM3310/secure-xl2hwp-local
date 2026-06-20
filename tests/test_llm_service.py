@@ -109,3 +109,49 @@ def test_successful_call_clears_existing_cooldown(monkeypatch) -> None:
     assert result == {"ok": True}
     assert call_counter["count"] == 1
     assert service._unavailable_until_monotonic == 0.0
+
+
+def test_openrouter_chat_completion_shape(monkeypatch) -> None:
+    observed = {}
+
+    class OpenRouterResponse:
+        def raise_for_status(self) -> None:
+            return None
+
+        def json(self) -> dict:
+            return {"choices": [{"message": {"content": "{\"ok\": true}"}}]}
+
+    class OpenRouterClient:
+        def __init__(self, *args, **kwargs) -> None:
+            pass
+
+        def __enter__(self):
+            return self
+
+        def __exit__(self, exc_type, exc, tb) -> None:
+            return None
+
+        def post(self, url, **kwargs):
+            observed["url"] = url
+            observed["headers"] = kwargs.get("headers", {})
+            observed["json"] = kwargs.get("json", {})
+            return OpenRouterResponse()
+
+    monkeypatch.setattr("app.services.llm_service.httpx.Client", OpenRouterClient)
+
+    service = LocalLLMService(
+        base_url="https://openrouter.ai/api/v1",
+        primary_model="qwen/qwen3-next-80b-a3b-thinking",
+        fallback_model="openai/gpt-5.4-mini",
+        provider="openrouter",
+        api_key="test-openrouter-key",
+        http_referer="https://secure-xl2hwp-local.pages.dev",
+        app_title="secure-xl2hwp-local",
+        timeout_seconds=1,
+    )
+
+    assert service.chat_json("system", "user") == {"ok": True}
+    assert observed["url"] == "https://openrouter.ai/api/v1/chat/completions"
+    assert observed["headers"]["Authorization"] == "Bearer test-openrouter-key"
+    assert observed["headers"]["X-OpenRouter-Title"] == "secure-xl2hwp-local"
+    assert observed["json"]["model"] == "qwen/qwen3-next-80b-a3b-thinking"

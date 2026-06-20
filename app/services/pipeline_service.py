@@ -38,10 +38,19 @@ class PipelineService:
         self.export_service = ExportService()
         self.audit_logger = audit_logger
 
+        is_openrouter = settings.llm_provider.strip().lower() == "openrouter"
         llm_service = LocalLLMService(
-            base_url=settings.ollama_base_url,
-            primary_model=settings.llm_primary_model,
-            fallback_model=settings.llm_fallback_model,
+            base_url=settings.openrouter_base_url if is_openrouter else settings.ollama_base_url,
+            primary_model=settings.openrouter_model if is_openrouter else settings.llm_primary_model,
+            fallback_model=(
+                settings.openrouter_fallback_model
+                if is_openrouter
+                else settings.llm_fallback_model
+            ),
+            provider=settings.llm_provider,
+            api_key=settings.openrouter_api_key if is_openrouter else "",
+            http_referer=settings.openrouter_http_referer,
+            app_title=settings.openrouter_app_title,
             timeout_seconds=settings.llm_timeout_seconds,
             unavailable_cooldown_seconds=settings.llm_unavailable_cooldown_seconds,
         )
