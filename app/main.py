@@ -994,7 +994,7 @@ def _export_verification_pack_payload() -> dict[str, Any]:
         },
         "architecture_actions": [
             "Download the signed summary bundle only after the verification pack is healthy.",
-            "Treat a broken hash chain as a export handoff blocker, not a warning.",
+            "Treat a broken hash chain as an export handoff blocker, not a warning.",
             "Keep signature verification and signed bundle export in the same walkthrough for regulated delivery.",
         ],
         "links": {
