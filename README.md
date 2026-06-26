@@ -19,7 +19,7 @@ A local-first Korean document automation tool that turns repetitive Excel-to-Han
 ## System Fast Path
 
 - **First minute:** Check the auth setup, template drift preview, signed export, and audit timeline.
-- **Local demo:** Run `make install`, `make sample-data`, and `uvicorn app.main:app --host 127.0.0.1 --port 8080`; open `http://127.0.0.1:8080/`.
+- **Local demo:** Run `make install`, `make sample-data`, and `make run`; open `http://127.0.0.1:8080/`.
 - **Verification:** Run `make verify`; it covers lint, tests, and signed proof generation.
 
 ## Service Launch Playbook
@@ -58,6 +58,7 @@ Or use Make:
 ```bash
 make install
 make sample-data
+make run
 ```
 
 ### Optional: Ollama models
@@ -71,7 +72,7 @@ Set `ENABLE_LLM=false` in `.env` if not using Ollama. The deterministic pipeline
 ## Running
 
 ```bash
-uvicorn app.main:app --host 127.0.0.1 --port 8080
+make run
 ```
 
 Web UI at `http://127.0.0.1:8080/`

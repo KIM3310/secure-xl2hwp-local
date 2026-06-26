@@ -3,7 +3,7 @@ VENV ?= .venv
 VENV_PYTHON := $(VENV)/bin/python
 VENV_STAMP := $(VENV)/.installed-dev
 
-.PHONY: install sample-data lint test proof verify
+.PHONY: install sample-data lint test proof verify run
 
 $(VENV_STAMP): pyproject.toml
 	$(PYTHON) -m venv $(VENV)
@@ -26,3 +26,6 @@ proof: $(VENV_STAMP)
 	$(VENV_PYTHON) scripts/exercise_runtime_scorecard.py
 
 verify: lint test proof
+
+run: $(VENV_STAMP)
+	$(VENV_PYTHON) -m uvicorn app.main:app --host 127.0.0.1 --port 8080
