@@ -30,7 +30,7 @@
     "patterns": [
       "Infrastructure-as-code entrypoint with explicit variables, outputs, and provider boundaries",
       "Containerized runtime path suitable for repeatable local, staging, or managed service deployment",
-      "Security control plane with audit logging, isolation boundaries, and response architecture gates"
+      "Security control plane with audit logging, isolation boundaries, and response review gates"
     ],
     "landing_zone_controls": [
       "identity boundary and least-privilege service access",

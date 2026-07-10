@@ -892,7 +892,7 @@ def _service_brief_payload() -> dict[str, Any]:
         },
         "architecture_flow": [
             "Open /health to confirm auth bootstrap state, signing posture, and path boundaries.",
-            "Read /ops/runtime-scorecard and /ops/service-brief before operator onboarding to confirm architecture flow, operating posture, and trust boundary.",
+            "Read /ops/runtime-scorecard and /ops/service-brief before operator onboarding to confirm review flow, operating posture, and trust boundary.",
             "Inspect /ops/template-drift-preview before changing templates or exporting regulated documents.",
             "Open /ops/export-verification-pack before any export handoff that depends on signed bundles.",
             "Open /ops/offline-deployment-pack before shared workstation rollout or constrained-environment delivery.",
@@ -1100,7 +1100,7 @@ def _architecture_pack_payload() -> dict[str, Any]:
         "generated_at_utc": datetime.now(timezone.utc).isoformat(),
         "readiness_contract": ARCHITECTURE_PACK_CONTRACT,
         "headline": (
-            "Architecture brief for a local spreadsheet-to-HWP pipeline: auth bootstrap, signed export evidence, "
+            "Review brief for a local spreadsheet-to-HWP pipeline: auth bootstrap, signed export evidence, "
             "and regulated path boundaries in one surface."
         ),
         "proof_bundle": {
@@ -1187,9 +1187,9 @@ def _architecture_pack_payload() -> dict[str, Any]:
                 "why": "Summarizes roles, readiness posture, and trust boundary before processing.",
             },
             {
-                "label": "Architecture Pack",
+                "label": "Review Pack",
                 "path": "/ops/architecture-pack",
-                "why": "Packages approval gate, boundary, artifacts, and architecture sequence in one payload.",
+                "why": "Packages approval gate, boundary, artifacts, and review sequence in one payload.",
             },
             {
                 "label": "Export Verification Pack",
@@ -1490,7 +1490,7 @@ def health() -> dict:
             "llm-assisted-cleanup",
             "service-brief-surface",
             "runtime-scorecard-surface",
-            "template-drift-parchitecture-surface",
+            "template-drift-preview-surface",
             "export-verification-pack-surface",
             "offline-deployment-pack-surface",
             "process-report-schema",

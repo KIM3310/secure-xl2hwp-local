@@ -14,6 +14,7 @@ VENV_DIR="$ROOT_DIR/.offline-build-venv"
 rm -rf "$VENV_DIR"
 
 "$PYTHON_BIN" -m venv "$VENV_DIR"
+# shellcheck disable=SC1091
 source "$VENV_DIR/bin/activate"
 
 python -m pip install --upgrade pip

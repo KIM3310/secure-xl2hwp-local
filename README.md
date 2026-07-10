@@ -2,33 +2,33 @@
 
 Excel-to-Hancom document conversion platform designed for air-gapped and local secure environments. Cleans spreadsheet data using contract-based rules and maps it to Hancom (HWP) templates, with full audit logging and signed exports.
 
-Architecture pack: [`docs/architecture-pack.md`](docs/architecture-pack.md)
+Compliance review pack: [`docs/architecture-pack.md`](docs/architecture-pack.md)
 
-## Product and System Surface
+## System Overview
 
 A local-first Korean document automation tool that turns repetitive Excel-to-Hancom work into signed, auditable exports.
 
-| Lens | Definition |
+| Area | Details |
 |---|---|
-| Audience | Korean back-office teams, public-sector-adjacent operators, legal/admin teams, and secure internal workflow owners. |
-| Architecture path | Validate the demo, README, architecture notes, and quality gate before deeper workflow architecture. |
-| System signal | JWT auth, signed exports, audit logs, local operation, structured output, and Hancom-focused workflow design. |
-| Safety boundary | Designed for controlled local use; real deployments need approved templates, retention rules, and workstation policies. |
-| Fast path | Run the backend checks and generate a sample signed export from staged input data. |
+| Users | Korean back-office teams, public-sector-adjacent operators, legal/admin teams, and secure internal workflow owners. |
+| Technical path | Validate the demo, README, architecture notes, and quality gate before deeper workflow review. |
+| System scope | JWT auth, signed exports, audit logs, local operation, structured output, and Hancom-focused workflow design. |
+| Operating boundary | Designed for controlled local use; real deployments need approved templates, retention rules, and workstation policies. |
+| Evaluation path | Run the backend checks and generate a sample signed export from staged input data. |
 
-## System Fast Path
+## Evaluation Path
 
-- **First minute:** Check the auth setup, template drift preview, signed export, and audit timeline.
+- **Start here:** Check the auth setup, template drift preview, signed export, and audit timeline.
 - **Local demo:** Run `make install`, `make sample-data`, and `make run`; open `http://127.0.0.1:8080/`.
-- **Verification:** Run `make verify`; it covers lint, tests, and signed proof generation.
+- **Checks:** Run `make verify`; it covers lint, tests, and signed proof generation.
 
 ## Service Launch Playbook
 
-- [Service launch playbook](docs/service-launch-playbook.md) maps the repository to architecture audiences, operating gates, operating boundaries, and risk controls.
+- [Service launch playbook](docs/service-launch-playbook.md) maps the repository to its product scope, operating gates, operating boundaries, and risk controls.
 
 ## Architecture Notes
 
-- [Architecture guide](docs/architecture-evidence-map.md) summarizes the project angle, first files to inspect, runtime commands, and known boundaries.
+- [Architecture guide](docs/architecture-evidence-map.md) summarizes the system scope, first files to inspect, runtime commands, and known boundaries.
 - [Quality notes](docs/quality-gate.md) lists the local checks, CI surface, and release expectations for this repository.
 - [Enterprise readiness notes](docs/enterprise-readiness.md) outlines security, data, operations, integration, and handoff expectations.
 
@@ -154,15 +154,13 @@ MIT
 
 ## Cloud + AI Architecture
 
-This repository includes a neutral cloud and AI engineering blueprint that maps the current proof surface to runtime boundaries, data contracts, model-risk controls, deployment posture, and validation hooks.
-
 - [Cloud + AI architecture blueprint](docs/cloud-ai-architecture.md)
 - [Machine-readable architecture manifest](docs/architecture/blueprint.json)
 - Validation command: `python3 scripts/validate_architecture_blueprint.py`
 
 ## Enterprise Productization
 
-- [Product operating model](docs/product-operating-model.md) defines the architecture inspection, trust boundary, trust boundary, operating checks, and service path for this repository.
+- [Product operating model](docs/product-operating-model.md) defines the product scope, trust boundary, operating checks, and service path for this repository.
 
 ## System Architecture
 

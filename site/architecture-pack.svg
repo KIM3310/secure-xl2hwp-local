@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" role="img" aria-labelledby="title desc">
-  <title id="title">secure-xl2hwp-local architecture card</title>
-  <desc id="desc">Local-only spreadsheet automation with template-drift preview, signed architecture packs, and export verification.</desc>
+  <title id="title">secure-xl2hwp-local review card</title>
+  <desc id="desc">Local-only spreadsheet automation with template-drift preview, signed review packs, and export verification.</desc>
   <defs>
     <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
       <stop offset="0%" stop-color="#0f1720" />
@@ -16,7 +16,7 @@
   <circle cx="178" cy="520" r="220" fill="#7dd3fc" opacity="0.12" />
   <text x="96" y="128" fill="#99f6e4" font-size="28" font-family="Inter, Arial, sans-serif" letter-spacing="8">LOCAL-ONLY REVIEW FLOW</text>
   <text x="96" y="226" fill="#ffffff" font-size="78" font-weight="700" font-family="Inter, Arial, sans-serif">secure-xl2hwp-local</text>
-  <text x="96" y="302" fill="#d7e3e5" font-size="33" font-family="Inter, Arial, sans-serif">Service brief → template drift → architecture pack → signed export verify</text>
+  <text x="96" y="302" fill="#d7e3e5" font-size="33" font-family="Inter, Arial, sans-serif">Service brief → template drift → review pack → signed export verify</text>
   <rect x="96" y="384" width="452" height="78" rx="24" fill="url(#accent)" opacity="0.96" />
   <text x="132" y="433" fill="#082124" font-size="29" font-weight="700" font-family="Inter, Arial, sans-serif">Docs-only public page. Real proof lives in the local runtime.</text>
 </svg>

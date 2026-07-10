@@ -30,9 +30,9 @@ python scripts/exercise_runtime_scorecard.py --full
 | --- | --- |
 | `/health` | Bootstrap state, signing posture, and next operator action |
 | `/ops/runtime-scorecard` | Compact posture summary for auth, readiness, and recent audit flow |
-| `/ops/service-brief` | Trust boundary, allowed roles, architecture flow, and process contract |
+| `/ops/service-brief` | Trust boundary, allowed roles, review flow, and process contract |
 | `/ops/readiness` | Preflight gate before regulated spreadsheet processing |
-| `/ops/architecture-pack` | Architecture handoff surface for signed exports and approval sequence |
+| `/ops/architecture-pack` | Review handoff surface for signed exports and approval sequence |
 | `logs/audit/2026-03-15.jsonl` | Concrete audit trail with both successful and failed processing events |
 
 ## Audit baseline

@@ -9,7 +9,7 @@
   <meta property="og:title" content="Secure XL2HWP Local" />
   <meta property="og:description" content="Secure XL2HWP Local: local-only spreadsheet cleanup and Hancom handoff workflow with signed audit/export evidence. Free entry point: public architecture page that explains trust boundary and handoff path. Paid path." />
   <meta property="og:image" content="/architecture-pack.svg">
-  <meta property="og:image:alt" content="secure-xl2hwp-local architecture card for local-only document automation">
+  <meta property="og:image:alt" content="secure-xl2hwp-local review card for local-only document automation">
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="Secure XL2HWP Local" />
   <meta name="twitter:description" content="Secure XL2HWP Local: local-only spreadsheet cleanup and Hancom handoff workflow with signed audit/export evidence. Free entry point: public architecture page that explains trust boundary and handoff path. Paid path." />
@@ -123,17 +123,17 @@
       <div class="hero-grid">
         <div class="stack">
           <h1>Local-only spreadsheet automation with verifiable handoff.</h1>
-          <p class="lede">This page is intentionally not a SaaS front door. It is a public explainer for a secure local runtime whose strongest proof is the architecture path: trust boundary first, template-drift before export claims, then signed audit/export evidence for handoff.</p>
+          <p class="lede">This page is intentionally not a SaaS front door. It is a public explainer for a secure local runtime whose strongest proof is the verification path: trust boundary first, template drift before export claims, then signed audit/export evidence for handoff.</p>
           <p class="note"><strong>Honest framing:</strong> GitHub Pages hosts the story. The regulated processing routes live only inside the local secure deployment.</p>
           <div class="hero-actions">
-            <a class="button primary" href="https://github.com/KIM3310/secure-xl2hwp-local/blob/main/docs/verification-guide.md">Open architecture path</a>
+            <a class="button primary" href="https://github.com/KIM3310/secure-xl2hwp-local/blob/main/docs/verification-guide.md">Open review path</a>
             <a class="button" href="https://github.com/KIM3310/secure-xl2hwp-local/blob/main/docs/architecture-pack.md">View technical pack</a>
           </div>
         </div>
         <aside class="hero-aside">
           <div class="metric">
-            <small>Architecture handoff route</small>
-            <strong>Brief → Drift → Architecture Pack → Verify</strong>
+            <small>Review handoff route</small>
+            <strong>Brief → Drift → Review Pack → Verify</strong>
             <p>Lead with process contract, prove template safety, then show signed export evidence instead of demo theater.</p>
           </div>
           <div class="callout">
@@ -163,14 +163,14 @@
     </section>
 
     <section class="panel stack">
-      <h2>Fastest architecture handoff flow</h2>
+      <h2>Fastest review handoff flow</h2>
       <div class="route-grid">
         <div class="route-list">
           <article class="step">
             <div class="step-num">1</div>
             <div>
               <strong>Open the service brief</strong>
-              <p>Use <code>/ops/service-brief</code> to show the operating contract, trust boundary, allowed roles, and the intended architecture flow.</p>
+              <p>Use <code>/ops/service-brief</code> to show the operating contract, trust boundary, allowed roles, and the intended review flow.</p>
             </div>
           </article>
           <article class="step">
@@ -189,11 +189,11 @@
           </article>
         </div>
         <article class="route-card">
-          <strong>Architecture briefing script</strong>
+          <strong>Review briefing script</strong>
           <p class="subtle">Use this when you need the clearest operating story in under two minutes.</p>
           <code>"This is not a public SaaS demo. The design goal is local trust.
 I prove safety by showing the service brief, then template drift,
-then the signed architecture pack and export verification route."</code>
+then the signed review pack and export verification route."</code>
         </article>
       </div>
     </section>
@@ -211,7 +211,7 @@ then the signed architecture pack and export verification route."</code>
         <h2>Audit/export verification flow</h2>
         <ul class="list">
           <li>Audit summaries exist as JSON/CSV plus signed bundle outputs.</li>
-          <li>Architecture-pack copy points users to the exact endpoints used for handoff.</li>
+          <li>Review-pack copy points users to the exact endpoints used for handoff.</li>
           <li>Verification endpoint proves bundle integrity after transfer, not just at creation time.</li>
         </ul>
       </article>
@@ -232,7 +232,7 @@ then the signed architecture pack and export verification route."</code>
           <li><strong>1.</strong> <code>/ops/service-brief</code> — trust boundary, roles, signing mode, operating contract.</li>
           <li><strong>2.</strong> <code>/ops/template-drift-preview</code> — hold points for template/spec mismatch.</li>
           <li><strong>3.</strong> <code>/ops/runtime-scorecard</code> — compact runtime posture before handoff.</li>
-          <li><strong>4.</strong> <code>/ops/architecture-pack</code> — architecture sequence, proof assets, approval gate.</li>
+          <li><strong>4.</strong> <code>/ops/architecture-pack</code> — review sequence, proof assets, approval gate.</li>
           <li><strong>5.</strong> <code>/ops/audit/export/verify</code> — post-export integrity check.</li>
         </ul>
       </article>
@@ -273,8 +273,8 @@ then the signed architecture pack and export verification route."</code>
         <h2>Public posture</h2>
         <ul class="list">
           <li>Public site: documentation, proof route, and clarification framing</li>
-          <li>Local runtime: actual processing, architecture-pack, signed export, verify endpoints</li>
-          <li>Recommended verification flow: brief -> drift -> runtime scorecard -> architecture pack -> verify</li>
+          <li>Local runtime: actual processing, <code>/ops/architecture-pack</code>, signed export, verify endpoints</li>
+          <li>Recommended verification flow: brief -> drift -> runtime scorecard -> review pack -> verify</li>
         </ul>
       </article>
     </section>

@@ -7,7 +7,7 @@ const I18N = {
     "app.tagline": "엑셀 정제부터 한컴 문서화까지, 폐쇄망 친화형 자동화 스튜디오",
     "serviceBrief.kicker": "운영 계약",
     "serviceBrief.title": "서비스 브리프",
-    "serviceBrief.subtitle": "운영 전 trust boundary, architecture flow, 처리 계약을 먼저 확인합니다.",
+    "serviceBrief.subtitle": "운영 전 trust boundary, review flow, 처리 계약을 먼저 확인합니다.",
     "serviceBrief.loading": "불러오는 중...",
     "serviceBrief.unavailable": "서비스 브리프를 불러오지 못했습니다.",
     "serviceBrief.schema": "처리 스키마",
@@ -16,7 +16,7 @@ const I18N = {
     "serviceBrief.failedChecks": "실패 점검",
     "serviceBrief.roles": "처리 역할",
     "serviceBrief.architectureFlow": "검토 흐름",
-    "serviceBrief.twoMinuteArchitecture": "2분 아키텍처 경로",
+    "serviceBrief.twoMinuteArchitecture": "2분 검토 경로",
     "serviceBrief.trustBoundary": "신뢰 경계",
     "serviceBrief.proofAssets": "증거 자산",
     "serviceBrief.watchouts": "주의점",
@@ -25,7 +25,7 @@ const I18N = {
     "architecturePack.proofBundle": "증거 번들",
     "architecturePack.boundary": "경계",
     "architecturePack.artifacts": "검토 산출물",
-    "architecturePack.twoMinuteArchitecture": "2분 아키텍처 경로",
+    "architecturePack.twoMinuteArchitecture": "2분 검토 경로",
     "architecturePack.sequence": "검토 순서",
     "architecturePack.proofAssets": "증거 자산",
     "workflow.title": "첫 번째 운영 워크플로우",
@@ -192,18 +192,18 @@ const I18N = {
     "serviceBrief.signing": "Signing mode",
     "serviceBrief.failedChecks": "Failed checks",
     "serviceBrief.roles": "Process roles",
-    "serviceBrief.architectureFlow": "Architecture flow",
-    "serviceBrief.twoMinuteArchitecture": "2-minute architecture path",
+    "serviceBrief.architectureFlow": "Review flow",
+    "serviceBrief.twoMinuteArchitecture": "2-minute review path",
     "serviceBrief.trustBoundary": "Trust boundary",
     "serviceBrief.proofAssets": "Proof assets",
     "serviceBrief.watchouts": "Watchouts",
-    "architecturePack.title": "Architecture pack",
+    "architecturePack.title": "Review pack",
     "architecturePack.approvalGate": "Approval gate",
     "architecturePack.proofBundle": "Proof bundle",
     "architecturePack.boundary": "Boundary",
     "architecturePack.artifacts": "Artifacts",
-    "architecturePack.twoMinuteArchitecture": "2-minute architecture path",
-    "architecturePack.sequence": "Architecture sequence",
+    "architecturePack.twoMinuteArchitecture": "2-minute review path",
+    "architecturePack.sequence": "Review sequence",
     "architecturePack.proofAssets": "Proof assets",
     "workflow.title": "First secure workflow",
     "workflow.fallbackLabel": "Intentional fallback",
@@ -344,7 +344,7 @@ const I18N = {
     "toast.verifySelect": "Select both payload and signature files.",
     "toast.bootstrapRefreshed": "Admin bootstrap status refreshed.",
     "toast.serviceBriefFail": "Failed to fetch service brief",
-    "toast.architecturePackFail": "Failed to fetch architecture pack",
+    "toast.architecturePackFail": "Failed to fetch review pack",
     "health.ok": "OK",
     "health.unavailable": "Unavailable",
     "health.label": "Health",
@@ -1177,7 +1177,7 @@ function renderWorkflowLaunchpad() {
   const steps = bootstrapRequired
     ? [
         "Create the first local admin before demoing any secure processing route.",
-        "Open the service brief and architecture pack so the trust boundary is visible before login claims.",
+        "Open the service brief and review pack so the trust boundary is visible before login claims.",
         "After bootstrap, log in and run one path/file job before talking about signed export evidence.",
       ]
     : hasUser
@@ -1186,7 +1186,7 @@ function renderWorkflowLaunchpad() {
           resultReady
             ? "The first run already exists: copy the signed handoff or verify snapshot before expanding scope."
             : `Run one ${state.mode === "file" ? "file upload" : "path mode"} job so the first service workflow becomes tangible on-screen.`,
-          "End on architecture-pack routes and signed verification instead of describing the pipeline abstractly.",
+          "End on the /ops/architecture-pack route and signed verification instead of describing the pipeline abstractly.",
         ]
       : [
           "Log in with a local operator account before running any secure route.",
@@ -1210,8 +1210,8 @@ function renderWorkflowLaunchpad() {
   els.workflowLaunchpadFallback.textContent = bootstrapRequired
     ? "When no local admin exists, the UI keeps the workflow honest: bootstrap first, processing second."
     : architecturePack.headline
-      ? "If a downstream architecture surface degrades, stay on service brief + architecture pack routes and avoid pretending the signed handoff already exists."
-      : "If architecture-pack data is unavailable, keep the service brief and template-drift route visible while the secure runtime catches up.";
+      ? "If a downstream review surface degrades, stay on the service brief and /ops/architecture-pack routes and avoid pretending the signed handoff already exists."
+      : "If /ops/architecture-pack data is unavailable, keep the service brief and template-drift route visible while the secure runtime catches up.";
 }
 
 function drawEmpty(canvas, label) {
@@ -1515,7 +1515,7 @@ async function copyServiceBriefSnapshot() {
     `Auth: ${payload.auth_mode || els.briefAuthMode.textContent || "-"}`,
     `Signing: ${payload.signing_mode || els.briefSigningMode.textContent || "-"}`,
     "",
-    "2-minute architecture path",
+    "2-minute review path",
     ...((payload.two_minute_architecture || []).map((item) => `- ${item}`)),
   ];
   await copyTextValue(lines.join("\n"));
@@ -1524,13 +1524,13 @@ async function copyServiceBriefSnapshot() {
 async function copyArchitecturePackSnapshot() {
   const payload = state.lastArchitecturePack || {};
   const lines = [
-    "secure-xl2hwp-local architecture pack",
+    "secure-xl2hwp-local review pack",
     `Headline: ${payload.headline || els.architecturePackHeadline.textContent || "-"}`,
     `Gate: ${els.architecturePackGate.textContent || "-"}`,
     `Proof: ${els.architecturePackProof.textContent || "-"}`,
     `Boundary: ${els.architecturePackBoundary.textContent || "-"}`,
     "",
-    "Architecture sequence",
+    "Review sequence",
     ...((payload.architecture_sequence || []).map((item) => `- ${item}`)),
     "",
     "Proof assets",
@@ -1542,7 +1542,7 @@ async function copyArchitecturePackSnapshot() {
 async function copyArchitectureRoutesSnapshot() {
   const payload = state.lastArchitecturePack || {};
   const architectureEndpoints = payload.proof_bundle?.architecture_endpoints || [];
-  const lines = ["secure-xl2hwp-local architecture routes", ...architectureEndpoints.map((item) => `- ${item}`)];
+  const lines = ["secure-xl2hwp-local review routes", ...architectureEndpoints.map((item) => `- ${item}`)];
   await copyTextValue(lines.join("\n"));
 }
 
