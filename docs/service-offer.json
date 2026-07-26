@@ -69,5 +69,29 @@
     ],
     "isAccessibleForFree": true,
     "keywords": "secure-xl2hwp-local, Secure, XL2HWP, Local, local-only, spreadsheet, cleanup, Hancom, handoff, workflow, signed, audit, export, evidence, local, license, deployment, package, template, adaptation, support, architecture, page, explains"
+  },
+  "commerce": {
+    "gateway_url": "https://kim3310-doeon-kim-portfolio.pages.dev/?offer=secure-xl2hwp-local#service-offers",
+    "lane_id": "document-smb-ops-pilot",
+    "lane_name": "Document and SMB Ops Pilot",
+    "billing_mode": "one-time",
+    "price_unit": "single workflow setup from USD 400",
+    "fulfillment_kind": "approval-safe inbox, public-data enrichment map, document handoff, and checkout-readiness checklist",
+    "risk_bucket": "privacy-high-trust",
+    "checkout": {
+      "provider": "lemon-squeezy",
+      "status": "account-onboarding-required",
+      "fallback_url": "https://kim3310-doeon-kim-portfolio.pages.dev/?offer=secure-xl2hwp-local#service-offers"
+    },
+    "sponsorship": {
+      "provider": "github-sponsors",
+      "eligible": true,
+      "status": "account-onboarding-required"
+    },
+    "advertising": {
+      "provider": null,
+      "eligible": false,
+      "status": "not-applicable"
+    }
   }
 }

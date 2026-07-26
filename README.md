@@ -178,6 +178,7 @@ MIT
 - Paid boundary: paid local license, deployment package, and template adaptation support
 - Canonical URL: https://secure-xl2hwp-local.pages.dev/
 - Lead capture: https://github.com/KIM3310/secure-xl2hwp-local/issues/new?template=service-inquiry.yml&title=Private+workspace+inquiry%3A+Secure+XL2HWP+Local
+- Commercial route: https://kim3310-doeon-kim-portfolio.pages.dev/?offer=secure-xl2hwp-local#service-offers
 - Machine-readable offer: [docs/service-offer.json](docs/service-offer.json)
 - Search growth implementation: [docs/search-growth-implementation.md](docs/search-growth-implementation.md)
 - Revenue architecture: [docs/revenue-architecture.md](docs/revenue-architecture.md)

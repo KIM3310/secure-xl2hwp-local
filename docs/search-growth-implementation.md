@@ -11,6 +11,7 @@ This repository now exposes a search-readable service surface in addition to the
 | System architecture | [docs/system-architecture.md](./system-architecture.md) |
 | Public canonical URL | https://secure-xl2hwp-local.pages.dev/ |
 | Lead capture URL | https://github.com/KIM3310/secure-xl2hwp-local/issues/new?template=service-inquiry.yml&title=Private+workspace+inquiry%3A+Secure+XL2HWP+Local |
+| Commercial route | https://kim3310-doeon-kim-portfolio.pages.dev/?offer=secure-xl2hwp-local#service-offers |
 
 ## Search Positioning
 
