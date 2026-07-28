@@ -13,8 +13,8 @@ Commercial route: https://kim3310-doeon-kim-portfolio.pages.dev/?offer=secure-xl
 
 Use this project as a runnable or inspectable reference for a customer-owned, single-process Excel-to-Hancom pilot. The built-in login guard and audit hash state are process-local; production readiness, multi-worker operation, SSO/OIDC, and vendor-hosted customer data are explicitly out of scope.
 # ADSENSE-PUBLICATION:START
-Editorial guide: https://secure-xl2hwp-local.pages.dev/guide.html
-Architecture article: https://secure-xl2hwp-local.pages.dev/architecture.html
-Verification article: https://secure-xl2hwp-local.pages.dev/verification.html
-Publisher information: https://secure-xl2hwp-local.pages.dev/publisher.html
+Editorial guide: https://secure-xl2hwp-local.pages.dev/guide
+Architecture article: https://secure-xl2hwp-local.pages.dev/architecture
+Verification article: https://secure-xl2hwp-local.pages.dev/verification
+Publisher information: https://secure-xl2hwp-local.pages.dev/publisher
 # ADSENSE-PUBLICATION:END
