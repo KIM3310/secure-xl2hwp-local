@@ -10,7 +10,7 @@ This repository now exposes a search-readable service surface in addition to the
 | Revenue architecture | [docs/revenue-architecture.md](./revenue-architecture.md) |
 | System architecture | [docs/system-architecture.md](./system-architecture.md) |
 | Public canonical URL | https://secure-xl2hwp-local.pages.dev/ |
-| Lead capture URL | https://github.com/KIM3310/secure-xl2hwp-local/issues/new?template=service-inquiry.yml&title=Private+workspace+inquiry%3A+Secure+XL2HWP+Local |
+| Lead capture URL | https://kim3310-doeon-kim-portfolio.pages.dev/?offer=secure-xl2hwp-local&inquiry=secure-workflow-pilot#private-inquiry |
 | Commercial route | https://kim3310-doeon-kim-portfolio.pages.dev/?offer=secure-xl2hwp-local#service-offers |
 
 ## Search Positioning
@@ -18,7 +18,7 @@ This repository now exposes a search-readable service surface in addition to the
 - Primary query: Secure XL2HWP Local local-only spreadsheet cleanup
 - Secondary queries: Secure XL2HWP Local demo; Secure XL2HWP Local system architecture; Secure XL2HWP Local business tool; local-only spreadsheet cleanup and Hancom handoff workflow with signed audit/export evidence service
 - Public entry point: public architecture page that explains trust boundary and handoff path
-- Paid boundary: paid local license, deployment package, and template adaptation support
+- Paid boundary: fixed-scope customer-owned pilot for one approved Excel-to-Hancom workflow
 
 ## Conversion Boundary
 
@@ -28,5 +28,5 @@ The public surface stays crawlable and free. Paid value starts when a visitor wa
 
 - Keep the sitemap and robots file aligned with the final production domain.
 - Submit the canonical URL and sitemap in Google Search Console after the domain is connected.
-- The lead-capture path is a GitHub Issue Form so private workspace and paid-package requests create a trackable queue before payment infrastructure is added.
+- The lead-capture path is the central private inquiry form. It accepts contact and scope details only; credentials and customer documents stay out of the intake.
 - Keep exact free-tier quotas out of public promises because provider limits change.

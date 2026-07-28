@@ -14,14 +14,17 @@ This repository is packaged as a concrete system surface, not a loose code sampl
 | Area | Position |
 | --- | --- |
 | Target users | Korean back-office teams with local document workflows |
-| Service wedge | Per-seat offline conversion automation license |
+| Service wedge | Fixed-scope customer-owned secure workflow pilot |
 | System signal | Local-first security, signed exports, auditability |
-| Delivery shape | Fixed-scope pilot, integration sprint, and handoff-ready operating pack |
+| Delivery shape | One approved workflow, single-process customer runtime, explicit perimeter and storage gates, signed handoff evidence, and an operator runbook |
 | Expansion path | Add customer-specific adapters, policy controls, observability, and support SLAs after the pilot proves value |
 
 ## Enterprise Trust Boundary
 
 - Keep credentials out of the repository and require environment-based configuration for live integrations.
+- Keep customer files, runtime secrets, audit logs, and generated documents inside the customer's runtime and accounts.
+- Treat the built-in login guard and audit hash chain as process-local controls. They do not support multi-worker or horizontally scaled deployment.
+- Require upstream throttling, customer identity controls, persistent audit storage, and named backup/retention owners before shared access.
 - Treat generated screenshots, fixtures, and sample data as non-customer proof assets unless explicitly approved.
 - Keep CI, repository-surface validation, architecture manifest checks, and secret scanning green before presenting the repo externally.
 - Use the architecture blueprint as the source of truth for cloud, AI, data, and operational boundaries.
@@ -47,4 +50,4 @@ This repository is packaged as a concrete system surface, not a loose code sampl
 
 ## Service Next Step
 
-Turn the repo into a customer-facing offer by pairing the proof surface with one discovery question, one measurable success metric, and one bounded follow-up path. The smallest viable package should be easy to verify and bounded enough to deliver without custom platform work.
+Route qualified demand to the `secure-workflow-pilot` lane. The paid scope is one approved Excel-to-Hancom workflow with measurable time/error reduction, customer-owned deployment, signed handoff verification, and an explicit production gap report.

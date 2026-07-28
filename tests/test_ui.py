@@ -85,6 +85,12 @@ def test_health_includes_auth_bootstrap_state() -> None:
     assert "export-verification-pack-surface" in payload["capabilities"]
     assert "offline-deployment-pack-surface" in payload["capabilities"]
     assert "architecture-pack-surface" in payload["capabilities"]
+    assert payload["runtime_boundary"]["delivery_mode"] == "customer-owned-pilot"
+    assert payload["runtime_boundary"]["supported_topology"] == "single-process"
+    assert payload["runtime_boundary"]["rate_limit"]["scope"] == "process-local"
+    assert payload["runtime_boundary"]["rate_limit"]["resets_on_restart"] is True
+    assert payload["runtime_boundary"]["audit_state"]["cross_process_safe"] is False
+    assert payload["runtime_boundary"]["production_ready"] is False
 
 
 def test_service_brief_and_process_schema_shape() -> None:
@@ -338,7 +344,14 @@ def test_ops_readiness_with_admin_role_shape() -> None:
     assert payload["overall_status"] in {"healthy", "degraded"}
     assert isinstance(payload["checks"], list)
     check_names = {row["name"] for row in payload["checks"]}
-    assert {"specs", "audit_log_dir", "export_signing", "llm_connectivity"}.issubset(check_names)
+    assert {
+        "specs",
+        "audit_log_dir",
+        "export_signing",
+        "llm_connectivity",
+        "runtime_boundary",
+    }.issubset(check_names)
+    assert payload["runtime_boundary"]["production_ready"] is False
 
 
 def test_audit_export_summary_bundle_zip_contains_payload_and_signature() -> None:

@@ -1,6 +1,6 @@
 # secure-xl2hwp-local
 
-Excel-to-Hancom document conversion platform designed for air-gapped and local secure environments. Cleans spreadsheet data using contract-based rules and maps it to Hancom (HWP) templates, with full audit logging and signed exports.
+Pilot-ready reference implementation for Excel-to-Hancom document conversion in air-gapped and controlled local environments. It cleans spreadsheet data using contract-based rules and maps it to Hancom (HWP) templates, with file-backed audit events and signed exports.
 
 Compliance review pack: [`docs/architecture-pack.md`](docs/architecture-pack.md)
 
@@ -13,7 +13,7 @@ A local-first Korean document automation tool that turns repetitive Excel-to-Han
 | Users | Korean back-office teams, public-sector-adjacent operators, legal/admin teams, and secure internal workflow owners. |
 | Technical path | Validate the demo, README, architecture notes, and quality gate before deeper workflow review. |
 | System scope | JWT auth, signed exports, audit logs, local operation, structured output, and Hancom-focused workflow design. |
-| Operating boundary | Designed for controlled local use; real deployments need approved templates, retention rules, and workstation policies. |
+| Operating boundary | Customer-owned, single-process pilot. Login throttling and audit hash state are process-local; shared access requires an upstream rate limiter, customer identity controls, persistent storage, and approved workstation policies. |
 | Evaluation path | Run the backend checks and generate a sample signed export from staged input data. |
 
 ## Evaluation Path
@@ -43,6 +43,17 @@ A local-first Korean document automation tool that turns repetitive Excel-to-Han
 - **Offline deployment**: Wheel bundles and air-gapped install scripts
 - **Signed exports**: HMAC-SHA256 signed audit bundles with verification
 
+## Supported Delivery Boundary
+
+| Area | Current contract |
+|---|---|
+| Runtime owner | Customer. The public site and repository do not receive customer documents. |
+| Topology | One application process. Multi-worker or horizontal scaling is not supported because login throttling and audit hash state are process-local. |
+| Shared access | Requires a customer-operated reverse proxy or gateway that enforces rate limits and identity controls. |
+| State | Audit logs and generated outputs require customer-approved persistent filesystem mounts, backup, retention, and recovery. |
+| Secrets | Development may generate ephemeral keys. `pilot`, `staging`, and `prod` fail closed unless all secrets and ownership gates are explicitly configured. |
+| Readiness claim | Technical pilot only. The repository does not include SSO/OIDC, a shared state backend, production SLA, or compliance certification. |
+
 ## Quickstart
 
 ```bash
@@ -53,6 +64,8 @@ pip install '.[dev]'
 cp .env.example .env
 python scripts/create_sample_excel.py
 ```
+
+Blank secrets are generated in `dev` only and are deliberately reported as `ephemeral-dev-only`. They are invalid for a protected pilot.
 
 Or use Make:
 ```bash
@@ -83,10 +96,12 @@ Features: login/JWT session, path/file mode execution, metrics visualization, au
 
 The default `specs/security/users.yaml` is empty. Before using:
 
-1. Set strong values for `JWT_SECRET_KEY`, `AUTH_PASSWORD_PEPPER`, `EXPORT_SIGNING_KEY` in `.env`
+1. Set strong, independently generated values for `JWT_SECRET_KEY`, `AUTH_PASSWORD_PEPPER`, `EXPORT_SIGNING_KEY` in `.env`
 2. Generate password hashes: `python scripts/hash_password.py --password 'StrongPassword!' --pepper 'YOUR_PEPPER'`
 3. Write `specs/security/users.yaml` with the hash
 4. Configure `PROCESS_ALLOWED_ROLES` and path restrictions
+5. For shared pilot access, set `RUNTIME_OWNER=customer`, `RUNTIME_WORKERS=1`, `AUTH_RATE_LIMIT_MODE=upstream-enforced`, and `AUDIT_STORAGE_MODE=persistent-filesystem`
+6. Verify the upstream control and persistent mount independently; these settings declare an operator contract and do not provision those controls
 
 ## API Endpoints
 
@@ -137,7 +152,7 @@ pytest -q
 ruff check app tests scripts
 ```
 
-97 tests covering JWT auth, login guard thread safety, export signature verification, CoT pipeline stages, and path traversal blocking.
+The test suite covers JWT auth, the single-process login guard, protected-runtime fail-closed settings, export signature verification, CoT pipeline stages, and path traversal blocking.
 
 ## Docs
 
@@ -147,6 +162,7 @@ ruff check app tests scripts
 - SpecKit: `docs/speckit.md`
 - CoT design: `docs/cot.md`
 - Offline deploy: `docs/offline-deploy.md`
+- Customer-owned pilot: `docs/customer-owned-pilot.md`
 
 ## License
 
@@ -175,9 +191,9 @@ MIT
 ## Search And Service Surface
 
 - Public entry: public architecture page that explains trust boundary and handoff path
-- Paid boundary: paid local license, deployment package, and template adaptation support
+- Paid boundary: fixed-scope customer-owned pilot for one approved Excel-to-Hancom workflow
 - Canonical URL: https://secure-xl2hwp-local.pages.dev/
-- Lead capture: https://github.com/KIM3310/secure-xl2hwp-local/issues/new?template=service-inquiry.yml&title=Private+workspace+inquiry%3A+Secure+XL2HWP+Local
+- Lead capture: https://kim3310-doeon-kim-portfolio.pages.dev/?offer=secure-xl2hwp-local&inquiry=secure-workflow-pilot#private-inquiry
 - Commercial route: https://kim3310-doeon-kim-portfolio.pages.dev/?offer=secure-xl2hwp-local#service-offers
 - Machine-readable offer: [docs/service-offer.json](docs/service-offer.json)
 - Search growth implementation: [docs/search-growth-implementation.md](docs/search-growth-implementation.md)

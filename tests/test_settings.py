@@ -2,6 +2,17 @@ import pytest
 
 from app.core.settings import Settings
 
+PROTECTED_RUNTIME = {
+    "app_env": "prod",
+    "runtime_owner": "customer",
+    "runtime_workers": 1,
+    "auth_rate_limit_mode": "upstream-enforced",
+    "audit_storage_mode": "persistent-filesystem",
+    "jwt_secret_key": "j" * 48,
+    "auth_password_pepper": "p" * 48,
+    "export_signing_key": "s" * 48,
+}
+
 
 def test_settings_reject_short_jwt_secret_when_auth_enabled() -> None:
     with pytest.raises(ValueError):
@@ -53,3 +64,50 @@ def test_settings_reject_blank_allowed_base_dirs() -> None:
         Settings(allowed_output_base_dir="")
     with pytest.raises(ValueError):
         Settings(allowed_template_base_dir="   ")
+
+
+def test_development_defaults_use_ephemeral_secrets_only() -> None:
+    settings = Settings(
+        app_env="dev",
+        jwt_secret_key="",
+        auth_password_pepper="",
+        export_signing_key="",
+    )
+
+    posture = settings.secret_posture()
+    assert posture["mode"] == "ephemeral-dev-only"
+    assert set(posture["ephemeral_fields"]) == {
+        "AUTH_PASSWORD_PEPPER",
+        "EXPORT_SIGNING_KEY",
+        "JWT_SECRET_KEY",
+    }
+
+
+@pytest.mark.parametrize(
+    ("field", "value", "expected_message"),
+    [
+        ("runtime_owner", "developer", "RUNTIME_OWNER=customer"),
+        ("runtime_workers", 2, "RUNTIME_WORKERS=1"),
+        ("auth_rate_limit_mode", "process-local", "AUTH_RATE_LIMIT_MODE=upstream-enforced"),
+        ("audit_storage_mode", "ephemeral", "AUDIT_STORAGE_MODE=persistent-filesystem"),
+        ("jwt_secret_key", "", "JWT_SECRET_KEY must be explicitly configured"),
+        ("auth_password_pepper", "", "AUTH_PASSWORD_PEPPER must be explicitly configured"),
+        ("export_signing_key", "", "EXPORT_SIGNING_KEY must be explicitly configured"),
+    ],
+)
+def test_protected_runtime_rejects_unmet_customer_boundary(
+    field: str,
+    value: object,
+    expected_message: str,
+) -> None:
+    values = {**PROTECTED_RUNTIME, field: value}
+    with pytest.raises(ValueError, match=expected_message):
+        Settings(**values)
+
+
+def test_protected_runtime_accepts_single_worker_customer_owned_pilot() -> None:
+    settings = Settings(**PROTECTED_RUNTIME)
+
+    assert settings.secret_posture()["mode"] == "operator-supplied"
+    assert settings.runtime_boundary()["delivery_mode"] == "customer-owned-pilot"
+    assert settings.runtime_boundary()["production_ready"] is False

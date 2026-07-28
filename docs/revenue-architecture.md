@@ -8,23 +8,24 @@ This document turns the repository architecture into a zero-to-low-cost service 
 | --- | --- |
 | Target buyer / user | regulated office, local government team, or enterprise back office needing offline spreadsheet-to-document automation |
 | Productized offer | local-only spreadsheet cleanup and Hancom handoff workflow with signed audit/export evidence |
-| First paid SKU | paid local license, deployment package, and template adaptation support |
+| First paid SKU | fixed-scope customer-owned pilot for one approved Excel-to-Hancom workflow |
 | Free lead magnet | public architecture page that explains trust boundary and handoff path |
-| Paid expansion | fixed local install package, template pack, and support retainer |
+| Paid expansion | additional approved templates, customer connector work, and support only after the first workflow passes acceptance |
 | Data / workflow moat | template drift reports, signed audit bundles, offline deployment recipe, and regulated workflow templates |
+| Private inquiry | https://kim3310-doeon-kim-portfolio.pages.dev/?offer=secure-xl2hwp-local&inquiry=secure-workflow-pilot#private-inquiry |
 
-## Free-Tier-First Launch Stack
+## Low-Cost Launch Stack
 
 | Concern | Default choice |
 | --- | --- |
 | Build and coding loop | OpenCode, Kimi Code CLI, Freebuff, Lovable, Ollama-assisted local agents |
 | Public front door | Cloudflare Pages first, with Vercel/Netlify as alternate static front doors |
-| Backend / state | Cloudflare Workers for thin APIs, Supabase/Firebase for managed auth and data, Render/Oracle/GCP free VM only when a long-running process is unavoidable |
-| AI inference | OpenRouter, Groq, Cerebras, Cloudflare Workers AI, NVIDIA NIM, Ollama local fallback |
-| Storage / exports | Supabase Storage, Firebase Storage, Cloudflare R2/KV/D1 depending on data shape |
-| Repo-specific launch path | Cloudflare Pages docs-only public site, local FastAPI runtime, offline SQLite/file storage, optional Supabase waitlist only outside regulated data path |
+| Lead intake | Central Cloudflare private inquiry form for business contact and scope only; never customer documents or credentials |
+| AI inference | Customer-owned Ollama by default; external providers require a separate approved data-boundary decision |
+| Storage / exports | Customer persistent filesystem for input, output, audit logs, and signed bundles |
+| Repo-specific launch path | Cloudflare Pages documentation, customer-owned single-process FastAPI runtime, and no vendor-hosted regulated data path |
 
-Keep exact provider quotas out of the product contract. Free-tier limits change; the architecture should degrade gracefully through caching, daily quotas, customer-supplied API keys, and an explicit paid workspace switch.
+Keep public infrastructure separate from the document runtime. The central intake records only enough contact and scope information to qualify a pilot; the customer runtime retains all documents, secrets, outputs, and audit evidence.
 
 ## System Shape
 
@@ -32,46 +33,38 @@ Keep exact provider quotas out of the product contract. Free-tier limits change;
 flowchart LR
   Visitor["Visitor or operator"] --> Demo["Free public demo / docs"]
   Demo --> Capture["Lead capture or anonymous workspace"]
-  Capture --> Workspace["Free-tier workspace state"]
-  Workspace --> Meter["Quota, rate limit, and entitlement checks"]
-  Meter --> Core["Repository core workflow"]
-  Core --> AI["Free or customer-key AI inference"]
-  Core --> Export["Reports, traces, bundles, or templates"]
-  Export --> Upgrade["Paid SKU: private workspace / support / connector / export pack"]
-  Upgrade --> Retention["Saved history, private data, team controls, and recurring reports"]
+  Capture --> Scope["Private scope review"]
+  Scope --> Pilot["Customer-owned secure workflow pilot"]
+  Pilot --> Core["One approved Excel-to-Hancom workflow"]
+  Core --> Export["Signed output and audit evidence"]
+  Export --> Accept["Customer acceptance report"]
+  Accept --> Expand["Additional templates or support"]
 ```
 
-## Metering And Paywall Hooks
+## Commercial Boundary
 
-- Start with anonymous read-only demos and synthetic data so traffic costs stay near zero.
-- Add `workspace_id`, `plan`, `quota_day`, and `export_count` fields before adding payment; this lets the app enforce limits without redesign.
-- Cache AI outputs by normalized prompt, scenario, model, and version. Paid users can bypass cache with their own provider key.
-- Keep exports, private connectors, longer retention, branded reports, team seats, and SLA support behind the paid boundary.
-- Store only the minimum data needed for the free tier. Push private/customer data into local runtime or customer-owned accounts whenever possible.
+- Free: public architecture, synthetic walkthrough, and verification instructions.
+- Paid: one approved workflow, template adaptation, customer-owned deployment profile, boundary acceptance checks, signed export evidence, and an operator runbook.
+- Excluded: vendor-hosted documents, multi-worker runtime, SSO/OIDC, shared rate-limit state, compliance certification, and production SLA.
+- Expansion is offered only after measured pilot acceptance, not as an unverified per-seat license.
 
 ## 30-Day Revenue Test
 
-1. Publish the public demo or architecture page with one clear CTA: request private workspace, download a pack, or run a sample report.
-2. Add a lead capture route using Workers + D1/KV, Supabase, Firebase, or a GitHub issue form.
-3. Create one downloadable artifact: report PDF, template pack, runbook, dataset sample, or export bundle.
-4. Offer a fixed-scope paid package before building subscription complexity.
-5. Track activation manually first: visits, CTA clicks, export requests, email replies, and paid pilot conversations.
+1. Keep one CTA to the private `secure-workflow-pilot` intake.
+2. Qualify one workflow, one template family, named operators, data sensitivity, and the required customer perimeter.
+3. Agree on a measurable baseline and acceptance target.
+4. Run synthetic data first, then approved customer data only after the runtime gate passes.
+5. Deliver the signed verification pack, operator runbook, and production gap report.
+6. Track qualified inquiries, scoped pilots, acceptance rate, time saved, correction reduction, and expansion decisions.
 
 ## Cost Guardrails
 
-- Prefer static pages, edge functions, and scheduled jobs over always-on servers.
-- Use OpenRouter/Groq/Cerebras/Workers AI free models only for bounded tasks; require customer keys for heavy/private workloads.
-- Use R2 or repo artifacts for large downloads instead of database blobs.
-- Keep synthetic sample data in the public demo and reserve customer data for private/local deployment.
-- Move to paid infrastructure only when one paid SKU repeatedly exceeds free-tier limits.
+- Keep the public surface static and the inquiry payload small.
+- Keep synthetic sample data in public artifacts.
+- Do not upload customer documents or audit bundles to the public intake.
+- Use customer-owned compute, storage, secrets, and model runtime for the pilot.
+- Do not build checkout or subscription machinery before a fixed-scope pilot converts.
 
 ## Paid Conversion Architecture
 
-The paid version should not be a different product. It should unlock more trust, privacy, retention, and operational surface area:
-
-- private workspace or local deployment
-- saved history and longer retention
-- branded exports or signed evidence bundles
-- connector setup for the customer's systems
-- team roles, audit logs, and admin controls
-- support or implementation package tied to a concrete outcome
+The paid motion is an implementation and acceptance package, not a hosted tier. Expansion may add approved templates, connector work, customer identity integration, centralized audit state, or support, but each addition requires a separately scoped boundary and acceptance gate.

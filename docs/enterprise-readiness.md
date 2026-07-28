@@ -13,15 +13,15 @@ This note defines what an enterprise compliance reviewer, public-sector operator
 | Primary reader | Korean back-office, public-sector-adjacent, legal/admin, and secure internal workflow teams. |
 | Core wedge | Air-gapped/local Excel-to-Hancom conversion with audit logging and signed exports. |
 | Stack | Python, Terraform, Docker |
-| Readiness posture | Pilot-ready technical surface; production use requires customer-specific identity, monitoring, data, and support controls. |
+| Readiness posture | Customer-owned, single-process technical pilot; not a production-ready shared service. |
 
 ## Enterprise Controls
 
 | Control | Current expectation |
 |---|---|
 | Data boundary | Customer documents require approved storage, document-rights checks, redaction policy, and inspectable retrieval/evaluation logs. |
-| Identity and access | Production pilots should add SSO/OIDC, RBAC, scoped service accounts, secret rotation, and admin-visible access reviews. |
-| Auditability | Keep decision logs, generated reports, CI results, eval outputs, and operator handoff artifacts inspectable. |
+| Identity and access | Built-in YAML users and JWTs are pilot controls. Shared access requires customer identity integration or an approved upstream gateway plus independent rate limiting. |
+| Auditability | JSONL audit files and their hash chain are process-local. Run one worker, persist the audit directory, and verify backup/retention before approved data is used. |
 | Observability | Track health checks, latency, error budget, cost, eval pass rate, audit-log completeness, and handoff/report generation status. |
 | Release gate | Full local gate: make verify; Test suite: make test |
 | Support handoff | Name the owner, escalation path, rollback path, known limits, and review cadence before production testing. |
@@ -74,6 +74,9 @@ This note defines what an enterprise compliance reviewer, public-sector operator
 - Approved templates required
 - Workstation policy needed
 - Retention/signing keys customer-specific
+- Login throttling resets on restart and is not shared across processes.
+- Audit append locking and hash state are not safe across multiple application processes.
+- SSO/OIDC, WAF, shared state, backup automation, production SLA, and compliance certification are outside the repository.
 
 ## Finish Line
 

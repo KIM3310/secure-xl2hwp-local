@@ -736,6 +736,7 @@ def _build_signed_bundle(
 
 def _service_readiness() -> dict[str, Any]:
     checks: list[dict[str, Any]] = []
+    runtime_boundary = settings.runtime_boundary()
 
     try:
         spec_loader.load_contract("default")
@@ -835,13 +836,31 @@ def _service_readiness() -> dict[str, Any]:
     else:
         checks.append({"name": "llm_connectivity", "status": "skipped", "detail": "LLM disabled"})
 
+    checks.append(
+        {
+            "name": "runtime_boundary",
+            "status": "ok" if runtime_boundary["pilot_ready"] else "warning",
+            "detail": (
+                "customer-owned single-process pilot boundary configured"
+                if runtime_boundary["pilot_ready"]
+                else (
+                    "development/evaluation posture only; shared access requires customer ownership, "
+                    "upstream rate limiting, persistent audit storage, and explicit secrets"
+                )
+            ),
+        }
+    )
+
     failed_checks = [check["name"] for check in checks if check.get("status") == "failed"]
+    warning_checks = [check["name"] for check in checks if check.get("status") == "warning"]
     overall_status = "healthy" if not failed_checks else "degraded"
 
     return {
         "overall_status": overall_status,
         "failed_checks": failed_checks,
+        "warning_checks": warning_checks,
         "checks": checks,
+        "runtime_boundary": runtime_boundary,
         "generated_at_utc": datetime.now(timezone.utc).isoformat(),
     }
 
@@ -865,6 +884,7 @@ def _process_report_schema() -> dict[str, Any]:
 def _service_brief_payload() -> dict[str, Any]:
     auth_bootstrap = _auth_bootstrap_snapshot()
     readiness = _service_readiness()
+    runtime_boundary = readiness["runtime_boundary"]
     allowed_roles = sorted(_allowed_process_roles())
     auth_mode = "enabled" if settings.auth_enabled else "disabled"
     signing_mode = "enabled" if settings.export_signing_enabled else "disabled"
@@ -884,6 +904,7 @@ def _service_brief_payload() -> dict[str, Any]:
         "allowed_process_roles": allowed_roles,
         "bootstrap_state": auth_bootstrap,
         "readiness": readiness,
+        "runtime_boundary": runtime_boundary,
         "evidence_counts": {
             "allowed_roles": len(allowed_roles),
             "readiness_failed_checks": len(readiness["failed_checks"]),
@@ -911,6 +932,7 @@ def _service_brief_payload() -> dict[str, Any]:
         "watchouts": [
             "This service is designed for local or air-gapped operation; cloud dependencies should remain optional.",
             "If auth bootstrap is still required, shared access should not be opened yet.",
+            "The built-in login guard and audit hash state are process-local; shared access requires one app worker plus an upstream rate limiter.",
             "Signed exports improve traceability, but they do not replace input or template validation.",
         ],
         "trust_boundary": [
@@ -1012,8 +1034,13 @@ def _export_verification_pack_payload() -> dict[str, Any]:
 def _offline_deployment_pack_payload() -> dict[str, Any]:
     auth_bootstrap = _auth_bootstrap_snapshot()
     readiness = _service_readiness()
+    runtime_boundary = readiness["runtime_boundary"]
     failed_checks = len(readiness["failed_checks"])
-    shared_operator_ready = (not auth_bootstrap["required"]) and failed_checks == 0
+    shared_operator_ready = (
+        (not auth_bootstrap["required"])
+        and failed_checks == 0
+        and bool(runtime_boundary["pilot_ready"])
+    )
 
     return {
         "status": "ok" if shared_operator_ready else "degraded",
@@ -1032,6 +1059,7 @@ def _offline_deployment_pack_payload() -> dict[str, Any]:
             "signing_enabled": settings.export_signing_enabled,
             "llm_cleanup_optional": settings.enable_llm,
             "allowed_process_roles": len(_allowed_process_roles()),
+            "runtime_boundary": runtime_boundary,
         },
         "deployment_contract": {
             "runtime_target": "local or air-gapped operator workstation",
@@ -1053,6 +1081,13 @@ def _offline_deployment_pack_payload() -> dict[str, Any]:
                 "auth_bootstrap_complete": not auth_bootstrap["required"],
                 "readiness_passed": failed_checks == 0,
                 "signed_export_enabled": settings.export_signing_enabled,
+                "customer_owned_runtime": runtime_boundary["runtime_owner"] == "customer",
+                "upstream_rate_limit_configured": runtime_boundary["rate_limit"][
+                    "upstream_configured"
+                ],
+                "persistent_audit_storage": runtime_boundary["audit_state"][
+                    "persistent_storage_configured"
+                ],
             },
         },
         "operator_handoff": {
@@ -1062,7 +1097,11 @@ def _offline_deployment_pack_payload() -> dict[str, Any]:
             else (
                 "auth bootstrap required"
                 if auth_bootstrap["required"]
-                else f"{failed_checks} readiness checks still failing"
+                else (
+                    f"{failed_checks} readiness checks still failing"
+                    if failed_checks
+                    else "customer-owned pilot boundary is not configured"
+                )
             ),
             "next_architecture_gate": (
                 "Run /ops/readiness and verify /ops/export-verification-pack before shared rollout."
@@ -1071,6 +1110,7 @@ def _offline_deployment_pack_payload() -> dict[str, Any]:
         "architecture_actions": [
             "Keep offline rollout tied to the same signed export and audit surfaces used for export handoff.",
             "Treat auth bootstrap and readiness failures as rollout blockers for shared operators.",
+            "Keep exactly one application worker until login throttling and audit hash state use a shared backend.",
             "Use this pack to document workstation trust boundaries before enabling regulated processing.",
         ],
         "links": {
@@ -1091,8 +1131,13 @@ def _architecture_pack_payload() -> dict[str, Any]:
     readiness = brief["readiness"]
     export_verification = _export_verification_pack_payload()
     offline_deployment = _offline_deployment_pack_payload()
+    runtime_boundary = readiness["runtime_boundary"]
     failed_checks = len(readiness["failed_checks"])
-    ready_for_handoff = (not auth_bootstrap["required"]) and failed_checks == 0
+    ready_for_handoff = (
+        (not auth_bootstrap["required"])
+        and failed_checks == 0
+        and bool(runtime_boundary["pilot_ready"])
+    )
 
     return {
         "status": brief["status"],
@@ -1123,6 +1168,7 @@ def _architecture_pack_payload() -> dict[str, Any]:
             ],
             "export_verification_contract": export_verification["schema"],
             "offline_deployment_contract": offline_deployment["schema"],
+            "runtime_boundary": runtime_boundary,
         },
         "approval_gate": {
             "auth_bootstrap_required": auth_bootstrap["required"],
@@ -1139,7 +1185,11 @@ def _architecture_pack_payload() -> dict[str, Any]:
             else (
                 "auth bootstrap required"
                 if auth_bootstrap["required"]
-                else f"{failed_checks} readiness checks still failing"
+                else (
+                    f"{failed_checks} readiness checks still failing"
+                    if failed_checks
+                    else "customer-owned pilot boundary is not configured"
+                )
             ),
         },
         "target_boundary": {
@@ -1173,6 +1223,7 @@ def _architecture_pack_payload() -> dict[str, Any]:
         "watchouts": [
             "Signed bundles provide tamper evidence, but they do not validate spreadsheet semantics automatically.",
             "If auth bootstrap is still required, the workstation is not ready for shared operator access.",
+            "Process-local throttling and audit state do not support multiple application workers.",
             "Path guardrails are only effective when base directories remain locked down in deployment.",
         ],
         "proof_assets": [
@@ -1235,6 +1286,7 @@ def _runtime_scorecard_payload() -> dict[str, Any]:
     readiness = brief["readiness"]
     failed_checks = int(len(readiness.get("failed_checks", [])))
     auth_bootstrap_required = bool(brief["bootstrap_state"]["required"])
+    runtime_boundary = brief["runtime_boundary"]
     process_success_rate = audit_summary.get("process_success_rate")
     success_rate_value = float(process_success_rate) if process_success_rate is not None else 100.0
     runtime_score = max(
@@ -1242,6 +1294,7 @@ def _runtime_scorecard_payload() -> dict[str, Any]:
         100
         - min(failed_checks * 12, 40)
         - (15 if auth_bootstrap_required else 0)
+        - (15 if not runtime_boundary["pilot_ready"] else 0)
         - (10 if success_rate_value < 95 else 0),
     )
     top_actor = (audit_summary.get("top_actors") or [{}])[0]
@@ -1261,12 +1314,15 @@ def _runtime_scorecard_payload() -> dict[str, Any]:
             "audit_chain_valid": audit_summary.get("hash_chain_valid", False),
             "process_success_rate": process_success_rate,
             "auth_bootstrap_required": auth_bootstrap_required,
+            "pilot_boundary_configured": runtime_boundary["pilot_ready"],
+            "production_ready": False,
         },
         "runtime": {
             "allowed_process_roles": brief["allowed_process_roles"],
             "login_guard_max_failures": login_attempt_guard.max_failures,
             "readiness_overall_status": readiness["overall_status"],
             "audit_log_dir": settings.audit_log_dir,
+            "boundary": runtime_boundary,
         },
         "audit_snapshot": {
             "top_actor": top_actor,
@@ -1439,6 +1495,7 @@ def ui_home(request: Request) -> HTMLResponse:
 @app.get("/health")
 def health() -> dict:
     auth_bootstrap = _auth_bootstrap_snapshot()
+    runtime_boundary = settings.runtime_boundary()
     diagnostics = {
         "auth_mode": "enabled" if settings.auth_enabled else "disabled",
         "bootstrap_state": "required" if auth_bootstrap["required"] else "ready",
@@ -1448,9 +1505,13 @@ def health() -> dict:
             "Create the initial admin bootstrap record before opening shared access."
             if auth_bootstrap["required"]
             else (
-                "Verify Ollama reachability from /ops/readiness before running LLM cleanup."
-                if settings.enable_llm
-                else "Review /ops/architecture-pack and run /ops/readiness before processing regulated spreadsheets."
+                "Configure the customer-owned pilot boundary before opening shared access."
+                if not runtime_boundary["pilot_ready"]
+                else (
+                    "Verify Ollama reachability from /ops/readiness before running LLM cleanup."
+                    if settings.enable_llm
+                    else "Review /ops/architecture-pack and run /ops/readiness before processing regulated spreadsheets."
+                )
             )
         ),
     }
@@ -1469,7 +1530,10 @@ def health() -> dict:
             "max_failures": login_attempt_guard.max_failures,
             "window_seconds": login_attempt_guard.window_seconds,
             "lock_seconds": login_attempt_guard.lock_seconds,
+            "scope": "process-local",
+            "resets_on_restart": True,
         },
+        "runtime_boundary": runtime_boundary,
         "process_allowed_roles": sorted(_allowed_process_roles()),
         "allowed_input_base_dir": settings.allowed_input_base_dir,
         "allowed_output_base_dir": settings.allowed_output_base_dir,
@@ -1642,6 +1706,11 @@ def auth_guard_state(_current_user: AuthUser = Depends(require_audit_user)) -> d
         "max_failures": login_attempt_guard.max_failures,
         "window_seconds": login_attempt_guard.window_seconds,
         "lock_seconds": login_attempt_guard.lock_seconds,
+        "scope": "process-local",
+        "resets_on_restart": True,
+        "cross_process_safe": False,
+        "upstream_required_for_shared_access": True,
+        "upstream_configured": settings.auth_rate_limit_mode == "upstream-enforced",
     }
 
 
