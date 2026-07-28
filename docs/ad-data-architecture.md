@@ -8,7 +8,7 @@ Free local-first document conversion security checklist for spreadsheet-to-HWP w
 
 - Audience: Korean document automation teams and privacy reviewers
 - Central resource: https://kim3310-doeon-kim-portfolio.pages.dev/resources/secure-xl2hwp-local/
-- Live system: https://secure-xl2hwp-local.pages.dev
+- Live system: https://secure-xl2hwp-local.pages.dev/
 - Advertising boundary: ads allowed only on public local-first security resources; file conversion, signatures, results, and audit logs are ad-free
 - Current ad state: code-ready on the central resource; serving depends on Google AdSense site approval and consent policy.
 

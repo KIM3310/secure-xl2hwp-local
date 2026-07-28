@@ -6,7 +6,7 @@
   "audience": "Korean document automation teams and privacy reviewers",
   "public_resource": {
     "url": "https://kim3310-doeon-kim-portfolio.pages.dev/resources/secure-xl2hwp-local/",
-    "live_demo": "https://secure-xl2hwp-local.pages.dev",
+    "live_demo": "https://secure-xl2hwp-local.pages.dev/",
     "readiness_checklist": [
       "Architecture Summary",
       "Runtime And Data Flow",
