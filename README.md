@@ -194,9 +194,20 @@ MIT
 - Paid boundary: fixed-scope customer-owned pilot for one approved Excel-to-Hancom workflow
 - Canonical URL: https://secure-xl2hwp-local.pages.dev/
 - Lead capture: https://kim3310-doeon-kim-portfolio.pages.dev/?offer=secure-xl2hwp-local&inquiry=secure-workflow-pilot#private-inquiry
+- Resource route: https://kim3310-doeon-kim-portfolio.pages.dev/resources/secure-xl2hwp-local/
 - Commercial route: https://kim3310-doeon-kim-portfolio.pages.dev/?offer=secure-xl2hwp-local#service-offers
 - Machine-readable offer: [docs/service-offer.json](docs/service-offer.json)
 - Search growth implementation: [docs/search-growth-implementation.md](docs/search-growth-implementation.md)
 - Revenue architecture: [docs/revenue-architecture.md](docs/revenue-architecture.md)
 
 <!-- search-growth-readme:end -->
+
+<!-- KIM3310:AD-DATA-PIVOT:START -->
+## Free Resource, Advertising, and Aggregate Data
+
+- [Public utility and architecture checklist](https://kim3310-doeon-kim-portfolio.pages.dev/resources/secure-xl2hwp-local/)
+- Revenue model: contextual advertising on the policy-eligible central resource page.
+- Aggregate value: anonymous aggregate local-document automation interest and checklist usage counts
+- Boundary: ads allowed only on public local-first security resources; file conversion, signatures, results, and audit logs are ad-free
+- Consent defaults off, DNT/GPC fail closed, and personal or sensitive data is never sold.
+<!-- KIM3310:AD-DATA-PIVOT:END -->

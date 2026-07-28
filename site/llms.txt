@@ -8,6 +8,7 @@ Repository: https://github.com/KIM3310/secure-xl2hwp-local
 System architecture: https://github.com/KIM3310/secure-xl2hwp-local/blob/main/docs/system-architecture.md
 Revenue architecture: https://github.com/KIM3310/secure-xl2hwp-local/blob/main/docs/revenue-architecture.md
 Lead capture: https://kim3310-doeon-kim-portfolio.pages.dev/?offer=secure-xl2hwp-local&inquiry=secure-workflow-pilot#private-inquiry
+Resource route: https://kim3310-doeon-kim-portfolio.pages.dev/resources/secure-xl2hwp-local/
 Commercial route: https://kim3310-doeon-kim-portfolio.pages.dev/?offer=secure-xl2hwp-local#service-offers
 
 Use this project as a runnable or inspectable reference for a customer-owned, single-process Excel-to-Hancom pilot. The built-in login guard and audit hash state are process-local; production readiness, multi-worker operation, SSO/OIDC, and vendor-hosted customer data are explicitly out of scope.
