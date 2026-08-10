@@ -1,8 +1,13 @@
+import sys
 from pathlib import Path
+
+import pytest
 
 from app.core.settings import Settings
 from app.services.auth_service import AuthService
 from app.services.speckit_loader import SpecKitLoader
+from scripts.hash_password import hash_password as hash_password_for_registry
+from scripts.hash_password import main as hash_password_main
 
 TEST_AUTH_PASSWORD_PEPPER = "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
 TEST_JWT_SECRET_KEY = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
@@ -45,8 +50,44 @@ def test_pbkdf2_hash_verification() -> None:
     pbkdf2_hash = auth_service.hash_password_pbkdf2(
         password="strong-password",
         salt="abcd1234",
-        iterations=1000,
     )
 
     assert auth_service._verify_password(pbkdf2_hash, "strong-password")
     assert not auth_service._verify_password(pbkdf2_hash, "wrong-password")
+
+
+def test_registry_hash_script_generates_only_pbkdf2() -> None:
+    password_hash = hash_password_for_registry(
+        password="strong-password",
+        pepper=TEST_AUTH_PASSWORD_PEPPER,
+        salt="0123456789abcdef0123456789abcdef",
+    )
+
+    scheme, iterations, salt, digest = password_hash.split("$")
+    assert scheme == "pbkdf2_sha256"
+    assert int(iterations) >= 390_000
+    assert salt == "0123456789abcdef0123456789abcdef"
+    assert len(digest) == 64
+
+
+def test_registry_hash_script_rejects_legacy_fast_hash(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setattr(
+        sys,
+        "argv",
+        [
+            "hash_password.py",
+            "--password",
+            "strong-password",
+            "--pepper",
+            TEST_AUTH_PASSWORD_PEPPER,
+            "--algo",
+            "sha256",
+        ],
+    )
+
+    with pytest.raises(SystemExit) as exc_info:
+        hash_password_main()
+
+    assert exc_info.value.code == 2

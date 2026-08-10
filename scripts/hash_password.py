@@ -1,30 +1,39 @@
 from __future__ import annotations
 
 import argparse
-import binascii
 import hashlib
 import secrets
 
+PBKDF2_SCHEME = "pbkdf2_sha256"
+PBKDF2_MIN_ITERATIONS = 390_000
+PBKDF2_DEFAULT_ITERATIONS = PBKDF2_MIN_ITERATIONS
+PBKDF2_MAX_ITERATIONS = 2_000_000
+PBKDF2_SALT_BYTES = 16
 
-def hash_password(password: str, pepper: str) -> str:
-    return hashlib.sha256(f"{password}{pepper}".encode()).hexdigest()
 
-
-def hash_password_pbkdf2(
+def hash_password(
     password: str,
     pepper: str,
-    iterations: int = 390000,
+    iterations: int = PBKDF2_DEFAULT_ITERATIONS,
     salt: str = "",
 ) -> str:
+    if not PBKDF2_MIN_ITERATIONS <= iterations <= PBKDF2_MAX_ITERATIONS:
+        raise ValueError(
+            f"PBKDF2 iterations must be between "
+            f"{PBKDF2_MIN_ITERATIONS} and {PBKDF2_MAX_ITERATIONS}"
+        )
     if not salt:
-        salt = secrets.token_hex(8)
+        salt = secrets.token_hex(PBKDF2_SALT_BYTES)
+    if "$" in salt:
+        raise ValueError("PBKDF2 salt must not contain '$'")
+
     digest = hashlib.pbkdf2_hmac(
         "sha256",
         f"{password}{pepper}".encode(),
         salt.encode(),
         iterations,
     )
-    return f"pbkdf2_sha256${iterations}${salt}${binascii.hexlify(digest).decode()}"
+    return f"{PBKDF2_SCHEME}${iterations}${salt}${digest.hex()}"
 
 
 def main() -> None:
@@ -33,26 +42,24 @@ def main() -> None:
     parser.add_argument("--pepper", required=True)
     parser.add_argument(
         "--algo",
-        choices=["sha256", "pbkdf2_sha256"],
-        default="pbkdf2_sha256",
-        help="Hash algorithm format",
+        choices=[PBKDF2_SCHEME],
+        default=PBKDF2_SCHEME,
+        help="Password hashing algorithm (legacy fast hashes are not supported)",
     )
-    parser.add_argument("--iterations", type=int, default=390000)
+    parser.add_argument("--iterations", type=int, default=PBKDF2_DEFAULT_ITERATIONS)
     parser.add_argument("--salt", default="")
     args = parser.parse_args()
 
-    if args.algo == "sha256":
-        print(hash_password(args.password, args.pepper))
-        return
-
-    print(
-        hash_password_pbkdf2(
+    try:
+        password_hash = hash_password(
             password=args.password,
             pepper=args.pepper,
             iterations=args.iterations,
             salt=args.salt,
         )
-    )
+    except ValueError as exc:
+        parser.error(str(exc))
+    print(password_hash)
 
 
 if __name__ == "__main__":
