@@ -18,6 +18,7 @@ from app.main import (
     _export_signature_headers,
     _resolve_repo_path,
     _validate_process_path_request,
+    _validate_upload_request_paths,
     settings,
 )
 from app.pipeline.cot_engine import CotOrchestrator, CotResult
@@ -140,14 +141,17 @@ class TestJwtAuthFlow:
         assert result is None
 
     def test_pbkdf2_verify_correct(self, auth: AuthService) -> None:
-        hashed = auth.hash_password_pbkdf2("test-pass", salt="salt123", iterations=1000)
+        hashed = auth.hash_password_pbkdf2("test-pass", salt="salt123")
         assert auth._verify_password(hashed, "test-pass") is True
         assert auth._verify_password(hashed, "wrong-pass") is False
 
-    def test_sha256_verify_correct(self, auth: AuthService) -> None:
-        hashed = auth.hash_password("test-pass")
-        assert auth._verify_password(hashed, "test-pass") is True
-        assert auth._verify_password(hashed, "wrong-pass") is False
+    def test_legacy_unsalted_hash_is_rejected(self, auth: AuthService) -> None:
+        legacy_hash = "0" * 64
+        assert auth._verify_password(legacy_hash, "test-pass") is False
+
+    def test_under_iteration_pbkdf2_hash_is_rejected(self, auth: AuthService) -> None:
+        under_iteration_hash = f"pbkdf2_sha256$1$salt123${'0' * 64}"
+        assert auth._verify_password(under_iteration_hash, "test-pass") is False
 
     def test_malformed_pbkdf2_hash_returns_false(self, auth: AuthService) -> None:
         assert auth._verify_password("pbkdf2_sha256$not$enough", "any") is False
@@ -521,6 +525,111 @@ class TestPathGuardrails:
                 "output_dir",
             )
         assert exc_info.value.status_code == 400
+
+    def test_assert_path_rejects_prefix_collision(self, tmp_path: Path) -> None:
+        from fastapi import HTTPException
+
+        allowed = tmp_path / "allowed"
+        sibling = tmp_path / "allowed-evil" / "report.xlsx"
+        with pytest.raises(HTTPException):
+            _assert_path_within_base(str(sibling), str(allowed), "input_path")
+
+    def test_assert_path_rejects_before_resolving_outside_path(
+        self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        import os
+
+        from fastapi import HTTPException
+
+        allowed = tmp_path / "allowed"
+        outside = tmp_path / "outside" / "report.xlsx"
+        resolved_paths: list[str] = []
+        original_realpath = os.path.realpath
+
+        def recording_realpath(path: str) -> str:
+            resolved_paths.append(path)
+            return original_realpath(path)
+
+        monkeypatch.setattr(os.path, "realpath", recording_realpath)
+        with pytest.raises(HTTPException):
+            _assert_path_within_base(str(outside), str(allowed), "input_path")
+
+        assert resolved_paths == []
+
+    def test_assert_path_rejects_symlink_escape(self, tmp_path: Path) -> None:
+        from fastapi import HTTPException
+
+        allowed = tmp_path / "allowed"
+        outside = tmp_path / "outside"
+        allowed.mkdir()
+        outside.mkdir()
+        escape_link = allowed / "escape"
+        try:
+            escape_link.symlink_to(outside, target_is_directory=True)
+        except OSError:
+            pytest.skip("Directory symlinks are not available on this platform")
+
+        with pytest.raises(HTTPException):
+            _assert_path_within_base(
+                str(escape_link / "report.xlsx"),
+                str(allowed),
+                "input_path",
+            )
+
+    def test_assert_path_accepts_configured_base_itself(self, tmp_path: Path) -> None:
+        allowed = tmp_path / "allowed"
+        allowed.mkdir()
+
+        assert _assert_path_within_base(str(allowed), str(allowed), "output_dir") == allowed
+
+    def test_process_output_directory_is_not_created_through_symlink(
+        self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        from fastapi import HTTPException
+
+        allowed = tmp_path / "allowed"
+        outside = tmp_path / "outside"
+        allowed.mkdir()
+        outside.mkdir()
+        escape_link = allowed / "escape"
+        try:
+            escape_link.symlink_to(outside, target_is_directory=True)
+        except OSError:
+            pytest.skip("Directory symlinks are not available on this platform")
+        monkeypatch.setattr(settings, "allowed_output_base_dir", str(allowed))
+
+        with pytest.raises(HTTPException):
+            _validate_process_path_request(
+                input_path="examples/input/sample_projects.xlsx",
+                output_dir=str(escape_link / "created"),
+                template_path=None,
+            )
+
+        assert not (outside / "created").exists()
+
+    def test_upload_output_directory_is_not_created_through_symlink(
+        self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        from fastapi import HTTPException
+
+        allowed = tmp_path / "allowed"
+        outside = tmp_path / "outside"
+        allowed.mkdir()
+        outside.mkdir()
+        escape_link = allowed / "escape"
+        try:
+            escape_link.symlink_to(outside, target_is_directory=True)
+        except OSError:
+            pytest.skip("Directory symlinks are not available on this platform")
+        monkeypatch.setattr(settings, "allowed_output_base_dir", str(allowed))
+
+        with pytest.raises(HTTPException):
+            _validate_upload_request_paths(
+                output_dir=str(escape_link / "created"),
+                template_path=None,
+            )
+
+        assert not (outside / "created").exists()
 
     def test_validate_process_path_request_rejects_all_traversals(self) -> None:
         from fastapi import HTTPException
