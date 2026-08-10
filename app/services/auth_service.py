@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import binascii
 import hashlib
 import hmac
 import logging
@@ -15,6 +14,12 @@ from app.core.settings import Settings
 from app.services.speckit_loader import SpecKitLoader
 
 logger = logging.getLogger(__name__)
+
+PBKDF2_SCHEME = "pbkdf2_sha256"
+PBKDF2_MIN_ITERATIONS = 390_000
+PBKDF2_DEFAULT_ITERATIONS = PBKDF2_MIN_ITERATIONS
+PBKDF2_MAX_ITERATIONS = 2_000_000
+PBKDF2_DIGEST_HEX_LENGTH = 64
 
 
 @dataclass
@@ -77,34 +82,43 @@ class AuthService:
             raise jwt.InvalidTokenError("Token role does not match current user role")
         return AuthUser(user_id=user_id, role=role)
 
-    def hash_password(self, password: str) -> str:
-        material = f"{password}{self.settings.auth_password_pepper}".encode()
-        return hashlib.sha256(material).hexdigest()
-
     def hash_password_pbkdf2(
         self,
         password: str,
         salt: str,
-        iterations: int = 390000,
+        iterations: int = PBKDF2_DEFAULT_ITERATIONS,
     ) -> str:
+        if not PBKDF2_MIN_ITERATIONS <= iterations <= PBKDF2_MAX_ITERATIONS:
+            raise ValueError(
+                f"PBKDF2 iterations must be between "
+                f"{PBKDF2_MIN_ITERATIONS} and {PBKDF2_MAX_ITERATIONS}"
+            )
+        if not salt or "$" in salt:
+            raise ValueError("PBKDF2 salt must be non-empty and must not contain '$'")
+
         material = f"{password}{self.settings.auth_password_pepper}".encode()
         digest = hashlib.pbkdf2_hmac("sha256", material, salt.encode(), iterations)
-        return f"pbkdf2_sha256${iterations}${salt}${binascii.hexlify(digest).decode()}"
+        return f"{PBKDF2_SCHEME}${iterations}${salt}${digest.hex()}"
 
     def _verify_password(self, stored_hash: str, password: str) -> bool:
-        if stored_hash.startswith("pbkdf2_sha256$"):
-            try:
-                _, iterations_str, salt, expected_hex = stored_hash.split("$", maxsplit=3)
-                iterations = int(iterations_str)
-                actual = self.hash_password_pbkdf2(password=password, salt=salt, iterations=iterations)
-                actual_hex = actual.split("$", maxsplit=3)[-1]
-                return hmac.compare_digest(expected_hex, actual_hex)
-            except (ValueError, IndexError):
-                return False
+        if not stored_hash.startswith(f"{PBKDF2_SCHEME}$"):
+            return False
 
-        expected_hash = stored_hash
-        provided_hash = self.hash_password(password)
-        return hmac.compare_digest(expected_hash, provided_hash)
+        try:
+            scheme, iterations_str, salt, expected_hex = stored_hash.split("$", maxsplit=3)
+            if scheme != PBKDF2_SCHEME or len(expected_hex) != PBKDF2_DIGEST_HEX_LENGTH:
+                return False
+            expected_digest = bytes.fromhex(expected_hex)
+            iterations = int(iterations_str)
+            actual = self.hash_password_pbkdf2(
+                password=password,
+                salt=salt,
+                iterations=iterations,
+            )
+            actual_digest = bytes.fromhex(actual.rsplit("$", maxsplit=1)[-1])
+            return hmac.compare_digest(expected_digest, actual_digest)
+        except (ValueError, IndexError):
+            return False
 
     def _load_users(self) -> dict:
         registry = self.spec_loader.load_user_registry(self.settings.user_registry_name)

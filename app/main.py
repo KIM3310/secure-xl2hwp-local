@@ -253,24 +253,51 @@ def _allowed_process_roles() -> set[str]:
     return {role.strip() for role in settings.process_allowed_roles.split(",") if role.strip()}
 
 
+def _absolute_repo_path(path_value: str) -> str:
+    """Normalize a path lexically without touching attacker-selected filesystem locations."""
+    candidate = (
+        path_value
+        if os.path.isabs(path_value)
+        else os.path.join(str(REPO_ROOT), path_value)
+    )
+    return os.path.normcase(os.path.abspath(candidate))
+
+
+def _path_prefix(path_value: str) -> str:
+    return path_value.rstrip(os.sep) + os.sep
+
+
 def _resolve_repo_path(path_value: str) -> Path:
-    candidate = Path(path_value)
-    if candidate.is_absolute():
-        return candidate.resolve()
-    return (REPO_ROOT / candidate).resolve()
+    absolute_path = _absolute_repo_path(path_value)
+    return Path(os.path.normcase(os.path.realpath(absolute_path)))
 
 
 def _assert_path_within_base(path_value: str, base_dir_value: str, field_name: str) -> Path:
-    target = _resolve_repo_path(path_value)
-    base_dir = _resolve_repo_path(base_dir_value)
-    try:
-        target.relative_to(base_dir)
-    except ValueError as exc:
+    # First perform a lexical boundary check. This prevents an absolute/UNC path outside
+    # the configured base from being resolved at all (important on Windows, where
+    # resolving an attacker-selected UNC path can initiate an outbound network access).
+    target_lexical = _absolute_repo_path(path_value)
+    base_lexical = _absolute_repo_path(base_dir_value)
+    if target_lexical == base_lexical:
+        target_lexical = base_lexical
+    elif not target_lexical.startswith(_path_prefix(base_lexical)):
+        raise HTTPException(
+            status_code=400,
+            detail=f"{field_name} must stay under configured base directory: {base_lexical}",
+        )
+
+    # Resolve symlinks only after the lexical check, then enforce the boundary again
+    # so a link located under an allowed directory cannot escape that directory.
+    target = os.path.normcase(os.path.realpath(target_lexical))
+    base_dir = os.path.normcase(os.path.realpath(base_lexical))
+    if target == base_dir:
+        return Path(base_dir)
+    if not target.startswith(_path_prefix(base_dir)):
         raise HTTPException(
             status_code=400,
             detail=f"{field_name} must stay under configured base directory: {base_dir}",
-        ) from exc
-    return target
+        )
+    return Path(target)
 
 
 def _validate_process_path_request(
