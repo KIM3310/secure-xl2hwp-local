@@ -11,7 +11,6 @@ A local-first Korean document automation tool that turns repetitive Excel-to-Han
 | Area | Details |
 |---|---|
 | Users | Korean back-office teams, public-sector-adjacent operators, legal/admin teams, and secure internal workflow owners. |
-| Technical path | Validate the demo, README, architecture notes, and quality gate before deeper workflow review. |
 | System scope | JWT auth, signed exports, audit logs, local operation, structured output, and Hancom-focused workflow design. |
 | Operating boundary | Customer-owned, single-process pilot. Login throttling and audit hash state are process-local; shared access requires an upstream rate limiter, customer identity controls, persistent storage, and approved workstation policies. |
 | Evaluation path | Run the backend checks and generate a sample signed export from staged input data. |
