@@ -7,8 +7,9 @@ COPY app ./app
 COPY specs ./specs
 COPY scripts ./scripts
 
-RUN pip install --no-cache-dir --upgrade pip && \
-    pip install --no-cache-dir .
+RUN python -m pip install --no-cache-dir --upgrade "pip>=26.1.2" "setuptools>=83.0.0" \
+    && python -m pip install --no-cache-dir . \
+    && python -m pip check
 
 EXPOSE 8080
 
