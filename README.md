@@ -1,4 +1,6 @@
-# secure-xl2hwp-local
+# Secure XL2HWP Local
+
+[![CI](https://github.com/KIM3310/secure-xl2hwp-local/actions/workflows/ci.yml/badge.svg)](https://github.com/KIM3310/secure-xl2hwp-local/actions/workflows/ci.yml)
 
 Pilot-ready reference implementation for Excel-to-Hancom document conversion in air-gapped and controlled local environments. It cleans spreadsheet data using contract-based rules and maps it to Hancom (HWP) templates, with file-backed audit events and signed exports.
 
@@ -57,11 +59,12 @@ A local-first Korean document automation tool that turns repetitive Excel-to-Han
 
 ```bash
 cd secure-xl2hwp-local
-python3 -m venv .venv
-source .venv/bin/activate
-pip install '.[dev]'
+make install  # selects an available Python 3.10+ interpreter and creates .venv
 cp .env.example .env
-python scripts/create_sample_excel.py
+make sample-data
+
+# Override interpreter discovery when needed:
+make BOOTSTRAP_PYTHON=/path/to/python3.10 install
 ```
 
 Blank secrets are generated in `dev` only and are deliberately reported as `ephemeral-dev-only`. They are invalid for a protected pilot.
