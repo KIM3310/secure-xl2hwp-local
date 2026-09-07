@@ -5,6 +5,7 @@ from dataclasses import dataclass
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Optional, Union
+from uuid import uuid4
 
 import pandas as pd
 
@@ -43,12 +44,13 @@ class ExportService:
 
         stem = Path(input_path).stem
         timestamp = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
+        artifact_id = f"{timestamp}.{uuid4().hex}"
 
-        normalized_xlsx = out_dir / f"{stem}.normalized.{timestamp}.xlsx"
-        normalized_csv = out_dir / f"{stem}.normalized.{timestamp}.csv"
-        report_json = out_dir / f"{stem}.report.{timestamp}.json"
-        hancom_payload_json = out_dir / f"{stem}.hancom_payload.{timestamp}.json"
-        hancom_preview_txt = out_dir / f"{stem}.hancom_preview.{timestamp}.txt"
+        normalized_xlsx = out_dir / f"{stem}.normalized.{artifact_id}.xlsx"
+        normalized_csv = out_dir / f"{stem}.normalized.{artifact_id}.csv"
+        report_json = out_dir / f"{stem}.report.{artifact_id}.json"
+        hancom_payload_json = out_dir / f"{stem}.hancom_payload.{artifact_id}.json"
+        hancom_preview_txt = out_dir / f"{stem}.hancom_preview.{artifact_id}.txt"
 
         dataframe.to_excel(normalized_xlsx, index=False)
         dataframe.to_csv(normalized_csv, index=False, encoding="utf-8-sig")
@@ -64,6 +66,7 @@ class ExportService:
         payload = template_payload.get("template_placeholders", {})
 
         report_payload: dict[str, Any] = {
+            "artifact_id": artifact_id,
             "generated_at_utc": timestamp,
             "input_file": str(input_path),
             "template_path": str(template_path) if template_path else None,
@@ -79,6 +82,7 @@ class ExportService:
         }
 
         hancom_payload = {
+            "artifact_id": artifact_id,
             "generated_at_utc": timestamp,
             "source_file": str(input_path),
             "template_name": template_profile.template_name,
@@ -112,6 +116,9 @@ class ExportService:
 
     @staticmethod
     def _write_preview(path: Path, placeholders: dict[str, Any]) -> None:
-        lines = [f"{key} = {value}" for key, value in sorted(placeholders.items(), key=lambda item: item[0])]
+        lines = [
+            f"{key} = {value}"
+            for key, value in sorted(placeholders.items(), key=lambda item: item[0])
+        ]
         with path.open("w", encoding="utf-8") as handle:
             handle.write("\n".join(lines))
